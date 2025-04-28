@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Menu, User, BarChart2, Settings, LogOut, Package, Wrench } from 'lucide-react';
+import { Menu, BarChart2, Settings, LogOut, Package, Wrench } from 'lucide-react';
 import { useState } from 'react';
 import Logo from '../assets/logo.svg';
 
