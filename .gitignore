@@ -1,0 +1,49 @@
+# Common frontend patterns to ignore
+
+# Dependencies
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build outputs
+dist
+build
+out
+.next
+
+# Environment variables
+.env*
+!.env.example
+
+# IDE and editor files
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+*.sublime-*
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage
+.nyc_output
+
+# Temporary files
+.cache
+.temp
+.tmp
+*.log
+storybook-static
+
+# Misc
+.eslintcache
+.vercel
+.netlify
