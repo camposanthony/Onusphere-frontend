@@ -8,8 +8,8 @@ const AllTools = () => {
   return (
     <div className="space-y-8">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">All Tools</h1>
-        <p className="text-muted-foreground mt-1">
+        <h1 className="text-3xl font-bold text-gradient">All Tools</h1>
+        <p style={{color: 'var(--muted-foreground)'}} className="mt-1">
           Discover and add logistics tools to your workspace
         </p>
       </div>
@@ -18,20 +18,25 @@ const AllTools = () => {
       <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
         <div className="relative flex-1 max-w-xl">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search size={18} className="text-muted-foreground" />
+            <Search size={18} style={{color: 'var(--muted-foreground)'}} />
           </div>
           <input
             type="text"
             placeholder="Search for tools..."
-            className="pl-10 pr-4 py-2 bg-accent-muted border border-border rounded-md w-full focus:outline-none focus:ring-1 focus:ring-accent"
+            className="pl-10 pr-4 py-2 border rounded-md w-full focus:outline-none focus:ring-1 focus:ring-accent"
+            style={{backgroundColor: 'var(--muted)', borderColor: 'var(--border)'}}
           />
         </div>
         <div className="flex items-center space-x-2">
-          <button className="bg-accent-muted text-foreground py-2 px-4 rounded-md hover:bg-accent/10 transition-colors flex items-center border border-border">
+          <button className="py-2 px-4 rounded-md transition-colors flex items-center border" 
+                  style={{backgroundColor: 'var(--muted)', color: 'var(--foreground)', borderColor: 'var(--border)'}}>
+
             <Filter size={18} className="mr-2" />
             Filters
           </button>
-          <button className="bg-accent-muted text-foreground py-2 px-4 rounded-md hover:bg-accent/10 transition-colors flex items-center border border-border">
+          <button className="py-2 px-4 rounded-md transition-colors flex items-center border" 
+                  style={{backgroundColor: 'var(--muted)', color: 'var(--foreground)', borderColor: 'var(--border)'}}>
+
             <ArrowDownUp size={18} className="mr-2" />
             Sort
           </button>
@@ -48,8 +53,9 @@ const AllTools = () => {
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 activeCategory === category
                   ? 'bg-accent text-white'
-                  : 'bg-accent-muted text-foreground hover:bg-accent/10 border border-border'
+                  : 'border'
               }`}
+              style={activeCategory !== category ? {backgroundColor: 'var(--muted)', color: 'var(--foreground)', borderColor: 'var(--border)'} : {}}
             >
               {category}
             </button>
@@ -60,26 +66,28 @@ const AllTools = () => {
       {/* Tools Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Tool Card 1 */}
-        <div className="bg-accent-muted rounded-lg border border-border hover:border-accent transition-colors overflow-hidden group cursor-pointer">
+        <div className="dashboard-card rounded-lg hover:border-accent transition-colors overflow-hidden group cursor-pointer">
           <div className="p-6">
             <div className="flex justify-between items-start mb-4">
               <div className="p-3 rounded-md bg-accent/10">
                 <Wrench size={24} className="text-accent" />
               </div>
-              <div className="bg-accent/10 text-accent text-xs py-1 px-2 rounded-full">
+              <div className="text-xs py-1 px-2 rounded-full" style={{backgroundColor: 'var(--accent-background)', color: 'var(--accent)'}}>
                 Popular
               </div>
             </div>
             <h3 className="font-medium text-lg mb-2">Route Optimization</h3>
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="text-sm mb-4" style={{color: 'var(--muted-foreground)'}}>
               AI-powered route optimization for multiple vehicles with constraints and real-time traffic data.
             </p>
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-2">
-                <Tag size={14} className="text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">Planning</span>
+                <Tag size={14} style={{color: 'var(--muted-foreground)'}} />
+                <span className="text-xs" style={{color: 'var(--muted-foreground)'}}>Planning</span>
               </div>
-              <button className="text-accent hover:text-accent/80 bg-background py-1 px-3 rounded-md border border-border hover:bg-accent/5 transition-colors flex-shrink-0">
+              <button className="py-1 px-3 rounded-md border hover:opacity-80 transition-colors flex-shrink-0"
+                      style={{backgroundColor: 'var(--background)', borderColor: 'var(--border)', color: 'var(--accent)'}}>
+
                 Add
               </button>
             </div>
@@ -87,26 +95,28 @@ const AllTools = () => {
         </div>
 
         {/* Tool Card 2 */}
-        <div className="bg-accent-muted rounded-lg border border-border hover:border-accent transition-colors overflow-hidden group cursor-pointer">
+        <div className="dashboard-card rounded-lg hover:border-accent transition-colors overflow-hidden group cursor-pointer">
           <div className="p-6">
             <div className="flex justify-between items-start mb-4">
               <div className="p-3 rounded-md bg-accent/10">
                 <Wrench size={24} className="text-accent" />
               </div>
-              <div className="bg-accent/10 text-accent text-xs py-1 px-2 rounded-full">
+              <div className="text-xs py-1 px-2 rounded-full" style={{backgroundColor: 'var(--accent-background)', color: 'var(--accent)'}}>
                 New
               </div>
             </div>
             <h3 className="font-medium text-lg mb-2">Load Balancer</h3>
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="text-sm mb-4" style={{color: 'var(--muted-foreground)'}}>
               Optimize weight distribution across your fleet to maximize efficiency and reduce fuel consumption.
             </p>
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-2">
-                <Tag size={14} className="text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">Optimization</span>
+                <Tag size={14} style={{color: 'var(--muted-foreground)'}} />
+                <span className="text-xs" style={{color: 'var(--muted-foreground)'}}>Optimization</span>
               </div>
-              <button className="text-accent hover:text-accent/80 bg-background py-1 px-3 rounded-md border border-border hover:bg-accent/5 transition-colors flex-shrink-0">
+              <button className="py-1 px-3 rounded-md border hover:opacity-80 transition-colors flex-shrink-0"
+                      style={{backgroundColor: 'var(--background)', borderColor: 'var(--border)', color: 'var(--accent)'}}>
+
                 Add
               </button>
             </div>
@@ -114,7 +124,7 @@ const AllTools = () => {
         </div>
 
         {/* Tool Card 3 */}
-        <div className="bg-accent-muted rounded-lg border border-border hover:border-accent transition-colors overflow-hidden group cursor-pointer">
+        <div className="dashboard-card rounded-lg hover:border-accent transition-colors overflow-hidden group cursor-pointer">
           <div className="p-6">
             <div className="flex justify-between items-start mb-4">
               <div className="p-3 rounded-md bg-accent/10">
@@ -125,15 +135,17 @@ const AllTools = () => {
               </div>
             </div>
             <h3 className="font-medium text-lg mb-2">Performance Dashboard</h3>
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="text-sm mb-4" style={{color: 'var(--muted-foreground)'}}>
               Comprehensive analytics dashboard for tracking KPIs, fleet performance, and delivery metrics.
             </p>
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-2">
-                <Tag size={14} className="text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">Analytics</span>
+                <Tag size={14} style={{color: 'var(--muted-foreground)'}} />
+                <span className="text-xs" style={{color: 'var(--muted-foreground)'}}>Analytics</span>
               </div>
-              <button className="text-accent hover:text-accent/80 bg-background py-1 px-3 rounded-md border border-border hover:bg-accent/5 transition-colors flex-shrink-0">
+              <button className="py-1 px-3 rounded-md border hover:opacity-80 transition-colors flex-shrink-0"
+                      style={{backgroundColor: 'var(--background)', borderColor: 'var(--border)', color: 'var(--accent)'}}>
+
                 Add
               </button>
             </div>
@@ -141,7 +153,7 @@ const AllTools = () => {
         </div>
 
         {/* Tool Card 4 */}
-        <div className="bg-accent-muted rounded-lg border border-border hover:border-accent transition-colors overflow-hidden group cursor-pointer">
+        <div className="dashboard-card rounded-lg hover:border-accent transition-colors overflow-hidden group cursor-pointer">
           <div className="p-6">
             <div className="flex justify-between items-start mb-4">
               <div className="p-3 rounded-md bg-accent/10">
@@ -152,15 +164,17 @@ const AllTools = () => {
               </div>
             </div>
             <h3 className="font-medium text-lg mb-2">Automated Notifications</h3>
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="text-sm mb-4" style={{color: 'var(--muted-foreground)'}}>
               Set up automatic notifications for customers, drivers, and warehouse staff based on shipment status.
             </p>
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-2">
-                <Tag size={14} className="text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">Communication</span>
+                <Tag size={14} style={{color: 'var(--muted-foreground)'}} />
+                <span className="text-xs" style={{color: 'var(--muted-foreground)'}}>Communication</span>
               </div>
-              <button className="text-accent hover:text-accent/80 bg-background py-1 px-3 rounded-md border border-border hover:bg-accent/5 transition-colors flex-shrink-0">
+              <button className="py-1 px-3 rounded-md border hover:opacity-80 transition-colors flex-shrink-0"
+                      style={{backgroundColor: 'var(--background)', borderColor: 'var(--border)', color: 'var(--accent)'}}>
+
                 Add
               </button>
             </div>
@@ -168,7 +182,7 @@ const AllTools = () => {
         </div>
 
         {/* Tool Card 5 */}
-        <div className="bg-accent-muted rounded-lg border border-border hover:border-accent transition-colors overflow-hidden group cursor-pointer">
+        <div className="dashboard-card rounded-lg hover:border-accent transition-colors overflow-hidden group cursor-pointer">
           <div className="p-6">
             <div className="flex justify-between items-start mb-4">
               <div className="p-3 rounded-md bg-accent/10">
@@ -179,15 +193,17 @@ const AllTools = () => {
               </div>
             </div>
             <h3 className="font-medium text-lg mb-2">Real-time GPS Tracker</h3>
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="text-sm mb-4" style={{color: 'var(--muted-foreground)'}}>
               Track your vehicles in real-time with advanced GPS technology and geofencing capabilities.
             </p>
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-2">
-                <Tag size={14} className="text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">Tracking</span>
+                <Tag size={14} style={{color: 'var(--muted-foreground)'}} />
+                <span className="text-xs" style={{color: 'var(--muted-foreground)'}}>Tracking</span>
               </div>
-              <button className="text-accent hover:text-accent/80 bg-background py-1 px-3 rounded-md border border-border hover:bg-accent/5 transition-colors flex-shrink-0">
+              <button className="py-1 px-3 rounded-md border hover:opacity-80 transition-colors flex-shrink-0"
+                      style={{backgroundColor: 'var(--background)', borderColor: 'var(--border)', color: 'var(--accent)'}}>
+
                 Add
               </button>
             </div>
@@ -195,26 +211,28 @@ const AllTools = () => {
         </div>
 
         {/* Tool Card 6 */}
-        <div className="bg-accent-muted rounded-lg border border-border hover:border-accent transition-colors overflow-hidden group cursor-pointer">
+        <div className="dashboard-card rounded-lg hover:border-accent transition-colors overflow-hidden group cursor-pointer">
           <div className="p-6">
             <div className="flex justify-between items-start mb-4">
               <div className="p-3 rounded-md bg-accent/10">
                 <Wrench size={24} className="text-accent" />
               </div>
-              <div className="bg-accent/10 text-accent text-xs py-1 px-2 rounded-full">
+              <div className="text-xs py-1 px-2 rounded-full" style={{backgroundColor: 'var(--accent-background)', color: 'var(--accent)'}}>
                 Popular
               </div>
             </div>
             <h3 className="font-medium text-lg mb-2">Inventory Management</h3>
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="text-sm mb-4" style={{color: 'var(--muted-foreground)'}}>
               Comprehensive inventory management system with forecasting, reordering, and warehouse optimization.
             </p>
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-2">
-                <Tag size={14} className="text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">Planning</span>
+                <Tag size={14} style={{color: 'var(--muted-foreground)'}} />
+                <span className="text-xs" style={{color: 'var(--muted-foreground)'}}>Planning</span>
               </div>
-              <button className="text-accent hover:text-accent/80 bg-background py-1 px-3 rounded-md border border-border hover:bg-accent/5 transition-colors flex-shrink-0">
+              <button className="py-1 px-3 rounded-md border hover:opacity-80 transition-colors flex-shrink-0"
+                      style={{backgroundColor: 'var(--background)', borderColor: 'var(--border)', color: 'var(--accent)'}}>
+
                 Add
               </button>
             </div>
