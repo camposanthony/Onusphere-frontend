@@ -20,6 +20,7 @@ export default {
     },
     extend: {
       colors: {
+        // These will be used in dark mode by default
         'background': '#000000',
         'foreground': '#ffffff',
         'muted': '#1a1a1a',
@@ -35,6 +36,23 @@ export default {
         'border': '#2a2a2a',
         'input': '#1a1a1a',
         'ring': '#eb8934',
+
+        // Light mode colors
+        'light-background': '#ffffff',
+        'light-foreground': '#1f2937',
+        'light-muted': '#f5f7fa',
+        'light-muted-foreground': '#4b5563',
+        'light-accent': '#eb8934',
+        'light-accent-muted': '#f8f9fa',
+        'light-primary': '#eb8934',
+        'light-primary-foreground': '#ffffff',
+        'light-secondary': '#f5f7fa',
+        'light-secondary-foreground': '#1f2937',
+        'light-destructive': '#ef4444',
+        'light-destructive-foreground': '#ffffff',
+        'light-border': '#e5e7eb',
+        'light-input': '#f5f7fa',
+        'light-ring': '#eb8934',
       },
       borderRadius: {
         lg: "0.5rem",

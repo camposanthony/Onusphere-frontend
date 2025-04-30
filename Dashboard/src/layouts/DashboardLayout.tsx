@@ -2,6 +2,7 @@ import { Outlet, Link, useLocation } from 'react-router-dom';
 import { Menu, BarChart2, Settings, LogOut, Package, Wrench } from 'lucide-react';
 import { useState } from 'react';
 import Logo from '../assets/logo.svg';
+import ThemeToggle from '../components/ui/ThemeToggle';
 
 const DashboardLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -11,9 +12,10 @@ const DashboardLayout = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
       {/* Header */}
-      <header className="h-16 flex items-center border-b border-border fixed top-0 left-0 right-0 z-20 bg-background">
+      <header className="h-16 flex items-center border-b fixed top-0 left-0 right-0 z-20" 
+               style={{ borderColor: 'var(--border)', backgroundColor: 'var(--background)' }}>
         <div className="w-full flex items-center justify-between px-0">
           <div className="flex items-center">
             <button 
@@ -27,20 +29,28 @@ const DashboardLayout = () => {
               <span className="text-lg font-bold">Onusphere</span>
             </div>
           </div>
+          <div className="mr-4">
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 
       <div className="flex pt-16">
         {/* Sidebar */}
         <aside 
-          className={`fixed left-0 top-16 h-[calc(100vh-4rem)] bg-[#0D0D0D] border-r border-border transition-all duration-300 ease-in-out z-10 ${
+          className={`fixed left-0 top-16 h-[calc(100vh-4rem)] transition-all duration-300 ease-in-out z-10 ${
             isSidebarOpen ? 'w-56' : 'w-16'
           }`}
+          style={{ 
+            backgroundColor: 'var(--muted)', 
+            borderRight: '1px solid var(--border)'
+          }}
         >
           <nav className="py-6 px-0">
             <ul className="space-y-6">
               <li>
-                <Link to="/" className={`flex items-center p-2 rounded-md text-foreground hover:bg-background/10 hover:text-accent group pl-4 ${location.pathname === '/' ? 'bg-background/10 text-accent' : ''}`}>
+                <Link to="/" className={`flex items-center p-2 rounded-md group pl-4 ${location.pathname === '/' ? 'active-nav' : ''}`}
+                     style={{ color: 'var(--foreground)' }}>
                   <div className="min-w-[22px] flex justify-center">
                     <BarChart2 className={location.pathname === '/' ? 'text-accent' : 'text-muted-foreground group-hover:text-accent'} size={22} />
                   </div>
@@ -48,7 +58,8 @@ const DashboardLayout = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/my-tools" className={`flex items-center p-2 rounded-md text-foreground hover:bg-background/10 hover:text-accent group pl-4 ${location.pathname === '/my-tools' ? 'bg-background/10 text-accent' : ''}`}>
+                <Link to="/my-tools" className={`flex items-center p-2 rounded-md group pl-4 ${location.pathname === '/my-tools' ? 'active-nav' : ''}`}
+                     style={{ color: 'var(--foreground)' }}>
                   <div className="min-w-[22px] flex justify-center">
                     <Wrench className={location.pathname === '/my-tools' ? 'text-accent' : 'text-muted-foreground group-hover:text-accent'} size={22} />
                   </div>
@@ -56,15 +67,17 @@ const DashboardLayout = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/all-tools" className={`flex items-center p-2 rounded-md text-foreground hover:bg-background/10 hover:text-accent group pl-4 ${location.pathname === '/all-tools' ? 'bg-background/10 text-accent' : ''}`}>
+                <Link to="/all-tools" className={`flex items-center p-2 rounded-md group pl-4 ${location.pathname === '/all-tools' ? 'active-nav' : ''}`}
+                     style={{ color: 'var(--foreground)' }}>
                   <div className="min-w-[22px] flex justify-center">
                     <Package className={location.pathname === '/all-tools' ? 'text-accent' : 'text-muted-foreground group-hover:text-accent'} size={22} />
                   </div>
                   <span className={`ml-3 whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out ${isSidebarOpen ? 'max-w-[180px] opacity-100' : 'max-w-0 opacity-0'}`}>All Tools</span>
                 </Link>
               </li>
-              <li className="pt-4 mt-4 border-t border-border">
-                <a href="#" className="flex items-center p-2 rounded-md text-foreground hover:bg-background/10 hover:text-accent group pl-4">
+              <li className="pt-4 mt-4" style={{ borderTop: '1px solid var(--border)' }}>
+                <a href="#" className="flex items-center p-2 rounded-md group pl-4"
+                   style={{ color: 'var(--foreground)' }}>
                   <div className="min-w-[22px] flex justify-center">
                     <Settings className="text-muted-foreground group-hover:text-accent" size={22} />
                   </div>
@@ -72,7 +85,8 @@ const DashboardLayout = () => {
                 </a>
               </li>
               <li>
-                <a href="#" className="flex items-center p-2 rounded-md text-foreground hover:bg-background/10 hover:text-accent group pl-4">
+                <a href="#" className="flex items-center p-2 rounded-md group pl-4"
+                   style={{ color: 'var(--foreground)' }}>
                   <div className="min-w-[22px] flex justify-center">
                     <LogOut className="text-muted-foreground group-hover:text-accent" size={22} />
                   </div>

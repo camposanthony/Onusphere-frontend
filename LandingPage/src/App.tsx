@@ -14,17 +14,17 @@ function App() {
     <ThemeProvider>
       <div className="min-h-screen bg-light-bg dark:bg-charcoal text-dark-text dark:text-light-gray transition-colors duration-300">
         <Header />
-        <main>
-          <Hero />
-          <ToolboxConcept />
-          <ToolShowcase />
-          <InteractiveToolbox />
-          <Benefits />
-          <UseCaseExample />
-          <CallToAction />
-        </main>
-        <Footer />
-      </div>
+      <main>
+        <Hero />
+        <ToolboxConcept />
+        <ToolShowcase />
+        <InteractiveToolbox />
+        <Benefits />
+        <UseCaseExample />
+        <CallToAction />
+      </main>
+      <Footer />
+    </div>
     </ThemeProvider>
   );
 }

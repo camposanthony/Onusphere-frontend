@@ -42,7 +42,7 @@
   }
 
   .btn-secondary {
-    @apply btn border border-light-border dark:border-medium-gray text-dark-text dark:text-white hover:bg-secondary-text/10 dark:hover:bg-medium-gray/10 focus:ring-medium-gray;
+    @apply btn border border-light-border dark:border-medium-gray text-dark-text dark:text-white hover:bg-medium-gray/10 focus:ring-medium-gray;
   }
 
   .btn-accent {
@@ -50,7 +50,7 @@
   }
 
   .card {
-    @apply bg-light-card dark:bg-slate-gray rounded-lg p-6 border border-light-border dark:border-medium-gray transition-all duration-300;
+    @apply bg-[#f5f7fa] dark:bg-slate-gray rounded-lg p-6 border border-light-border dark:border-medium-gray transition-all duration-300;
   }
 
   .section {

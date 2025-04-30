@@ -38,7 +38,7 @@ const Header: React.FC = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
-            <a href="#toolbox" className="text-secondary-text dark:text-light-gray hover:text-dark-text dark:hover:text-white transition-colors">Toolbox</a>
+          <a href="#toolbox" className="text-secondary-text dark:text-light-gray hover:text-dark-text dark:hover:text-white transition-colors">Toolbox</a>
             <a href="#tools" className="text-secondary-text dark:text-light-gray hover:text-dark-text dark:hover:text-white transition-colors">Tools</a>
             <a href="#benefits" className="text-secondary-text dark:text-light-gray hover:text-dark-text dark:hover:text-white transition-colors">Benefits</a>
             <a href="#use-cases" className="text-secondary-text dark:text-light-gray hover:text-dark-text dark:hover:text-white transition-colors">Use Cases</a>
@@ -57,11 +57,11 @@ const Header: React.FC = () => {
               className="text-white dark:text-white"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
-            {isMenuOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
+              {isMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
             </button>
           </div>
         </div>
