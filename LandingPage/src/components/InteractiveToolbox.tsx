@@ -72,13 +72,13 @@ const InteractiveToolbox: React.FC = () => {
   return (
     <section className="py-16 md:py-24 relative overflow-hidden">
       <div className="section-title">
-        <h2>Explore Our Toolbox</h2>
-        <p>Click on any tool to learn more about its capabilities and how it integrates with other tools.</p>
+        <h2 className="text-dark-text dark:text-white">Explore Our Toolbox</h2>
+        <p className="text-secondary-text dark:text-light-gray">Click on any tool to learn more about its capabilities and how it integrates with other tools.</p>
       </div>
       
       {/* Interactive Visualization */}
       <div className="max-w-5xl mx-auto mt-12 relative">
-        <div className="aspect-[16/9] bg-slate-gray rounded-lg border border-medium-gray p-6 relative">
+        <div className="aspect-[16/9] bg-light-card dark:bg-slate-gray rounded-lg border border-light-border dark:border-medium-gray p-6 relative">
           {/* Connection Lines */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none z-0">
             {connections.map((connection, index) => {
@@ -94,19 +94,20 @@ const InteractiveToolbox: React.FC = () => {
                     y1={`${fromTool.position.y}%`} 
                     x2={`${toTool.position.x}%`} 
                     y2={`${toTool.position.y}%`} 
-                    stroke="#505055" 
+                    stroke="#9ca3af" 
                     strokeWidth="2"
                     strokeDasharray="4"
+                    className="dark:stroke-[#505055]"
                   />
                   <line 
                     x1={`${fromTool.position.x}%`} 
                     y1={`${fromTool.position.y}%`} 
                     x2={`${toTool.position.x}%`} 
                     y2={`${toTool.position.y}%`} 
-                    stroke="#00B2FF" 
+                    stroke="#60a5fa" 
                     strokeWidth="2"
                     strokeDasharray="4"
-                    className="animate-pulse"
+                    className="animate-pulse dark:stroke-[#00B2FF]"
                     style={{ opacity: 0.5 }}
                   />
                 </g>
@@ -120,8 +121,8 @@ const InteractiveToolbox: React.FC = () => {
               key={tool.id}
               className={`absolute p-3 rounded-full transform -translate-x-1/2 -translate-y-1/2 transition-all ${
                 tool.available 
-                  ? 'bg-electric-blue text-white hover:shadow-lg hover:shadow-electric-blue/20' 
-                  : 'bg-medium-gray text-white opacity-50'
+                  ? 'bg-accent-green text-white hover:shadow-lg hover:shadow-accent-green/20' 
+                  : 'bg-secondary-text/50 dark:bg-medium-gray text-white opacity-50'
               }`}
               style={{ 
                 left: `${tool.position.x}%`, 
@@ -139,8 +140,8 @@ const InteractiveToolbox: React.FC = () => {
           
           {/* Central Toolbox */}
           <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-            <div className="h-20 w-20 bg-charcoal rounded-lg border border-electric-blue flex items-center justify-center shadow-lg shadow-electric-blue/20">
-              <div className="text-electric-blue">
+            <div className="h-20 w-20 bg-white dark:bg-charcoal rounded-lg border border-accent-green flex items-center justify-center shadow-lg shadow-accent-green/20">
+              <div className="text-accent-green">
                 <svg className="h-10 w-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"></path>
                 </svg>
@@ -151,19 +152,19 @@ const InteractiveToolbox: React.FC = () => {
         
         {/* Selection Info */}
         {selectedTool && (
-          <div className="absolute -bottom-36 md:bottom-8 md:right-8 w-full md:w-72 bg-charcoal border border-electric-blue rounded-lg p-4 shadow-lg shadow-electric-blue/20 animate-fade-in">
+          <div className="absolute -bottom-36 md:bottom-8 md:right-8 w-full md:w-72 bg-white dark:bg-charcoal border border-accent-green rounded-lg p-4 shadow-lg shadow-accent-green/20 animate-fade-in">
             <div className="flex justify-between items-start mb-2">
-              <h3 className="text-lg font-medium">{selectedTool.name}</h3>
+              <h3 className="text-lg font-medium text-dark-text dark:text-white">{selectedTool.name}</h3>
               <button 
-                className="text-medium-gray hover:text-white"
+                className="text-secondary-text dark:text-medium-gray hover:text-dark-text dark:hover:text-white"
                 onClick={() => setSelectedTool(null)}
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
-            <p className="text-sm">{selectedTool.description}</p>
+            <p className="text-sm text-secondary-text dark:text-light-gray">{selectedTool.description}</p>
             <div className="mt-3">
-              <a href="#get-started" className="text-electric-blue text-sm hover:underline">
+              <a href="#get-started" className="text-accent-green text-sm hover:underline">
                 Learn more about this tool
               </a>
             </div>
@@ -172,7 +173,7 @@ const InteractiveToolbox: React.FC = () => {
       </div>
       
       <div className="text-center mt-48 md:mt-24">
-        <p className="italic text-medium-gray">All tools in the Onusphere ecosystem are designed to work together seamlessly.</p>
+        <p className="italic text-secondary-text dark:text-medium-gray">All tools in the Onusphere ecosystem are designed to work together seamlessly.</p>
       </div>
     </section>
   );

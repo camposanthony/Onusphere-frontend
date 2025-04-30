@@ -1,4 +1,4 @@
-import React from 'react';
+import { ThemeProvider } from './components/ThemeProvider';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import ToolboxConcept from './components/ToolboxConcept';
@@ -11,8 +11,9 @@ import Footer from './components/Footer';
 
 function App() {
   return (
-    <div className="min-h-screen bg-charcoal text-light-gray">
-      <Header />
+    <ThemeProvider>
+      <div className="min-h-screen bg-light-bg dark:bg-charcoal text-dark-text dark:text-light-gray transition-colors duration-300">
+        <Header />
       <main>
         <Hero />
         <ToolboxConcept />
@@ -24,6 +25,7 @@ function App() {
       </main>
       <Footer />
     </div>
+    </ThemeProvider>
   );
 }
 

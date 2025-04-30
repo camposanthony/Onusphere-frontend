@@ -56,34 +56,34 @@ const ToolShowcase: React.FC = () => {
   ];
 
   return (
-    <section id="tools" className="section bg-charcoal">
+    <section id="tools" className="section bg-light-bg dark:bg-charcoal">
       <div className="section-title">
-        <div className="inline-flex items-center px-4 py-2 bg-electric-blue/10 rounded-full text-electric-blue text-sm font-medium mb-6">
+        <div className="inline-flex items-center px-4 py-2 bg-gradient-brand/10 rounded-full text-accent-green text-sm font-medium mb-6">
           Enterprise-Grade Solutions
         </div>
-        <h2>Modular Tools for Modern Logistics</h2>
-        <p>Each tool is built for enterprise scale, with robust security, extensive customization, and seamless integration capabilities.</p>
+        <h2 className="text-dark-text dark:text-white">Modular Tools for Modern Logistics</h2>
+        <p className="text-secondary-text dark:text-light-gray">Each tool is built for enterprise scale, with robust security, extensive customization, and seamless integration capabilities.</p>
       </div>
       
       <div className="grid lg:grid-cols-2 gap-8 mt-12">
         {tools.map((tool, index) => (
           <div 
             key={index}
-            className={`card group transition-all ${
-              !tool.available ? 'opacity-90 hover:opacity-100' : 'hover:border-electric-blue'
+            className={`card group transition-all bg-white dark:bg-slate-gray ${
+              !tool.available ? 'opacity-90 hover:opacity-100' : 'hover:border-accent-green'
             }`}
           >
             <div className="flex flex-col h-full">
               {/* Header */}
               <div className="flex items-start gap-4 mb-6">
                 <div className={`p-3 rounded-md ${
-                  tool.available ? 'bg-electric-blue/10 text-electric-blue' : 'bg-medium-gray/20 text-light-gray'
-                } group-hover:bg-electric-blue/20 transition-colors`}>
+                  tool.available ? 'bg-gradient-brand/10 text-accent-green' : 'bg-secondary-text/20 dark:bg-medium-gray/20 text-secondary-text dark:text-light-gray'
+                } group-hover:bg-gradient-brand/20 transition-colors`}>
                   {tool.icon}
                 </div>
                 <div>
-                  <h3 className="text-xl font-medium mb-2">{tool.name}</h3>
-                  <p className="text-light-gray/80">{tool.description}</p>
+                  <h3 className="text-xl font-medium mb-2 text-dark-text dark:text-white">{tool.name}</h3>
+                  <p className="text-secondary-text dark:text-light-gray/80">{tool.description}</p>
                 </div>
               </div>
 
@@ -92,8 +92,8 @@ const ToolShowcase: React.FC = () => {
                 <div className="grid grid-cols-2 gap-3">
                   {tool.features.map((feature, idx) => (
                     <div key={idx} className="flex items-center gap-2">
-                      <CheckCircle2 className={`h-4 w-4 ${tool.available ? 'text-electric-blue' : 'text-medium-gray'}`} />
-                      <span className="text-sm">{feature}</span>
+                      <CheckCircle2 className={`h-4 w-4 ${tool.available ? 'text-accent-green' : 'text-secondary-text dark:text-medium-gray'}`} />
+                      <span className="text-sm text-secondary-text dark:text-light-gray">{feature}</span>
                     </div>
                   ))}
                 </div>
@@ -108,10 +108,10 @@ const ToolShowcase: React.FC = () => {
                   </a>
                 ) : (
                   <div className="flex items-center justify-between">
-                    <span className="inline-flex items-center text-medium-gray border border-medium-gray px-3 py-1.5 rounded-md text-sm">
+                    <span className="inline-flex items-center text-secondary-text dark:text-medium-gray border border-secondary-text/30 dark:border-medium-gray px-3 py-1.5 rounded-md text-sm">
                       Coming Q2 2024
                     </span>
-                    <button className="text-electric-blue hover:underline text-sm">
+                    <button className="text-accent-green hover:underline text-sm">
                       Get Early Access
                     </button>
                   </div>
@@ -122,11 +122,11 @@ const ToolShowcase: React.FC = () => {
         ))}
       </div>
       
-      <div className="mt-16 bg-slate-gray rounded-lg p-8 border border-medium-gray">
+      <div className="mt-16 bg-light-card dark:bg-slate-gray rounded-lg p-8 border border-light-border dark:border-medium-gray">
         <div className="flex flex-col md:flex-row items-center justify-between gap-8">
           <div>
-            <h3 className="text-2xl font-medium mb-4">Need a Custom Solution?</h3>
-            <p className="text-light-gray/80">Our enterprise team can help build tools tailored to your specific logistics challenges.</p>
+            <h3 className="text-2xl font-medium mb-4 text-dark-text dark:text-white">Need a Custom Solution?</h3>
+            <p className="text-secondary-text dark:text-light-gray/80">Our enterprise team can help build tools tailored to your specific logistics challenges.</p>
           </div>
           <a href="#get-started" className="btn-secondary whitespace-nowrap">
             Contact Enterprise Sales
