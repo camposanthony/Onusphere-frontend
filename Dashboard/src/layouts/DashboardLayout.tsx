@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Menu, BarChart2, Settings, LogOut, Package, Wrench } from 'lucide-react';
+import { Menu, BarChart2, Settings, LogOut, Wrench } from 'lucide-react';
 import { useState } from 'react';
 import Logo from '../assets/logo.svg';
 import ThemeToggle from '../components/ui/ThemeToggle';
@@ -70,7 +70,7 @@ const DashboardLayout = () => {
                 <Link to="/all-tools" className={`flex items-center p-2 rounded-md group pl-4 ${location.pathname === '/all-tools' ? 'active-nav' : ''}`}
                      style={{ color: 'var(--foreground)' }}>
                   <div className="min-w-[22px] flex justify-center">
-                    <Package className={location.pathname === '/all-tools' ? 'text-accent' : 'text-muted-foreground group-hover:text-accent'} size={22} />
+                    <Wrench className={location.pathname === '/all-tools' ? 'text-accent' : 'text-muted-foreground group-hover:text-accent'} size={22} />
                   </div>
                   <span className={`ml-3 whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out ${isSidebarOpen ? 'max-w-[180px] opacity-100' : 'max-w-0 opacity-0'}`}>All Tools</span>
                 </Link>

@@ -1,8 +1,9 @@
 import { Routes, Route } from 'react-router-dom';
-import DashboardLayout from './layouts/DashboardLayout.js';
-import Dashboard from './pages/Dashboard.js';
-import MyTools from './pages/MyTools.js';
-import AllTools from './pages/AllTools.js';
+import DashboardLayout from './layouts/DashboardLayout';
+import Dashboard from './pages/Dashboard';
+import MyTools from './pages/MyTools';
+import AllTools from './pages/AllTools';
+import TruckLoadingHelper from './pages/TruckLoadingHelper';
 import { ThemeProvider } from './components/ui/ThemeProvider';
 import './index.css';
 
@@ -14,6 +15,7 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="my-tools" element={<MyTools />} />
           <Route path="all-tools" element={<AllTools />} />
+          <Route path="tools/truck-loading-helper" element={<TruckLoadingHelper />} />
         </Route>
       </Routes>
     </ThemeProvider>
