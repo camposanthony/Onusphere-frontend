@@ -1,15 +1,21 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { Menu, BarChart2, Settings, LogOut, Wrench } from 'lucide-react';
 import { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import Logo from '../assets/logo.svg';
 import ThemeToggle from '../components/ui/ThemeToggle';
 
 const DashboardLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const location = useLocation();
+  const { logout } = useAuth();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
+  };
+  
+  const handleLogout = () => {
+    logout();
   };
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
@@ -85,13 +91,16 @@ const DashboardLayout = () => {
                 </a>
               </li>
               <li>
-                <a href="#" className="flex items-center p-2 rounded-md group pl-4"
-                   style={{ color: 'var(--foreground)' }}>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center p-2 rounded-md group pl-4 w-full text-left"
+                  style={{ color: 'var(--foreground)' }}
+                >
                   <div className="min-w-[22px] flex justify-center">
                     <LogOut className="text-muted-foreground group-hover:text-accent" size={22} />
                   </div>
                   <span className={`ml-3 whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out ${isSidebarOpen ? 'max-w-[180px] opacity-100' : 'max-w-0 opacity-0'}`}>Logout</span>
-                </a>
+                </button>
               </li>
             </ul>
           </nav>
