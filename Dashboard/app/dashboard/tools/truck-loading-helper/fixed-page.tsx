@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import EmailOrderProcessor from '@/components/truck-loading/email-order-processor';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import {
   Truck,
   Plus,
@@ -18,8 +17,7 @@ import {
   Filter,
   ArrowRight,
   Send,
-  Info,
-  AlertCircle
+  Info
 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -48,12 +46,6 @@ interface Order {
   status: 'pending' | 'loaded' | 'delivered';
   date: string;
   priority: 'low' | 'medium' | 'high';
-  loadingInstructions?: {
-    sequence: string[];
-    notes: string;
-    vehicleType: string;
-    estimatedTime: string;
-  };
 }
 
 // Empty arrays for customers and orders - we'll simulate adding them via email process
@@ -76,18 +68,7 @@ const sampleOrder: Order = {
   products: ['Product A (25)', 'Product B (10)'],
   status: 'pending',
   date: '2025-05-07',
-  priority: 'medium',
-  loadingInstructions: {
-    sequence: [
-      '1. Load Product B (10) at the front of the truck',
-      '2. Secure with straps to prevent shifting',
-      '3. Load Product A (25) behind Product B',
-      '4. Ensure weight distribution is balanced'
-    ],
-    notes: 'Product A is fragile. Handle with care and avoid stacking.',
-    vehicleType: 'Medium-duty truck (16ft)',
-    estimatedTime: '45 minutes'
-  }
+  priority: 'medium'
 };
 
 export default function TruckLoadingHelper() {
@@ -96,7 +77,6 @@ export default function TruckLoadingHelper() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [refreshing, setRefreshing] = useState(false);
   const [showEmailInstructions, setShowEmailInstructions] = useState(true);
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   
   // State to track if the user has customers and manage the onboarding process
   const [hasCustomers, setHasCustomers] = useState(false);
@@ -126,20 +106,6 @@ export default function TruckLoadingHelper() {
     return matchesSearch && matchesStatus;
   });
 
-  // State for tracking the email processing steps
-  const [processingEmail, setProcessingEmail] = useState(false);
-  const [processingStep, setProcessingStep] = useState(0);
-  const processingSteps = [
-    'Retrieving email content...',
-    'Identifying customer information...',
-    'Extracting order details...',
-    'Analyzing product specifications...',
-    'Calculating optimal loading sequence...',
-    'Generating truck loading instructions...',
-    'Optimizing for safety and efficiency...',
-    'Finalizing loading plan...',
-  ];
-
   // Handle refresh button - simulating data refresh
   const handleRefresh = () => {
     setRefreshing(true);
@@ -152,39 +118,21 @@ export default function TruckLoadingHelper() {
     }, 1000);
   };
   
-  // Simulate user forwarding email and system processing it with detailed steps
+  // Simulate user forwarding email and system processing it
   const handleEmailForwarded = () => {
-    setProcessingEmail(true);
-    setProcessingStep(0);
     setRefreshing(true);
-    setIsFirstVisit(false);
-    
-    // Simulate processing time with incremental steps to show progress
-    const stepInterval = 700; // Time between steps in ms
-    
-    // Process each step with a delay to simulate real-time processing
-    const processSteps = (currentStep: number) => {
-      if (currentStep < processingSteps.length) {
-        setProcessingStep(currentStep);
-        setTimeout(() => processSteps(currentStep + 1), stepInterval);
-      } else {
-        // All steps complete, show the result
-        setTimeout(() => {
-          // Add the sample customer and order
-          setCustomers([sampleCustomer]);
-          setOrders([sampleOrder]);
-          
-          // Update UI state
-          setProcessingEmail(false);
-          setRefreshing(false);
-          setHasCustomers(true);
-          setShowEmailInstructions(false);
-        }, stepInterval);
-      }
-    };
-    
-    // Start the processing sequence
-    processSteps(0);
+    // Simulate processing time
+    setTimeout(() => {
+      // Add the sample customer and order
+      setCustomers([sampleCustomer]);
+      setOrders([sampleOrder]);
+      
+      // Update UI state
+      setRefreshing(false);
+      setHasCustomers(true);
+      setShowEmailInstructions(false);
+      setIsFirstVisit(false);
+    }, 1500);
   };
 
   // Status badge colors
@@ -309,16 +257,14 @@ export default function TruckLoadingHelper() {
                 </div>
               </div>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <div className="w-[220px]">
-                    <Button variant="outline" size="sm" className="w-full" onClick={handleEmailForwarded}>
-                      <Send className="mr-2 h-4 w-4" />
-                      I've Forwarded an Email
-                    </Button>
-                  </div>
-                  <div className="w-[220px]">
-                    <EmailOrderProcessor />
-                  </div>
+                <div className="w-[220px]">
+                  <Button variant="default" className="w-full" onClick={handleEmailForwarded}>
+                    <Send className="mr-2 h-4 w-4" />
+                    I've Forwarded an Email
+                  </Button>
+                </div>
+                <div className="w-[220px]">
+                  <EmailOrderProcessor />
                 </div>
               </div>
             </div>
@@ -326,7 +272,7 @@ export default function TruckLoadingHelper() {
         </div>
       )}
       
-      {!hasCustomers && !isFirstVisit && !processingEmail && (
+      {!hasCustomers && !isFirstVisit && (
         <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6 mb-8">
           <div className="flex flex-col sm:flex-row items-start gap-4">
             <div className="p-3 bg-yellow-100 dark:bg-yellow-900 rounded-full">
@@ -339,39 +285,10 @@ export default function TruckLoadingHelper() {
                 You'll see your first customer and their order appear here soon. Please refresh the page in a few minutes.
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
-                <Button variant="outline" size="sm" onClick={handleRefresh}>
+                <Button variant="outline" onClick={handleRefresh}>
                   <RefreshCw className="mr-2 h-4 w-4" />
                   Refresh Now
                 </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-      
-      {processingEmail && (
-        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6 mb-8">
-          <div className="flex flex-col items-center text-center">
-            <div className="p-4 bg-blue-100 dark:bg-blue-900 rounded-full mb-4">
-              <Loader2 className="h-8 w-8 text-blue-700 dark:text-blue-300 animate-spin" />
-            </div>
-            <h3 className="text-xl font-semibold mb-2">Processing Your Email</h3>
-            <div className="max-w-md mb-6">
-              <div className="relative pt-4">
-                <div className="mb-6 h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-blue-600 dark:bg-blue-400 rounded-full transition-all duration-300 ease-in-out" 
-                    style={{ width: `${(processingStep / (processingSteps.length - 1)) * 100}%` }}
-                  ></div>
-                </div>
-                <div className="h-16 flex items-center justify-center mb-2">
-                  <p className="text-gray-700 dark:text-gray-300 text-lg font-medium">                  
-                    {processingSteps[processingStep]}
-                  </p>
-                </div>
-                <p className="text-gray-500 dark:text-gray-400 text-sm">
-                  Please wait while we extract and organize the information from your email.
-                </p>
               </div>
             </div>
           </div>
@@ -479,7 +396,7 @@ export default function TruckLoadingHelper() {
                   </p>
                   <div className="flex flex-col sm:flex-row gap-2 justify-center">
                     <div className="w-[220px]">
-                      <Button variant="outline" size="sm" className="w-full" onClick={handleEmailForwarded}>
+                      <Button variant="default" className="w-full" onClick={handleEmailForwarded}>
                         <Send className="mr-2 h-4 w-4" />
                         I've Forwarded an Email
                       </Button>
@@ -494,7 +411,7 @@ export default function TruckLoadingHelper() {
                   <UserPlus className="mx-auto h-12 w-12 text-gray-400 mb-4" />
                   <h3 className="text-lg font-medium mb-1">No customers found</h3>
                   <p className="text-gray-500 dark:text-gray-400 mb-4">No customers match your search criteria</p>
-                  <Button size="sm" onClick={() => setSearchQuery('')}>
+                  <Button onClick={() => setSearchQuery('')}>
                     <RefreshCw className="mr-2 h-4 w-4" />
                     Clear Search
                   </Button>
@@ -515,13 +432,13 @@ export default function TruckLoadingHelper() {
                     <TableHead>Products</TableHead>
                     <TableHead>Date</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Loading Instructions</TableHead>
+                    <TableHead>Priority</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredOrders.map((order) => (
-                    <TableRow key={order.id} className="group">
+                    <TableRow key={order.id}>
                       <TableCell className="font-medium">{order.id}</TableCell>
                       <TableCell>{order.customer}</TableCell>
                       <TableCell>
@@ -533,84 +450,9 @@ export default function TruckLoadingHelper() {
                       </TableCell>
                       <TableCell>{order.date}</TableCell>
                       <TableCell>{getStatusBadge(order.status)}</TableCell>
-                      <TableCell>
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
-                              className="bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 border-blue-200 dark:border-blue-800"
-                              onClick={() => setSelectedOrder(order)}
-                            >
-                              <Truck className="mr-2 h-4 w-4 text-blue-600 dark:text-blue-400" />
-                              View Loading Plan
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="sm:max-w-[600px]">
-                            <DialogHeader>
-                              <DialogTitle className="flex items-center">
-                                <Truck className="mr-2 h-5 w-5 text-blue-600" />
-                                Truck Loading Instructions
-                              </DialogTitle>
-                              <DialogDescription>
-                                Optimized loading plan for order {order.id} - {order.customer}
-                              </DialogDescription>
-                            </DialogHeader>
-                            
-                            <div className="mt-4 space-y-6">
-                              {/* Vehicle Information */}
-                              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
-                                <h3 className="text-sm font-semibold mb-2">Recommended Vehicle</h3>
-                                <div className="flex items-center">
-                                  <Truck className="h-10 w-10 text-blue-600 dark:text-blue-400 mr-3" />
-                                  <div>
-                                    <p className="font-medium">{order.loadingInstructions?.vehicleType}</p>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">Est. loading time: {order.loadingInstructions?.estimatedTime}</p>
-                                  </div>
-                                </div>
-                              </div>
-                              
-                              {/* Loading Sequence */}
-                              <div>
-                                <h3 className="text-sm font-semibold mb-3">Loading Sequence</h3>
-                                <div className="space-y-3">
-                                  {order.loadingInstructions?.sequence.map((step, index) => (
-                                    <div key={index} className="flex items-start">
-                                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mr-3 mt-0.5">
-                                        <span className="text-xs font-semibold text-blue-800 dark:text-blue-300">{index + 1}</span>
-                                      </div>
-                                      <p className="text-sm">{step}</p>
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-                              
-                              {/* Special Notes */}
-                              <div className="rounded-lg border border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/20 p-4">
-                                <h3 className="text-sm font-semibold flex items-center mb-2">
-                                  <Info className="h-4 w-4 text-yellow-600 dark:text-yellow-400 mr-2" />
-                                  Special Notes
-                                </h3>
-                                <p className="text-sm">{order.loadingInstructions?.notes}</p>
-                              </div>
-                              
-                              {/* Safety Reminder */}
-                              <div className="border-t pt-4 dark:border-gray-700">
-                                <p className="text-xs text-gray-500 dark:text-gray-400">
-                                  Remember to follow all safety protocols during loading. Ensure all items are properly secured before transport.
-                                </p>
-                              </div>
-                            </div>
-                          </DialogContent>
-                        </Dialog>
-                      </TableCell>
+                      <TableCell>{getPriorityBadge(order.priority)}</TableCell>
                       <TableCell className="text-right">
-                        <Link href={`/dashboard/tools/truck-loading-helper/loading-plan/${order.id}`}>
-                          <Button variant="ghost" size="sm" className="mr-1">
-                            <Truck className="mr-1 h-4 w-4 text-blue-600" />
-                            View Plan
-                          </Button>
-                        </Link>
+                        <Button variant="ghost" size="sm">View</Button>
                         <Button variant="ghost" size="sm">Update</Button>
                       </TableCell>
                     </TableRow>
@@ -627,7 +469,7 @@ export default function TruckLoadingHelper() {
                   </p>
                   <div className="flex flex-col sm:flex-row gap-2 justify-center">
                     <div className="w-[220px]">
-                      <Button variant="outline" size="sm" className="w-full" onClick={handleEmailForwarded}>
+                      <Button variant="default" className="w-full" onClick={handleEmailForwarded}>
                         <Send className="mr-2 h-4 w-4" />
                         I've Forwarded an Email
                       </Button>

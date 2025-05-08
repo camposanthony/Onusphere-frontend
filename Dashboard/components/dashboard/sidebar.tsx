@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
+import { useAuth } from '@/lib/context/AuthContext';
 
 // Updated routes based on user requirements
 const routes = [
@@ -56,6 +57,7 @@ export default function Sidebar() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const { logout } = useAuth();
   
   // Try to restore collapsed state from localStorage
   useEffect(() => {
@@ -149,6 +151,7 @@ export default function Sidebar() {
               collapsed ? "justify-center" : "justify-start space-x-3"
             )}
             title={collapsed ? "Sign Out" : undefined}
+            onClick={logout}
           >
             <LogOut className="h-5 w-5 flex-shrink-0" />
             {!collapsed && <span>Sign Out</span>}

@@ -9,26 +9,38 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Truck } from 'lucide-react';
+import { login, saveToken } from '@/lib/services/auth';
+import { useAuth } from '@/lib/context/AuthContext';
 
 export default function LoginPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const { setAuthenticated } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
     
-    // In a real app, you would make an API call here
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Call backend login API
+      const response = await login({ email, password });
+      
+      // Save the token
+      saveToken(response.access_token);
+      
+      // Update auth state
+      setAuthenticated(true);
+      
       // On success, redirect to the dashboard
-      router.push('/dashboard');
+      router.push('/dashboard/tools/truck-loading-helper');
     } catch (error) {
       // Handle errors
       console.error(error);
+      setError(error instanceof Error ? error.message : 'Login failed. Please try again.');
       setIsLoading(false);
     }
   };
@@ -91,13 +103,18 @@ export default function LoginPage() {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
+            {error && (
+              <div className="p-3 text-sm text-red-500 bg-red-50 border border-red-200 rounded-md">
+                {error}
+              </div>
+            )}
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? 'Signing in...' : 'Sign In'}
             </Button>
             <div className="text-center text-sm">
               Don&apos;t have an account?{' '}
               <Link 
-                href="/register" 
+                href="/auth/register" 
                 className="text-primary hover:underline"
               >
                 Sign up

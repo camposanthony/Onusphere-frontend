@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Bell, Moon, Sun, Search } from 'lucide-react';
+import { Bell, Moon, Sun, Search, LogOut, User, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -13,11 +13,15 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useTheme } from '@/components/theme-provider';
+import { useAuth } from '@/lib/context/AuthContext';
+import { useUser } from '@/lib/hooks/useUser';
 import { Input } from '@/components/ui/input';
 
 export default function Header() {
   const { theme, setTheme } = useTheme();
   const [notifications, setNotifications] = useState(3);
+  const { logout } = useAuth();
+  const { user, loading } = useUser();
 
   return (
     <header className="sticky top-0 z-30 h-16 flex items-center justify-between px-6 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
@@ -35,10 +39,6 @@ export default function Header() {
 
       {/* Right Section */}
       <div className="flex items-center ml-auto space-x-4">
-        {/* Theme Toggle */}
-        <Button variant="ghost" size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
-          {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-        </Button>
 
         {/* Notifications */}
         <DropdownMenu>
@@ -84,27 +84,6 @@ export default function Header() {
             <DropdownMenuItem className="cursor-pointer">
               <span className="text-primary mx-auto">View all notifications</span>
             </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        {/* User Menu */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="relative">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src="/placeholder-avatar.jpg" alt="User" />
-                <AvatarFallback>JD</AvatarFallback>
-              </Avatar>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Company Settings</DropdownMenuItem>
-            <DropdownMenuItem>Subscription</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Sign out</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

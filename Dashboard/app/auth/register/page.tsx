@@ -10,10 +10,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Truck } from 'lucide-react';
+import { signup, saveToken } from '@/lib/services/auth';
+import { useAuth } from '@/lib/context/AuthContext';
 
 export default function RegisterPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const { setAuthenticated } = useAuth();
   const [formData, setFormData] = useState({
     companyName: '',
     fullName: '',
@@ -22,6 +25,7 @@ export default function RegisterPage() {
     confirmPassword: '',
     companyType: '',
   });
+  const [error, setError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -35,21 +39,36 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
     
     // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords don't match");
+      setError("Passwords don't match");
       setIsLoading(false);
       return;
     }
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      // On success, redirect to login
-      router.push('/login');
+      // Call signup API
+      const response = await signup({
+        name: formData.fullName,
+        email: formData.email,
+        password: formData.password,
+        company_name: formData.companyName,
+        company_type: formData.companyType
+      });
+      
+      // Save the token
+      saveToken(response.access_token);
+      
+      // Update auth state
+      setAuthenticated(true);
+      
+      // On success, redirect to the dashboard
+      router.push('/dashboard/tools/truck-loading-helper');
     } catch (error) {
       console.error(error);
+      setError(error instanceof Error ? error.message : 'Registration failed. Please try again.');
       setIsLoading(false);
     }
   };
@@ -168,13 +187,18 @@ export default function RegisterPage() {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
+            {error && (
+              <div className="p-3 text-sm text-red-500 bg-red-50 border border-red-200 rounded-md">
+                {error}
+              </div>
+            )}
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? 'Creating account...' : 'Create Account'}
             </Button>
             <div className="text-center text-sm">
               Already have an account?{' '}
               <Link 
-                href="/login" 
+                href="/auth/login" 
                 className="text-primary hover:underline"
               >
                 Sign in

@@ -1,7 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import OrderStatusUpdater from '@/components/truck-loading/order-status-updater';
+import AddOrderForm from '@/components/truck-loading/add-order-form';
 import { useParams, useRouter } from 'next/navigation';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import {
   ArrowLeft,
   Truck,
@@ -43,6 +46,12 @@ interface Order {
   status: 'pending' | 'loaded' | 'delivered';
   date: string;
   priority: 'low' | 'medium' | 'high';
+  loadingInstructions?: {
+    sequence: string[];
+    notes: string;
+    vehicleType: string;
+    estimatedTime: string;
+  };
 }
 
 // Additional type for the master list of items
@@ -118,7 +127,18 @@ const mockOrders: Order[] = [
     products: ['Industrial Widgets (50)', 'Machine Parts (25)'], 
     status: 'pending', 
     date: '2025-05-02', 
-    priority: 'high' 
+    priority: 'high',
+    loadingInstructions: {
+      sequence: [
+        '1. Load Machine Parts (25) at the front of the truck',
+        '2. Secure with straps to prevent shifting',
+        '3. Load Industrial Widgets (50) behind Machine Parts',
+        '4. Ensure weight distribution is balanced across the truck bed'
+      ],
+      notes: 'Industrial Widgets are sensitive to vibration. Use additional padding between stacks.',
+      vehicleType: 'Box truck (24ft)',
+      estimatedTime: '60 minutes'
+    }
   },
   { 
     id: 'o2', 
@@ -127,7 +147,18 @@ const mockOrders: Order[] = [
     products: ['Assembly Kits (30)'], 
     status: 'loaded', 
     date: '2025-05-04', 
-    priority: 'medium' 
+    priority: 'medium',
+    loadingInstructions: {
+      sequence: [
+        '1. Stack Assembly Kits in groups of 5',
+        '2. Load from back to front of the truck',
+        '3. Use corner protectors on each stack',
+        '4. Secure with ratchet straps after every 10 kits'
+      ],
+      notes: 'Assembly Kits contain small parts. Ensure packaging is intact before loading.',
+      vehicleType: 'Cargo van',
+      estimatedTime: '30 minutes'
+    }
   },
   { 
     id: 'o3', 
@@ -266,7 +297,8 @@ export default function CustomerDetailPage() {
   const [customerOrders, setCustomerOrders] = useState<Order[]>([]);
   const [itemHistory, setItemHistory] = useState<ItemHistoryEntry[]>([]);
   const [activeTab, setActiveTab] = useState('orders');
-  
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+
   useEffect(() => {
     const customerId = params.id as string;
     
@@ -285,7 +317,23 @@ export default function CustomerDetailPage() {
     
     return () => clearTimeout(timer);
   }, [params.id]);
-  
+
+  // Handle status update
+  const handleStatusUpdate = (orderId: string, newStatus: 'pending' | 'loaded' | 'delivered', notes?: string) => {
+    setCustomerOrders(currentOrders => 
+      currentOrders.map(order => 
+        order.id === orderId 
+          ? { ...order, status: newStatus } 
+          : order
+      )
+    );
+  };
+
+  // Handle add new order
+  const handleOrderAdded = (newOrder: any) => {
+    setCustomerOrders(currentOrders => [newOrder, ...currentOrders]);
+  };
+
   // Status badge colors
   const getStatusBadge = (status: 'pending' | 'loaded' | 'delivered') => {
     switch (status) {
@@ -297,7 +345,7 @@ export default function CustomerDetailPage() {
         return <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">Delivered</Badge>;
     }
   };
-  
+
   // Priority badge colors
   const getPriorityBadge = (priority: 'low' | 'medium' | 'high') => {
     switch (priority) {
@@ -309,7 +357,7 @@ export default function CustomerDetailPage() {
         return <Badge variant="outline" className="border-red-400 text-red-600">High</Badge>;
     }
   };
-  
+
   // Item frequency badge
   const getFrequencyBadge = (frequency: 'frequent' | 'occasional' | 'rare') => {
     switch (frequency) {
@@ -321,7 +369,7 @@ export default function CustomerDetailPage() {
         return <Badge variant="outline" className="border-gray-400 text-gray-600">Rare</Badge>;
     }
   };
-  
+
   // Item status badge
   const getItemStatusBadge = (status: 'active' | 'discontinued') => {
     switch (status) {
@@ -331,7 +379,7 @@ export default function CustomerDetailPage() {
         return <Badge variant="secondary" className="bg-gray-100 text-gray-800">Discontinued</Badge>;
     }
   };
-  
+
   if (isLoading) {
     return (
       <div className="container mx-auto py-6 flex flex-col items-center justify-center h-[50vh]">
@@ -340,7 +388,7 @@ export default function CustomerDetailPage() {
       </div>
     );
   }
-  
+
   if (!customer) {
     return (
       <div className="container mx-auto py-6">
@@ -365,7 +413,7 @@ export default function CustomerDetailPage() {
       </div>
     );
   }
-  
+
   return (
     <div className="container mx-auto py-6">
       <div className="mb-6">
@@ -449,7 +497,7 @@ export default function CustomerDetailPage() {
                       <TableHead>Products</TableHead>
                       <TableHead>Date</TableHead>
                       <TableHead>Status</TableHead>
-                      <TableHead>Priority</TableHead>
+                      <TableHead>Loading Instructions</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -465,10 +513,26 @@ export default function CustomerDetailPage() {
                           </div>
                         </TableCell>
                         <TableCell>{order.date}</TableCell>
-                        <TableCell>{getStatusBadge(order.status)}</TableCell>
-                        <TableCell>{getPriorityBadge(order.priority)}</TableCell>
+                        <TableCell>
+                          <OrderStatusUpdater
+                            orderId={order.id}
+                            currentStatus={order.status}
+                            onStatusUpdate={handleStatusUpdate}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Link href={`/dashboard/tools/truck-loading-helper/loading-plan/${order.id}`}>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 border-blue-200 dark:border-blue-800"
+                            >
+                              <Truck className="mr-2 h-4 w-4 text-blue-600 dark:text-blue-400" />
+                              View Loading Plan
+                            </Button>
+                          </Link>
+                        </TableCell>
                         <TableCell className="text-right">
-                          <Button variant="ghost" size="sm">View</Button>
                           <Button variant="ghost" size="sm">Update</Button>
                         </TableCell>
                       </TableRow>
