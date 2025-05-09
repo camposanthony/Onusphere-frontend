@@ -54,7 +54,7 @@ export default function LoginPage() {
               <Truck className="h-8 w-8 text-primary" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold">LogiHub</CardTitle>
+          <CardTitle className="text-2xl font-bold">ViaTools</CardTitle>
           <CardDescription>
             Sign in to your account to continue
           </CardDescription>

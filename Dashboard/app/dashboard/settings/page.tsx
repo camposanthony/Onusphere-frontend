@@ -294,19 +294,6 @@ export default function SettingsPage() {
                       {errorMessage}
                     </div>
                   )}
-                  <div className="flex items-center space-x-4">
-                    <div className="h-20 w-20 flex items-center justify-center bg-muted rounded-md">
-                      <Building className="h-10 w-10 text-muted-foreground" />
-                    </div>
-                    <div className="space-y-2">
-                      <div>
-                        <Button type="button" size="sm">Upload Logo</Button>
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        SVG, PNG or JPG. Max size 1MB.
-                      </div>
-                    </div>
-                  </div>
                   
                   <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
                     <div className="space-y-2 md:col-span-2">

@@ -28,7 +28,7 @@ export default function LandingPage() {
             <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
               <Truck className="h-4 w-4 text-white" />
             </div>
-            <h1 className="text-xl font-bold tracking-tight">LogiHub</h1>
+            <h1 className="text-xl font-bold tracking-tight">ViaTools</h1>
           </Link>
           <nav className="hidden md:flex items-center gap-6">
             <Link 
@@ -86,7 +86,7 @@ export default function LandingPage() {
                       <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
                         <Truck className="h-4 w-4 text-white" />
                       </div>
-                      <span className="font-bold">LogiHub</span>
+                      <span className="font-bold">ViaTools</span>
                     </Link>
                   </div>
                   <nav className="flex flex-col gap-1 py-6">
@@ -145,7 +145,7 @@ export default function LandingPage() {
                     <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">Logistics Operations</span>
                   </h1>
                   <p className="max-w-[600px] text-muted-foreground md:text-xl animate-slide-up animation-delay-200">
-                    LogiHub provides a complete toolkit for logistics companies to streamline operations, reduce costs, and improve customer satisfaction.
+                    ViaTools provides a complete toolkit for logistics companies to streamline operations, reduce costs, and improve customer satisfaction.
                   </p>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-4 mt-4 animate-slide-up animation-delay-400">
@@ -229,7 +229,7 @@ export default function LandingPage() {
                 <div className="text-3xl sm:text-4xl font-bold tracking-tight relative mb-2">
                   <CountUp value={500} suffix="+" />
                 </div>
-                <p className="text-muted-foreground text-sm">Companies using LogiHub</p>
+                <p className="text-muted-foreground text-sm">Companies using ViaTools</p>
               </div>
               
               <div className="flex flex-col items-center md:items-start text-center md:text-left">
@@ -299,7 +299,7 @@ export default function LandingPage() {
                   Trusted by Logistics Leaders
                 </h2>
                 <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed">
-                  See what our customers have to say about how LogiHub transformed their operations
+                  See what our customers have to say about how ViaTools transformed their operations
                 </p>
               </div>
             </div>
@@ -340,7 +340,7 @@ export default function LandingPage() {
                     Ready to Transform Your Logistics?
                   </h2>
                   <p className="max-w-[900px] text-white/90 md:text-xl/relaxed">
-                    Join thousands of companies already using LogiHub to optimize their operations
+                    Join thousands of companies already using ViaTools to optimize their operations
                   </p>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-4 mt-6">
@@ -381,7 +381,7 @@ export default function LandingPage() {
                   <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
                     <Truck className="h-4 w-4 text-white" />
                   </div>
-                  <h1 className="text-xl font-bold tracking-tight">LogiHub</h1>
+                  <h1 className="text-xl font-bold tracking-tight">ViaTools</h1>
                 </Link>
                 <p className="text-sm text-muted-foreground max-w-xs">
                   A complete logistics management platform designed to streamline your operations.
@@ -432,7 +432,7 @@ export default function LandingPage() {
             
             <div className="flex flex-col md:flex-row justify-between items-center border-t border-border/40 mt-12 pt-8">
               <p className="text-xs text-muted-foreground">
-                © 2023 LogiHub. All rights reserved.
+                © 2025 ViaTools. All rights reserved.
               </p>
               <div className="flex gap-4 mt-4 md:mt-0">
                 <Link href="/terms" className="text-xs text-muted-foreground hover:text-foreground">
@@ -523,7 +523,7 @@ const testimonials = [
   {
     title: "Game-Changing Platform",
     author: "CEO at Express Delivery Co.",
-    content: "LogiHub has completely transformed how we manage our fleet and deliveries. We've seen a 30% reduction in operational costs."
+    content: "ViaTools has completely transformed how we manage our fleet and deliveries. We've seen a 30% reduction in operational costs."
   },
   {
     title: "Incredible ROI",
@@ -533,7 +533,7 @@ const testimonials = [
   {
     title: "Customer Satisfaction Up",
     author: "Director at Rapid Logistics",
-    content: "Since implementing LogiHub, our customer satisfaction scores have increased by 45%. The tracking portal is a game-changer."
+    content: "Since implementing ViaTools, our customer satisfaction scores have increased by 45%. The tracking portal is a game-changer."
   }
 ];
 

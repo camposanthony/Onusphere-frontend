@@ -75,7 +75,7 @@ export default function EmailOrderProcessor({ className }: EmailOrderProcessorPr
               <div className="rounded-md border p-4">
                 <h3 className="text-sm font-medium mb-2">Step 1: Forward order emails</h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                  Simply forward any order confirmation emails to:
+                  Forward any order confirmation emails to:
                 </p>
                 <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-900 p-2 rounded">
                   <code className="text-sm font-mono">{emailAddress}</code>
@@ -87,6 +87,12 @@ export default function EmailOrderProcessor({ className }: EmailOrderProcessorPr
                   >
                     {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                   </Button>
+                </div>
+                <div className="mt-3">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 flex items-start">
+                    <AlertCircle className="h-4 w-4 mr-1 mt-0.5 text-amber-500" />
+                    <span><strong>Important:</strong> Include the customer ID in the subject line using format: "[CUSTOMER_ID] Original Subject"</span>
+                  </p>
                 </div>
               </div>
               
@@ -121,8 +127,8 @@ export default function EmailOrderProcessor({ className }: EmailOrderProcessorPr
               <div className="rounded-md border p-4">
                 <h3 className="text-sm font-medium mb-2">How are orders matched to customers?</h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Orders are matched to customers based on the email content, order number, and customer information 
-                  patterns. The system learns from previous matches to improve accuracy.
+                  Orders are matched to customers based on the customer ID in the subject line (format: "[CUSTOMER_ID] Original Subject").
+                  This ensures orders are correctly associated even when the sender's email isn't registered with your account.
                 </p>
               </div>
               

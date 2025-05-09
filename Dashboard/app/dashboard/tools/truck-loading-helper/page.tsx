@@ -248,7 +248,7 @@ export default function TruckLoadingHelper() {
           <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
             <h2 className="text-lg font-semibold">Email Workflow</h2>
             <p className="text-sm text-gray-600 dark:text-gray-300">
-              Forward order emails to <strong>orders@onusphere.com</strong> and they'll automatically appear in the respective customer's account within 5 minutes.
+              Forward order emails to <strong>orders@onusphere.com</strong> with the customer ID in the subject line (format: "[CUSTOMER_ID] Original Subject") and they'll automatically appear in the respective customer's account within 5 minutes.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4">
@@ -277,11 +277,6 @@ export default function TruckLoadingHelper() {
             <h2 className="text-2xl font-bold mb-3">Welcome to Truck Loading Helper!</h2>
             <div className="max-w-xl">
               <h3 className="text-lg font-semibold mb-2">Add Your First Customer by Email</h3>
-              <p className="text-gray-700 dark:text-gray-300 mb-6">
-                To get started, simply forward an order email from your customer to <strong>orders@onusphere.com</strong><br />
-                Our system will automatically process the email and create a customer record with the order information.<br />
-                Once processed, you'll see the customer and their order appear here within minutes.
-              </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <div className="border rounded-md p-4 bg-white dark:bg-gray-800">
                   <div className="flex justify-center mb-2">
@@ -290,7 +285,6 @@ export default function TruckLoadingHelper() {
                     </div>
                   </div>
                   <h4 className="text-sm font-medium mb-2">Forward Order Email</h4>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">Forward your customer's order email to orders@onusphere.com</p>
                 </div>
                 <div className="border rounded-md p-4 bg-white dark:bg-gray-800">
                   <div className="flex justify-center mb-2">
@@ -299,7 +293,6 @@ export default function TruckLoadingHelper() {
                     </div>
                   </div>
                   <h4 className="text-sm font-medium mb-2">Automatic Processing</h4>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">Our system extracts all relevant information and creates records</p>
                 </div>
                 <div className="border rounded-md p-4 bg-white dark:bg-gray-800">
                   <div className="flex justify-center mb-2">
@@ -308,7 +301,6 @@ export default function TruckLoadingHelper() {
                     </div>
                   </div>
                   <h4 className="text-sm font-medium mb-2">Ready to Use</h4>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">Access customer and order details with tailored loading instructions</p>
                 </div>
               </div>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">

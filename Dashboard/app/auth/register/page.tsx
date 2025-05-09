@@ -88,7 +88,7 @@ export default function RegisterPage() {
           </div>
           <CardTitle className="text-2xl font-bold">Create an Account</CardTitle>
           <CardDescription>
-            Join the LogiHub platform to access logistics tools
+            Join the ViaTools platform to access logistics tools
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>

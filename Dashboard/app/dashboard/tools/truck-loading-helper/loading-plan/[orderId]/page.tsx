@@ -10,6 +10,7 @@ import {
   Image,
   Clock,
   AlertCircle,
+  CheckCircle,
   Package,
   Calendar
 } from 'lucide-react';
@@ -188,7 +189,7 @@ export default function LoadingPlanPage() {
       setEmailStatus({
         show: true,
         success: false,
-        message: 'Please enter an email address'
+        message: 'requires email'
       });
       
       // Auto-hide the error message after 3 seconds
@@ -202,7 +203,7 @@ export default function LoadingPlanPage() {
     setEmailStatus({
       show: true,
       success: true,
-      message: `Loading instructions sent to ${emailSettings.address}`
+      message: `Sent`
     });
     
     // Auto-hide success message after 3 seconds
@@ -338,8 +339,7 @@ export default function LoadingPlanPage() {
                   <div className="grid gap-4 rounded-lg border p-4 dark:border-gray-700">
                     <div className="flex items-center justify-between">
                       <Label htmlFor="auto-email" className="flex flex-col">
-                        <span className="font-medium">Automatic Email</span>
-                        <span className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Send instructions automatically when ready</span>
+                        <span className="font-medium">Automatic Email: Send instructions automatically when ready</span>
                       </Label>
                       <Switch 
                         id="auto-email" 
@@ -359,17 +359,26 @@ export default function LoadingPlanPage() {
                           onChange={(e) => setEmailSettings(prev => ({ ...prev, address: e.target.value }))}
                           className="flex-1"
                         />
-                        <Button onClick={handleEmailSend}>
-                          <Send className="mr-2 h-4 w-4" />
-                          Send to Loader
-                        </Button>
-                        
-                        {/* Email Status Notification */}
-                        {emailStatus.show && (
-                          <div className={`mt-3 p-2 text-sm rounded ${emailStatus.success ? 'bg-green-50 border border-green-200 text-green-700 dark:bg-green-900/20 dark:border-green-800 dark:text-green-300' : 'bg-red-50 border border-red-200 text-red-700 dark:bg-red-900/20 dark:border-red-800 dark:text-red-300'}`}>
-                            {emailStatus.message}
-                          </div>
-                        )}
+                        <div className="relative">
+                          <Button onClick={handleEmailSend}>
+                            <Send className="mr-2 h-4 w-4" />
+                            Send to Loader
+                          </Button>
+                          
+                          {/* Email Status Notification */}
+                          {emailStatus.show && (
+                            <div className="absolute inset-0 z-10 flex items-center justify-center rounded-md overflow-hidden shadow-md backdrop-blur-sm transition-all duration-200 ease-in-out">
+                              <div className={`w-full h-full flex items-center justify-center gap-1.5 p-2 text-sm font-medium ${emailStatus.success ? 'bg-green-50/90 border border-green-200 text-green-700 dark:bg-green-900/80 dark:border-green-800 dark:text-green-300' : 'bg-red-50/90 border border-red-200 text-red-700 dark:bg-red-900/80 dark:border-red-800 dark:text-red-300'}`}>
+                                {emailStatus.success ? (
+                                  <CheckCircle className="h-4 w-4" />
+                                ) : (
+                                  <AlertCircle className="h-4 w-4" />
+                                )}
+                                {emailStatus.message}
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>

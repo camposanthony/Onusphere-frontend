@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { 
@@ -111,10 +112,18 @@ export default function Sidebar() {
         {/* Logo */}
         <div className="h-16 flex items-center px-6 border-b border-gray-200 dark:border-gray-700">
           <Link href="/" className="flex items-center space-x-2 overflow-hidden">
-            <Menu className="h-6 w-6 text-primary flex-shrink-0" />
+            <div className="relative flex-shrink-0">
+              <Image 
+                src="/ViaTools2.png" 
+                alt="ViaTools Logo" 
+                width={32} 
+                height={32} 
+                className="h-auto w-auto" 
+              />
+            </div>
             <span className={cn("font-bold text-xl transition-opacity duration-200", 
               collapsed ? "opacity-0" : "opacity-100"
-            )}>LogiHub</span>
+            )}>ViaTools</span>
           </Link>
         </div>
         
@@ -127,16 +136,31 @@ export default function Sidebar() {
                 href={route.href}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                  "flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                  collapsed ? "justify-center" : "space-x-3",
+                  "flex items-center px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 ease-in-out relative",
                   route.active(pathname)
                     ? "bg-primary/10 text-primary dark:bg-primary/20"
-                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    : "hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
                 )}
                 title={collapsed ? route.label : undefined}
               >
-                <route.icon className="h-5 w-5 flex-shrink-0" />
-                {!collapsed && <span>{route.label}</span>}
+                <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
+                  <route.icon className={cn("h-5 w-5", {
+                    "text-primary": route.active(pathname),
+                    "text-[#000000] dark:text-white": !route.active(pathname)
+                  })} />
+                </div>
+                <span 
+                  className={cn(
+                    "ml-3 transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap",
+                    collapsed ? "w-0 opacity-0" : "w-auto opacity-100",
+                    {
+                      "text-primary": route.active(pathname),
+                      "text-[#000000] dark:text-white": !route.active(pathname)
+                    }
+                  )}
+                >
+                  {route.label}
+                </span>
               </Link>
             ))}
           </div>
@@ -146,15 +170,24 @@ export default function Sidebar() {
         <div className="p-4 border-t border-gray-200 dark:border-gray-700">
           <div 
             className={cn(
-              "flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer",
-              collapsed ? "justify-center" : "space-x-3",
-              "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+              "flex items-center px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 ease-in-out cursor-pointer relative",
+              "hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
             )}
             title={collapsed ? "Sign Out" : undefined}
             onClick={logout}
           >
-            <LogOut className="h-5 w-5 flex-shrink-0" />
-            {!collapsed && <span>Sign Out</span>}
+            <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
+              <LogOut className="h-5 w-5 text-[#000000] dark:text-white" />
+            </div>
+            <span 
+              className={cn(
+                "ml-3 transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap",
+                collapsed ? "w-0 opacity-0" : "w-auto opacity-100",
+                "text-[#000000] dark:text-white"
+              )}
+            >
+              Sign Out
+            </span>
           </div>
         </div>
       </div>

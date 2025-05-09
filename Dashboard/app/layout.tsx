@@ -10,8 +10,8 @@ import { AuthRedirectHandler } from '../lib/components/AuthRedirect';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'LogiHub - Logistics SaaS Platform',
-  description: 'A complete toolkit for logistics companies to optimize their operations',
+  title: 'ViaTools - Advanced Tools for Logistics',
+  description: 'A comprehensive suite of tools for logistics and supply chain optimization',
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
