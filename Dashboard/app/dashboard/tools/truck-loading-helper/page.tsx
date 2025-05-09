@@ -31,6 +31,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
+// TODO: Add to the steps to add an ID to the subject heading of the email that gets forwarded 
+// so it works with emails that isnt the one registered with the acct.
+
 // Data interfaces for customers and orders
 interface Customer {
   id: string;
