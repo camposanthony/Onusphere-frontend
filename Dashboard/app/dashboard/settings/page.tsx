@@ -191,20 +191,6 @@ export default function SettingsPage() {
                       {errorMessage}
                     </div>
                   )}
-                  <div className="flex items-center space-x-4">
-                    <Avatar className="h-20 w-20">
-                      <AvatarImage src="/placeholder-avatar.jpg" alt="User" />
-                      <AvatarFallback>{user?.name?.charAt(0) || 'U'}</AvatarFallback>
-                    </Avatar>
-                    <div className="space-y-2">
-                      <div>
-                        <Button type="button" size="sm">Change Avatar</Button>
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        JPEG, PNG or GIF. Max size 2MB.
-                      </div>
-                    </div>
-                  </div>
                   
                   <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
                     <div className="space-y-2 md:col-span-2">

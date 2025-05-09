@@ -18,12 +18,14 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const { setAuthenticated } = useAuth();
   const [formData, setFormData] = useState({
-    companyName: '',
-    fullName: '',
+    name: '',
     email: '',
     password: '',
     confirmPassword: '',
-    companyType: '',
+    company_name: '',
+    phone: '',
+    job_title: '',
+    timezone: 'America/New_York',
   });
   const [error, setError] = useState('');
 
@@ -32,8 +34,8 @@ export default function RegisterPage() {
     setFormData(prev => ({ ...prev, [id]: value }));
   };
 
-  const handleCompanyTypeChange = (value: string) => {
-    setFormData(prev => ({ ...prev, companyType: value }));
+  const handleTimezoneChange = (value: string) => {
+    setFormData(prev => ({ ...prev, timezone: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -51,11 +53,13 @@ export default function RegisterPage() {
     try {
       // Call signup API
       const response = await signup({
-        name: formData.fullName,
+        name: formData.name,
         email: formData.email,
         password: formData.password,
-        company_name: formData.companyName,
-        company_type: formData.companyType
+        company_name: formData.company_name,
+        phone: formData.phone,
+        job_title: formData.job_title,
+        timezone: formData.timezone
       });
       
       // Save the token
@@ -64,8 +68,8 @@ export default function RegisterPage() {
       // Update auth state
       setAuthenticated(true);
       
-      // On success, redirect to the dashboard
-      router.push('/dashboard/tools/truck-loading-helper');
+      // On success, redirect to the main dashboard
+      router.push('/dashboard');
     } catch (error) {
       console.error(error);
       setError(error instanceof Error ? error.message : 'Registration failed. Please try again.');
@@ -90,42 +94,11 @@ export default function RegisterPage() {
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="companyName">Company Name</Label>
+              <Label htmlFor="name">Full Name</Label>
               <Input 
-                id="companyName" 
-                placeholder="Your Company Inc." 
-                value={formData.companyName}
-                onChange={handleChange}
-                required 
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="companyType">Company Type</Label>
-              <Select 
-                value={formData.companyType} 
-                onValueChange={handleCompanyTypeChange}
-                required
-              >
-                <SelectTrigger id="companyType">
-                  <SelectValue placeholder="Select company type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="carrier">Carrier</SelectItem>
-                  <SelectItem value="3pl">3PL Provider</SelectItem>
-                  <SelectItem value="shipper">Shipper</SelectItem>
-                  <SelectItem value="warehouse">Warehouse Operator</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="fullName">Full Name</Label>
-              <Input 
-                id="fullName" 
+                id="name" 
                 placeholder="John Doe" 
-                value={formData.fullName}
+                value={formData.name}
                 onChange={handleChange}
                 required 
               />
@@ -167,7 +140,56 @@ export default function RegisterPage() {
               />
             </div>
             
-            <div className="flex items-center space-x-2">
+            <div className="space-y-2">
+              <Label htmlFor="company_name">Company Name</Label>
+              <Input 
+                id="company_name" 
+                placeholder="Your Company Inc." 
+                value={formData.company_name}
+                onChange={handleChange}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="phone">Phone Number</Label>
+              <Input 
+                id="phone" 
+                placeholder="+1 (555) 123-4567" 
+                value={formData.phone}
+                onChange={handleChange}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="job_title">Job Title</Label>
+              <Input 
+                id="job_title" 
+                placeholder="Logistics Manager" 
+                value={formData.job_title}
+                onChange={handleChange}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="timezone">Timezone</Label>
+              <Select 
+                value={formData.timezone} 
+                onValueChange={handleTimezoneChange}
+              >
+                <SelectTrigger id="timezone">
+                  <SelectValue placeholder="Select timezone" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="America/New_York">Eastern Time (ET)</SelectItem>
+                  <SelectItem value="America/Chicago">Central Time (CT)</SelectItem>
+                  <SelectItem value="America/Denver">Mountain Time (MT)</SelectItem>
+                  <SelectItem value="America/Los_Angeles">Pacific Time (PT)</SelectItem>
+                  <SelectItem value="Europe/London">London (GMT)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="flex items-center space-x-2 mb-4">
               <input 
                 type="checkbox" 
                 id="terms" 

@@ -16,6 +16,9 @@ export interface SignupData {
   password: string;
   company_name?: string;
   company_type?: string;
+  phone?: string;
+  job_title?: string;
+  timezone?: string;
 }
 
 export interface AuthResponse {

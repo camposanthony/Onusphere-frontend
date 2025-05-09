@@ -35,8 +35,8 @@ export default function LoginPage() {
       // Update auth state
       setAuthenticated(true);
       
-      // On success, redirect to the dashboard
-      router.push('/dashboard/tools/truck-loading-helper');
+      // On success, redirect to the main dashboard
+      router.push('/dashboard');
     } catch (error) {
       // Handle errors
       console.error(error);
@@ -91,7 +91,7 @@ export default function LoginPage() {
                 required 
               />
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 mb-4">
               <input 
                 type="checkbox" 
                 id="remember" 

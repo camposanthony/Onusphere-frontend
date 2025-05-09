@@ -144,18 +144,18 @@ export default function Sidebar() {
         
         {/* Sign Out */}
         <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-          <Button 
-            variant="ghost" 
+          <div 
             className={cn(
-              "w-full transition-all",
-              collapsed ? "justify-center" : "justify-start space-x-3"
+              "flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer",
+              collapsed ? "justify-center" : "space-x-3",
+              "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
             )}
             title={collapsed ? "Sign Out" : undefined}
             onClick={logout}
           >
             <LogOut className="h-5 w-5 flex-shrink-0" />
             {!collapsed && <span>Sign Out</span>}
-          </Button>
+          </div>
         </div>
       </div>
 

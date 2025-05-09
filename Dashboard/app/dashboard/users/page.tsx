@@ -18,8 +18,7 @@ const teamMembers = [
     id: 1,
     name: 'John Smith',
     email: 'john.smith@company.com',
-    role: 'Admin',
-    department: 'Operations',
+    title: 'Admin',
     avatarUrl: '/placeholder-avatar.jpg',
     initials: 'JS',
     lastActive: '5 minutes ago',
@@ -28,8 +27,7 @@ const teamMembers = [
     id: 2,
     name: 'Sarah Johnson',
     email: 'sarah.johnson@company.com',
-    role: 'Manager',
-    department: 'Logistics',
+    title: 'Manager',
     avatarUrl: '/placeholder-avatar.jpg',
     initials: 'SJ',
     lastActive: '1 hour ago',
@@ -38,8 +36,7 @@ const teamMembers = [
     id: 3,
     name: 'Michael Chen',
     email: 'michael.chen@company.com',
-    role: 'Team Member',
-    department: 'Distribution',
+    title: 'Team Member',
     avatarUrl: '/placeholder-avatar.jpg',
     initials: 'MC',
     lastActive: '3 hours ago',
@@ -48,8 +45,7 @@ const teamMembers = [
     id: 4,
     name: 'Jessica Taylor',
     email: 'jessica.taylor@company.com',
-    role: 'Team Member',
-    department: 'Customer Service',
+    title: 'Team Member',
     avatarUrl: '/placeholder-avatar.jpg',
     initials: 'JT',
     lastActive: 'Yesterday',
@@ -58,8 +54,7 @@ const teamMembers = [
     id: 5,
     name: 'David Rodriguez',
     email: 'david.rodriguez@company.com',
-    role: 'Manager',
-    department: 'Inventory',
+    title: 'Manager',
     avatarUrl: '/placeholder-avatar.jpg',
     initials: 'DR',
     lastActive: '2 days ago',
@@ -113,18 +108,17 @@ export default function UsersPage() {
         </CardHeader>
         <CardContent>
           <div className="rounded-md border">
-            <div className="grid grid-cols-12 gap-4 p-4 bg-muted/50 font-medium text-sm">
-              <div className="col-span-3">Name</div>
+            <div className="grid grid-cols-11 gap-4 p-4 bg-muted/50 font-medium text-sm">
+              <div className="col-span-4">Name</div>
               <div className="col-span-3">Email</div>
-              <div className="col-span-2">Role</div>
-              <div className="col-span-2">Department</div>
+              <div className="col-span-2">Title</div>
               <div className="col-span-1">Last Active</div>
               <div className="col-span-1"></div>
             </div>
             <div className="divide-y">
               {teamMembers.map((member) => (
-                <div key={member.id} className="grid grid-cols-12 gap-4 p-4 items-center">
-                  <div className="col-span-3 flex items-center gap-3">
+                <div key={member.id} className="grid grid-cols-11 gap-4 p-4 items-center">
+                  <div className="col-span-4 flex items-center gap-3">
                     <Avatar className="h-8 w-8">
                       <AvatarImage src={member.avatarUrl} alt={member.name} />
                       <AvatarFallback>{member.initials}</AvatarFallback>
@@ -132,10 +126,7 @@ export default function UsersPage() {
                     <span className="font-medium">{member.name}</span>
                   </div>
                   <div className="col-span-3 text-sm text-muted-foreground">{member.email}</div>
-                  <div className="col-span-2">
-                    <Badge className={getRoleBadgeColor(member.role)}>{member.role}</Badge>
-                  </div>
-                  <div className="col-span-2 text-sm">{member.department}</div>
+                  <div className="col-span-2 text-sm">{member.title}</div>
                   <div className="col-span-1 text-sm text-muted-foreground">{member.lastActive}</div>
                   <div className="col-span-1 text-right">
                     <DropdownMenu>
