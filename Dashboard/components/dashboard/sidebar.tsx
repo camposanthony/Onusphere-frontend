@@ -59,6 +59,7 @@ export default function Sidebar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const { logout } = useAuth();
+  const [savedTools, setSavedTools] = useState<string[]>([]);
   
   // Try to restore collapsed state from localStorage
   useEffect(() => {
@@ -66,12 +67,25 @@ export default function Sidebar() {
     if (savedState !== null) {
       setCollapsed(savedState === 'true');
     }
+    // Load saved tools from localStorage (same as my-tools page)
+    const tools = localStorage.getItem('savedTools');
+    if (tools) {
+      setSavedTools(JSON.parse(tools));
+    } else {
+      // Default fallback for demo: truck-loading-helper
+      setSavedTools(['truck-loading-helper']);
+    }
   }, []);
 
   // Save collapsed state to localStorage
   useEffect(() => {
     localStorage.setItem('sidebarCollapsed', collapsed.toString());
   }, [collapsed]);
+
+  // Determine if current path is a tool in My Tools
+  const myToolMatch = savedTools.some(toolId =>
+    pathname.startsWith(`/dashboard/tools/${toolId}`)
+  );
 
   // Toggle sidebar collapsed state
   const toggleSidebar = () => {
@@ -130,39 +144,49 @@ export default function Sidebar() {
         {/* Navigation */}
         <div className="flex-1 py-6 px-4 space-y-1 overflow-y-auto">
           <div className="space-y-1">
-            {routes.map((route) => (
-              <Link
-                key={route.href}
-                href={route.href}
-                onClick={() => setMobileOpen(false)}
-                className={cn(
-                  "flex items-center px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 ease-in-out relative",
-                  route.active(pathname)
-                    ? "bg-primary/10 text-primary dark:bg-primary/20"
-                    : "hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                )}
-                title={collapsed ? route.label : undefined}
-              >
-                <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
-                  <route.icon className={cn("h-5 w-5", {
-                    "text-primary": route.active(pathname),
-                    "text-[#000000] dark:text-white": !route.active(pathname)
-                  })} />
-                </div>
-                <span 
+            {routes.map((route) => {
+              // Custom active logic for My Tools
+              let isActive = route.active(pathname);
+              if (route.label === 'My Tools' && myToolMatch) {
+                isActive = true;
+              }
+              if (route.label === 'All Tools' && myToolMatch) {
+                isActive = false;
+              }
+              return (
+                <Link
+                  key={route.href}
+                  href={route.href}
+                  onClick={() => setMobileOpen(false)}
                   className={cn(
-                    "ml-3 transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap",
-                    collapsed ? "w-0 opacity-0" : "w-auto opacity-100",
-                    {
-                      "text-primary": route.active(pathname),
-                      "text-[#000000] dark:text-white": !route.active(pathname)
-                    }
+                    "flex items-center px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 ease-in-out relative",
+                    isActive
+                      ? "bg-primary/10 text-primary dark:bg-primary/20"
+                      : "hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
                   )}
+                  title={collapsed ? route.label : undefined}
                 >
-                  {route.label}
-                </span>
-              </Link>
-            ))}
+                  <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
+                    <route.icon className={cn("h-5 w-5", {
+                      "text-primary": isActive,
+                      "text-[#000000] dark:text-white": !isActive
+                    })} />
+                  </div>
+                  <span 
+                    className={cn(
+                      "ml-3 transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap",
+                      collapsed ? "w-0 opacity-0" : "w-auto opacity-100",
+                      {
+                        "text-primary": isActive,
+                        "text-[#000000] dark:text-white": !isActive
+                      }
+                    )}
+                  >
+                    {route.label}
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         </div>
         
