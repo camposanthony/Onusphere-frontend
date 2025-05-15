@@ -6,6 +6,7 @@ import './globals.css';
 import { ThemeProvider } from '../components/theme-provider';
 import { AuthProvider } from '../lib/context/AuthContext';
 import { AuthRedirectHandler } from '../lib/components/AuthRedirect';
+import { Toaster } from 'sonner';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -29,6 +30,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             {children}
           </AuthProvider>
         </ThemeProvider>
+        <Toaster />
       </body>
     </html>
   );

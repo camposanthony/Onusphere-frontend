@@ -6,20 +6,19 @@ import { authGet, authPost, authPut, API_BASE_URL } from '../utils/api';
 export interface Customer {
   id: string;
   name: string;
-  location: string;
-  ordersCount: number;
-  pendingOrders: number;
+  email_domain: string;
 }
 
 export interface Order {
   id: string;
-  customer: string;
-  customerId: string;
-  products: string[];
+  items: {
+    item_id: string;
+    number_pallets: number;
+  }[];
+  order_date: string;
+  upcoming_shipment_times: string[];
   status: 'pending' | 'loaded' | 'delivered';
-  date: string;
-  priority: 'low' | 'medium' | 'high';
-  loadingInstructions?: {
+  loading_instructions: {
     sequence: string[];
     notes: string;
     vehicleType: string;
@@ -42,24 +41,17 @@ export const getCustomerById = (id: string): Promise<Customer> => {
 };
 
 /**
- * Get all orders
+ * Get orders for a customer
  */
-export const getOrders = (): Promise<Order[]> => {
-  return authGet<Order[]>('/orders');
-};
-
-/**
- * Get order by ID
- */
-export const getOrderById = (id: string): Promise<Order> => {
-  return authGet<Order>(`/orders/${id}`);
+export const getCustomerOrders = (customerId: string): Promise<Order[]> => {
+  return authGet<Order[]>(`/customers/${customerId}/orders`);
 };
 
 /**
  * Update order status
  */
 export const updateOrderStatus = (id: string, status: 'pending' | 'loaded' | 'delivered'): Promise<Order> => {
-  return authPut<Order>(`/orders/${id}/status`, { status });
+  return authPut<Order>(`/customers/orders/${id}/status`, { status });
 };
 
 /**
@@ -76,3 +68,14 @@ export const triggerEmailProcessing = (emailData?: any): Promise<any> => {
 export const getLastPipelineResult = (): Promise<any> => {
   return authGet<any>('/result');
 };
+
+/**
+ * Create a test order (for development only)
+ */
+export const createTestOrder = (): Promise<Order> => {
+  return authPost<Order>('/testing/create-test-order', {});
+};
+
+export async function createCustomer(customerData: { name: string; email_domain: string }): Promise<Customer> {
+  return authPost<Customer>('/customers', customerData);
+}

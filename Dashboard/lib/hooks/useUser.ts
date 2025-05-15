@@ -30,7 +30,7 @@ export const useUser = () => {
         setLoading(true);
         setError(null);
         // This endpoint should be implemented on the backend to return the current user info
-        const userData = await authGet<User>('/me');
+        const userData = await authGet<User>('/account/me');
         setUser(userData);
       } catch (err) {
         console.error('Error fetching user:', err);
