@@ -22,7 +22,7 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { getCustomerOrders } from '@/lib/services/truck-loading-api';
+import { getCustomerOrders } from '@/lib/services/load-plan-pro-api';
 import { toast } from 'sonner';
 
 interface Order {
@@ -184,7 +184,7 @@ export default function LoadingPlanPage() {
     try {
       setIsSharing(true);
       // Generate a shareable URL
-      const url = `${window.location.origin}/dashboard/tools/truck-loading-helper/loading-plan/${params.orderId}?customerId=${searchParams.get('customerId')}`;
+      const url = `${window.location.origin}/dashboard/tools/load-plan-pro/loading-plan/${params.orderId}?customerId=${searchParams.get('customerId')}`;
       setShareUrl(url);
 
       // Try to use the Web Share API if available

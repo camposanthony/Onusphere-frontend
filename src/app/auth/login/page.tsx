@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Truck } from 'lucide-react';
 import { login, saveToken } from '@/lib/services/auth';
 import { useAuth } from '@/lib/context/AuthContext';
+import Image from 'next/image';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -49,12 +50,12 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
-          <div className="flex justify-center mb-4">
+          <div className="flex flex-col items-center mb-4">
             <div className="bg-primary/10 p-3 rounded-full">
-              <Truck className="h-8 w-8 text-primary" />
+              <Image src="/movomintlogo.png" alt="Movomint Logo" width={48} height={48} />
             </div>
+            <span className="mt-2 text-2xl font-bold">movomint</span>
           </div>
-          <CardTitle className="text-2xl font-bold">ViaTools</CardTitle>
           <CardDescription>
             Sign in to your account to continue
           </CardDescription>

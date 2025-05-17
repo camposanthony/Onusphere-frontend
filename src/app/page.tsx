@@ -203,8 +203,8 @@ export default function LandingPage() {
               scrolled ? 'scale-90' : 'scale-100'
             }`}>
               <Image
-                src="/striana.png"
-                alt="striana logo"
+                src="/movomintlogo.png"
+                alt="movomintlogo logo"
                 width={32}
                 height={32}
                 className="object-contain"
@@ -213,7 +213,7 @@ export default function LandingPage() {
             </div>
             <h1 className={`text-xl font-bold tracking-tight text-foreground transition-all duration-300 ${
               scrolled ? 'text-lg' : 'text-xl'
-            }`}>striana</h1>
+            }`}>movomint</h1>
           </Link>
           <nav className="hidden md:flex items-center gap-6">
             <Link 
@@ -304,17 +304,15 @@ export default function LandingPage() {
                 <div className="flex flex-col h-full">
                   <div className="flex items-center justify-between border-b border-border/40 py-4">
                     <Link href="/" className="flex items-center gap-2" onClick={() => setOpen(false)}>
-                      <div className="h-8 w-8 rounded-full flex items-center justify-center">
-                        <Image
-                          src="/striana.png"
-                          alt="striana logo"
-                          width={32}
-                          height={32}
-                          className="object-contain"
-                          priority
-                        />
-                      </div>
-                      <span className="font-bold text-foreground">striana</span>
+                      <Image
+                        src="/movomintlogo.png"
+                        alt="movomintlogo logo"
+                        width={32}
+                        height={32}
+                        className="object-contain"
+                        priority
+                      />
+                      <span className="font-bold text-foreground">movomint</span>
                     </Link>
                   </div>
                   <nav className="flex flex-col gap-1 py-6">
@@ -400,7 +398,7 @@ export default function LandingPage() {
               <motion.div variants={itemVariants} className="flex items-center gap-8 pt-8 justify-center lg:justify-start">
                 <div className="w-full text-center lg:text-left">
                   <span className="inline-block text-base md:text-lg font-semibold text-primary bg-primary/10 px-4 py-2 rounded-xl shadow-sm">
-                    See how striana can transform your logistics in 15 minutes.
+                    See how movomint can transform your logistics in 15 minutes.
                   </span>
                 </div>
               </motion.div>
@@ -694,7 +692,7 @@ export default function LandingPage() {
           <div className="container px-4 md:px-6 mx-auto relative">
             <div className="max-w-4xl mx-auto text-center">
               <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-foreground mb-6">
-                See striana in Action
+                See movomint in Action
               </h2>
               <p className="text-muted-foreground md:text-xl mb-8">
                 Book a personalized demo and discover how our unified platform can streamline your operations—no setup, no hassle.
@@ -725,15 +723,15 @@ export default function LandingPage() {
               <Link href="/" className="flex items-center gap-2 mb-4">
                 <div className="h-8 w-8 rounded-full flex items-center justify-center">
                   <Image
-                    src="/striana.png"
-                    alt="striana logo"
+                    src="/movomint.png"
+                    alt="movomint logo"
                     width={32}
                     height={32}
                     className="object-contain"
                     priority
                   />
                 </div>
-                <h1 className="text-xl font-bold tracking-tight text-foreground">striana</h1>
+                <h1 className="text-xl font-bold tracking-tight text-foreground">movomint</h1>
               </Link>
               <p className="text-sm text-muted-foreground max-w-xs">
                 The complete toolkit for modern logistics companies. Built by engineers, for engineers.
@@ -784,7 +782,7 @@ export default function LandingPage() {
           
           <div className="flex flex-col md:flex-row justify-between items-center border-t border-border/40 mt-12 pt-8">
             <p className="text-xs text-muted-foreground">
-              © 2024 striana. All rights reserved.
+              © 2024 movomint. All rights reserved.
             </p>
             <div className="flex gap-4 mt-4 md:mt-0">
               <Link href="/terms" className="text-xs text-muted-foreground hover:text-foreground">
@@ -894,7 +892,7 @@ const testimonials = [
   {
     name: "Sarah Chen",
     role: "CTO at Global Freight Solutions",
-    content: "striana's custom algorithms have revolutionized our route optimization. We've seen a 40% reduction in fuel costs and improved delivery times by 25%."
+    content: "movomint's custom algorithms have revolutionized our route optimization. We've seen a 40% reduction in fuel costs and improved delivery times by 25%."
   },
   {
     name: "Michael Rodriguez",
@@ -911,7 +909,7 @@ const testimonials = [
 const metrics = [
   {
     value: "500+",
-    label: "Companies Using striana"
+    label: "Companies Using movomint"
   },
   {
     value: "40%",

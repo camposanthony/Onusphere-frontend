@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { getCustomers, createCustomer, Customer } from '@/lib/services/truck-loading-api';
+import { getCustomers, createCustomer, Customer } from '@/lib/services/load-plan-pro-api';
 
 export default function CustomersPage() {
   const router = useRouter();
@@ -90,7 +90,7 @@ export default function CustomersPage() {
           await fetchCustomers();
           
           // Redirect to the new customer's orders page
-          router.push(`/dashboard/tools/truck-loading-helper/customer/${newCustomer.id}/orders`);
+          router.push(`/dashboard/tools/load-plan-pro/customer/${newCustomer.id}/orders`);
         } catch (error) {
           console.error('Error creating customer:', error);
           setError('Failed to create customer. Please try again.');
@@ -176,7 +176,7 @@ export default function CustomersPage() {
                   <Button 
                     variant="outline" 
                     className="w-full"
-                    onClick={() => router.push(`/dashboard/tools/truck-loading-helper/customer/${customer.id}/orders`)}
+                    onClick={() => router.push(`/dashboard/tools/load-plan-pro/customer/${customer.id}/orders`)}
                   >
                     View Orders
                   </Button>

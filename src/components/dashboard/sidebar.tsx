@@ -72,8 +72,8 @@ export default function Sidebar() {
     if (tools) {
       setSavedTools(JSON.parse(tools));
     } else {
-      // Default fallback for demo: truck-loading-helper
-      setSavedTools(['truck-loading-helper']);
+      // Default fallback for demo: load-plan-pro
+      setSavedTools(['load-plan-pro']);
     }
   }, []);
 
@@ -119,25 +119,26 @@ export default function Sidebar() {
         className={cn(
           "fixed inset-y-0 left-0 z-40 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out md:translate-x-0",
           mobileOpen ? "translate-x-0" : "-translate-x-full",
-          collapsed ? "md:w-20" : "md:w-64",
+          collapsed ? "md:w-19" : "md:w-64",
           "w-64" // Default width for mobile
         )}
       >
         {/* Logo */}
-        <div className="h-16 flex items-center px-6 border-b border-gray-200 dark:border-gray-700">
-          <Link href="/" className="flex items-center space-x-2 overflow-hidden">
-            <div className="relative flex-shrink-0">
+        <div className="h-16 flex items-center border-b border-gray-200 dark:border-gray-700 px-6">
+          <Link href="/" className="flex items-center">
+            <div className="relative w-8 h-8 flex items-center justify-center">
               <Image 
-                src="/striana.png" 
-                alt="striana Logo" 
+                src="/movomintlogo.png" 
+                alt="movomintlogo Logo" 
                 width={32} 
                 height={32} 
                 className="h-auto w-auto" 
               />
             </div>
-            <span className={cn("font-bold text-xl transition-opacity duration-200", 
-              collapsed ? "opacity-0" : "opacity-100"
-            )}>striana</span>
+            <span className={cn(
+              "font-bold text-xl ml-2",
+              collapsed ? "hidden" : "block"
+            )}>movomint</span>
           </Link>
         </div>
         

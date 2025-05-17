@@ -29,11 +29,11 @@ interface ToolCard {
 // All available tools (same as in the all-tools page)
 const allTools: ToolCard[] = [
   {
-    id: 'truck-loading-helper',
-    name: 'Truck Loading Helper',
+    id: 'load-plan-pro',
+    name: 'Load Plan Pro',
     description: 'Manage customers, orders, and optimize truck loading for your delivery operations',
     icon: <Truck className="h-10 w-10 text-primary" />,
-    path: '/dashboard/tools/truck-loading-helper',
+    path: '/dashboard/tools/load-plan-pro',
     tags: ['logistics', 'delivery', 'optimization'],
     isPopular: true
   },
@@ -48,8 +48,8 @@ export default function MyToolsPage() {
   // Simulate loading saved tools from local storage or an API
   useEffect(() => {
     // In a real app, you would fetch this from your backend
-    // For demo purposes, we'll just use the Truck Loading Helper as a default saved tool
-    setSavedTools(['truck-loading-helper']);
+    // For demo purposes, we'll just use the Load Plan Pro as a default saved tool
+    setSavedTools(['load-plan-pro']);
   }, []);
 
   // Filter tools based on search query and whether they're saved

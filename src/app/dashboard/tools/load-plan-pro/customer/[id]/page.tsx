@@ -404,7 +404,7 @@ export default function CustomerDetailPage() {
           <p className="text-gray-600 dark:text-gray-300 mb-4">
             The customer you're looking for doesn't exist or has been removed.
           </p>
-          <Link href="/dashboard/tools/truck-loading-helper">
+          <Link href="/dashboard/tools/load-plan-pro">
             <Button>
               Return to Truck Loading Helper
             </Button>
@@ -521,7 +521,7 @@ export default function CustomerDetailPage() {
                           />
                         </TableCell>
                         <TableCell>
-                          <Link href={`/dashboard/tools/truck-loading-helper/loading-plan/${order.id}`}>
+                          <Link href={`/dashboard/tools/load-plan-pro/loading-plan/${order.id}`}>
                             <Button 
                               variant="outline" 
                               size="sm" 

@@ -27,11 +27,11 @@ interface ToolCard {
 // List of all available tools
 const allTools: ToolCard[] = [
   {
-    id: 'truck-loading-helper',
-    name: 'Truck Loading Helper',
+    id: 'load-plan-pro',
+    name: 'Load Plan Pro',
     description: 'Manage customers, orders, and optimize truck loading for your delivery operations',
     icon: <Truck className="h-10 w-10 text-primary" />,
-    path: '/dashboard/tools/truck-loading-helper',
+    path: '/dashboard/tools/load-plan-pro',
     tags: ['logistics', 'delivery', 'optimization'],
     isPopular: true
   },

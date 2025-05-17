@@ -1,5 +1,5 @@
 /**
- * API client specifically for Truck Loading Helper
+ * API client specifically for Load Plan Pro
  */
 import { authGet, authPost, authPut, API_BASE_URL } from '../utils/api';
 

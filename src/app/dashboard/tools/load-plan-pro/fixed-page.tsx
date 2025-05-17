@@ -71,7 +71,7 @@ const sampleOrder: Order = {
   priority: 'medium'
 };
 
-export default function TruckLoadingHelper() {
+export default function LoadPlanPro() {
   const [activeTab, setActiveTab] = useState('customers');
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -163,7 +163,7 @@ export default function TruckLoadingHelper() {
     <div className="container mx-auto py-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Truck Loading Helper</h1>
+          <h1 className="text-3xl font-bold">Load Plan Pro</h1>
           <p className="text-gray-600 dark:text-gray-300 mt-1">
             Manage customers and their orders for efficient truck loading
           </p>
@@ -219,7 +219,7 @@ export default function TruckLoadingHelper() {
             <div className="p-4 bg-blue-100 dark:bg-blue-900 rounded-full mb-4">
               <Mail className="h-10 w-10 text-blue-700 dark:text-blue-300" />
             </div>
-            <h2 className="text-2xl font-bold mb-3">Welcome to Truck Loading Helper!</h2>
+            <h2 className="text-2xl font-bold mb-3">Welcome to Load Plan Pro!</h2>
             <div className="max-w-xl">
               <h3 className="text-lg font-semibold mb-2">Add Your First Customer by Email</h3>
               <p className="text-gray-700 dark:text-gray-300 mb-6">
@@ -358,7 +358,7 @@ export default function TruckLoadingHelper() {
                 </TableHeader>
                 <TableBody>
                   {filteredCustomers.map((customer) => (
-                    <TableRow key={customer.id} className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50" onClick={() => window.location.href = `/dashboard/tools/truck-loading-helper/customer/${customer.id}`}>
+                    <TableRow key={customer.id} className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50" onClick={() => window.location.href = `/dashboard/tools/load-plan-pro/customer/${customer.id}`}>
                       <TableCell className="font-medium">{customer.name}</TableCell>
                       <TableCell>{customer.location}</TableCell>
                       <TableCell>{customer.ordersCount}</TableCell>
@@ -374,7 +374,7 @@ export default function TruckLoadingHelper() {
                         )}
                       </TableCell>
                       <TableCell className="text-right">
-                        <Link href={`/dashboard/tools/truck-loading-helper/customer/${customer.id}`}>
+                        <Link href={`/dashboard/tools/load-plan-pro/customer/${customer.id}`}>
                           <Button variant="ghost" size="sm" onClick={(e) => e.stopPropagation()}>
                             View
                             <ArrowRight className="ml-1 h-4 w-4" />

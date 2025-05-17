@@ -15,10 +15,12 @@ export interface SignupData {
   email: string;
   password: string;
   company_name?: string;
+  company_code?: string;
   company_type?: string;
   phone?: string;
   job_title?: string;
   timezone?: string;
+  registration_type: 'business' | 'member';
 }
 
 export interface AuthResponse {

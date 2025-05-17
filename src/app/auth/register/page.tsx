@@ -12,30 +12,29 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Truck } from 'lucide-react';
 import { signup, saveToken } from '@/lib/services/auth';
 import { useAuth } from '@/lib/context/AuthContext';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import Image from 'next/image';
 
 export default function RegisterPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const { setAuthenticated } = useAuth();
+  const [registrationType, setRegistrationType] = useState<'business' | 'member'>('business');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
     company_name: '',
+    company_email: '',
+    company_code: '',
     phone: '',
-    job_title: '',
-    timezone: 'America/New_York',
   });
   const [error, setError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setFormData(prev => ({ ...prev, [id]: value }));
-  };
-
-  const handleTimezoneChange = (value: string) => {
-    setFormData(prev => ({ ...prev, timezone: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -51,15 +50,15 @@ export default function RegisterPage() {
     }
     
     try {
-      // Call signup API
+      // Call signup API with registration type
       const response = await signup({
         name: formData.name,
         email: formData.email,
         password: formData.password,
-        company_name: formData.company_name,
+        company_name: registrationType === 'business' ? formData.company_name : undefined,
+        company_code: registrationType === 'member' ? formData.company_code : undefined,
         phone: formData.phone,
-        job_title: formData.job_title,
-        timezone: formData.timezone
+        registration_type: registrationType
       });
       
       // Save the token
@@ -81,18 +80,60 @@ export default function RegisterPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 px-4 py-8">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
-          <div className="flex justify-center mb-4">
+          <div className="flex flex-col items-center mb-4">
             <div className="bg-primary/10 p-3 rounded-full">
-              <Truck className="h-8 w-8 text-primary" />
+              <Image src="/movomintlogo.png" alt="Movomint Logo" width={48} height={48} />
             </div>
+            <span className="mt-2 text-2xl font-bold">movomint</span>
           </div>
-          <CardTitle className="text-2xl font-bold">Create an Account</CardTitle>
           <CardDescription>
-            Join the ViaTools platform to access logistics tools
+            Join the movomint platform to access logistics tools
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
+            <Tabs defaultValue="business" className="w-full" onValueChange={(value) => setRegistrationType(value as 'business' | 'member')}>
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="business">Create Business Account</TabsTrigger>
+                <TabsTrigger value="member">Join Existing Business</TabsTrigger>
+              </TabsList>
+              <TabsContent value="business" className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="company_name">Company Name</Label>
+                  <Input 
+                    id="company_name" 
+                    placeholder="Your Company Inc." 
+                    value={formData.company_name}
+                    onChange={handleChange}
+                    required={registrationType === 'business'}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="company_email">Business Email</Label>
+                  <Input 
+                    id="company_email" 
+                    type="email"
+                    placeholder="business@company.com" 
+                    value={formData.company_email}
+                    onChange={handleChange}
+                    required={registrationType === 'business'}
+                  />
+                </div>
+              </TabsContent>
+              <TabsContent value="member" className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="company_code">Company Code</Label>
+                  <Input 
+                    id="company_code" 
+                    placeholder="Enter your company's invitation code" 
+                    value={formData.company_code}
+                    onChange={handleChange}
+                    required={registrationType === 'member'}
+                  />
+                </div>
+              </TabsContent>
+            </Tabs>
+
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
               <Input 
@@ -141,16 +182,6 @@ export default function RegisterPage() {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="company_name">Company Name</Label>
-              <Input 
-                id="company_name" 
-                placeholder="Your Company Inc." 
-                value={formData.company_name}
-                onChange={handleChange}
-              />
-            </div>
-            
-            <div className="space-y-2">
               <Label htmlFor="phone">Phone Number</Label>
               <Input 
                 id="phone" 
@@ -158,35 +189,6 @@ export default function RegisterPage() {
                 value={formData.phone}
                 onChange={handleChange}
               />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="job_title">Job Title</Label>
-              <Input 
-                id="job_title" 
-                placeholder="Logistics Manager" 
-                value={formData.job_title}
-                onChange={handleChange}
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="timezone">Timezone</Label>
-              <Select 
-                value={formData.timezone} 
-                onValueChange={handleTimezoneChange}
-              >
-                <SelectTrigger id="timezone">
-                  <SelectValue placeholder="Select timezone" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="America/New_York">Eastern Time (ET)</SelectItem>
-                  <SelectItem value="America/Chicago">Central Time (CT)</SelectItem>
-                  <SelectItem value="America/Denver">Mountain Time (MT)</SelectItem>
-                  <SelectItem value="America/Los_Angeles">Pacific Time (PT)</SelectItem>
-                  <SelectItem value="Europe/London">London (GMT)</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
             
             <div className="flex items-center space-x-2 mb-4">
@@ -215,7 +217,7 @@ export default function RegisterPage() {
               </div>
             )}
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Creating account...' : 'Create Account'}
+              {isLoading ? 'Creating account...' : registrationType === 'business' ? 'Create Business Account' : 'Join Business Account'}
             </Button>
             <div className="text-center text-sm">
               Already have an account?{' '}

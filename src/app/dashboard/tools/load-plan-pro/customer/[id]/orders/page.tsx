@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { getCustomerById, getCustomerOrders, createTestOrder, Customer, Order } from '@/lib/services/truck-loading-api';
+import { getCustomerById, getCustomerOrders, createTestOrder, Customer, Order } from '@/lib/services/load-plan-pro-api';
 import { toast } from 'sonner';
 
 export default function CustomerOrdersPage() {
@@ -64,7 +64,7 @@ export default function CustomerOrdersPage() {
 
   const handleOrderClick = (orderId: string) => {
     const customerId = params.id as string;
-    router.push(`/dashboard/tools/truck-loading-helper/loading-plan/${orderId}?customerId=${customerId}`);
+    router.push(`/dashboard/tools/load-plan-pro/loading-plan/${orderId}?customerId=${customerId}`);
   };
 
   // Filter orders based on search query and status
