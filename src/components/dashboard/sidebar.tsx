@@ -138,7 +138,10 @@ export default function Sidebar() {
             <span className={cn(
               "font-bold text-xl ml-2",
               collapsed ? "hidden" : "block"
-            )}>movomint</span>
+            )}>
+              <span>movo</span>
+              <span className="text-[#00827B]">mint</span>
+            </span>
           </Link>
         </div>
         

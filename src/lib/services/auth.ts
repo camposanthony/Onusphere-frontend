@@ -15,6 +15,7 @@ export interface SignupData {
   email: string;
   password: string;
   company_name?: string;
+  company_email?: string;
   company_code?: string;
   company_type?: string;
   phone?: string;
@@ -52,12 +53,33 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
  * Register a new user
  */
 export const signup = async (data: SignupData): Promise<AuthResponse> => {
-  const response = await fetch(`${API_URL}/auth/signup`, {
+  const endpoint = data.registration_type === 'business' 
+    ? '/auth/create-business-account'
+    : '/auth/add-new-member';
+
+  const payload = data.registration_type === 'business'
+    ? {
+        business_name: data.company_name,
+        business_email: data.company_email,
+        full_name: data.name,
+        email: data.email,
+        password: data.password,
+        phone: data.phone
+      }
+    : {
+        company_code: data.company_code,
+        full_name: data.name,
+        email: data.email,
+        password: data.password,
+        phone: data.phone
+      };
+
+  const response = await fetch(`${API_URL}${endpoint}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(payload),
   });
 
   if (!response.ok) {

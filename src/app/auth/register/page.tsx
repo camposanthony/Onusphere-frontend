@@ -48,6 +48,17 @@ export default function RegisterPage() {
       setIsLoading(false);
       return;
     }
+
+    // Validate email domains match for business registration
+    if (registrationType === 'business') {
+      const userEmailDomain = formData.email.split('@')[1];
+      const companyEmailDomain = formData.company_email.split('@')[1];
+      if (userEmailDomain !== companyEmailDomain) {
+        setError("Your email domain must match your company email domain");
+        setIsLoading(false);
+        return;
+      }
+    }
     
     try {
       // Call signup API with registration type
@@ -56,6 +67,7 @@ export default function RegisterPage() {
         email: formData.email,
         password: formData.password,
         company_name: registrationType === 'business' ? formData.company_name : undefined,
+        company_email: registrationType === 'business' ? formData.company_email : undefined,
         company_code: registrationType === 'member' ? formData.company_code : undefined,
         phone: formData.phone,
         registration_type: registrationType

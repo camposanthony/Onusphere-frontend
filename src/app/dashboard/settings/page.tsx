@@ -19,24 +19,14 @@ import {
   User,
   Loader2,
 } from 'lucide-react';
-import { useUser } from '@/lib/hooks/useUser';
 import { useState, useEffect } from 'react';
-import { authPut } from '@/lib/utils/api';
-
-// Extend the User interface to include additional fields
-interface ExtendedUser {
-  id: string;
-  name: string;
-  email: string;
-  company_name?: string;
-  company_type?: string;
-  phone?: string;
-  job_title?: string;
-  timezone?: string;
-}
+import { getUserSettings, getCompanySettings, updateUserSettings, updateCompanySettings, UserSettings, CompanySettings } from '@/lib/services/users';
 
 export default function SettingsPage() {
-  const { user, loading, error } = useUser() as { user: ExtendedUser | null, loading: boolean, error: string | null };
+  const [userSettings, setUserSettings] = useState<UserSettings | null>(null);
+  const [companySettings, setCompanySettings] = useState<CompanySettings | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -46,37 +36,44 @@ export default function SettingsPage() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    company_name: '',
-    company_type: '',
     phone: '',
-    job_title: '',
-    timezone: 'America/New_York',
-    // Company address fields
-    company_address: '',
-    company_city: '',
-    company_state: '',
-    company_zip: '',
-    company_country: 'US'
+    company_name: '',
+    company_email: '',
+    company_code: '',
   });
   
-  // Update form data when user data is loaded
+  // Load user and company data
   useEffect(() => {
-    if (user) {
-      setFormData(prev => ({
-        ...prev,
-        name: user.name || '',
-        email: user.email || '',
-        company_name: user.company_name || '',
-        company_type: user.company_type || '',
-        phone: user.phone || '',
-        job_title: user.job_title || '',
-        timezone: user.timezone || 'America/New_York'
-      }));
-    }
-  }, [user]);
+    const fetchData = async () => {
+      try {
+        const [userData, companyData] = await Promise.all([
+          getUserSettings(),
+          getCompanySettings()
+        ]);
+        
+        setUserSettings(userData);
+        setCompanySettings(companyData);
+        
+        setFormData({
+          name: userData.name,
+          email: userData.email,
+          phone: userData.phone || '',
+          company_name: companyData.name,
+          company_email: companyData.email,
+          company_code: companyData.company_code,
+        });
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load settings');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
   
   // Handle input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setFormData(prev => ({ ...prev, [id]: value }));
   };
@@ -89,32 +86,24 @@ export default function SettingsPage() {
     setErrorMessage('');
     
     try {
-      // Create payload based on form type
-      const payload = formType === 'account' 
-        ? {
-            name: formData.name,
-            phone: formData.phone,
-            job_title: formData.job_title,
-            timezone: formData.timezone
-          }
-        : formType === 'company'
-        ? {
-            company_name: formData.company_name,
-            company_type: formData.company_type,
-            company_address: formData.company_address,
-            company_city: formData.company_city,
-            company_state: formData.company_state,
-            company_zip: formData.company_zip,
-            company_country: formData.company_country
-          }
-        : formData;
+      if (formType === 'account') {
+        const updated = await updateUserSettings({
+          name: formData.name,
+          phone: formData.phone,
+        });
+        setUserSettings(updated);
+      } else if (formType === 'company') {
+        const updated = await updateCompanySettings({
+          name: formData.company_name,
+          email: formData.company_email,
+        });
+        setCompanySettings(updated);
+      }
       
-      // Call the backend API to update user profile
-      await authPut(`/me/update/${formType}`, payload);
       setSuccessMessage(`${formType.charAt(0).toUpperCase() + formType.slice(1)} settings updated successfully`);
-    } catch (error) {
-      console.error(`Error updating ${formType} settings:`, error);
-      setErrorMessage(error instanceof Error ? error.message : `Failed to update ${formType} settings`);
+    } catch (err) {
+      console.error(`Error updating ${formType} settings:`, err);
+      setErrorMessage(err instanceof Error ? err.message : `Failed to update ${formType} settings`);
     } finally {
       setSaving(false);
     }
@@ -122,10 +111,26 @@ export default function SettingsPage() {
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
-    // Reset messages when switching tabs
     setSuccessMessage('');
     setErrorMessage('');
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <span className="ml-2">Loading settings...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-4 text-red-500 bg-red-50 border border-red-200 rounded-md">
+        {error}
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -170,96 +175,60 @@ export default function SettingsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {loading ? (
-                <div className="flex justify-center items-center py-8">
-                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                  <span className="ml-2">Loading user data...</span>
-                </div>
-              ) : error ? (
-                <div className="p-4 text-red-500 bg-red-50 border border-red-200 rounded-md">
-                  {error}
-                </div>
-              ) : (
-                <form onSubmit={(e) => handleSubmit(e, 'account')}>
-                  {successMessage && (
-                    <div className="p-4 mb-4 text-green-700 bg-green-50 border border-green-200 rounded-md">
-                      {successMessage}
-                    </div>
-                  )}
-                  {errorMessage && (
-                    <div className="p-4 mb-4 text-red-500 bg-red-50 border border-red-200 rounded-md">
-                      {errorMessage}
-                    </div>
-                  )}
-                  
-                  <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
-                    <div className="space-y-2 md:col-span-2">
-                      <Label htmlFor="name">Full Name</Label>
-                      <Input 
-                        id="name" 
-                        value={formData.name} 
-                        onChange={handleChange} 
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input 
-                        id="email" 
-                        value={formData.email} 
-                        onChange={handleChange} 
-                        type="email" 
-                        disabled 
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="phone">Phone number</Label>
-                      <Input 
-                        id="phone" 
-                        value={formData.phone} 
-                        onChange={handleChange} 
-                      />
-                    </div>
-                    <div className="space-y-2 md:col-span-2">
-                      <Label htmlFor="job_title">Job title</Label>
-                      <Input 
-                        id="job_title" 
-                        value={formData.job_title} 
-                        onChange={handleChange} 
-                      />
-                    </div>
-                    <div className="space-y-2 md:col-span-2">
-                      <Label htmlFor="timezone">Timezone</Label>
-                      <select
-                        id="timezone"
-                        className="flex h-10 w-full rounded-md border border-gray-200 bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                        value={formData.timezone}
-                        onChange={handleChange}
-                      >
-                        <option value="America/New_York">Eastern Time (US & Canada)</option>
-                        <option value="America/Chicago">Central Time (US & Canada)</option>
-                        <option value="America/Denver">Mountain Time (US & Canada)</option>
-                        <option value="America/Los_Angeles">Pacific Time (US & Canada)</option>
-                        <option value="UTC">UTC</option>
-                      </select>
-                    </div>
+              <form onSubmit={(e) => handleSubmit(e, 'account')}>
+                {successMessage && (
+                  <div className="p-4 mb-4 text-green-700 bg-green-50 border border-green-200 rounded-md">
+                    {successMessage}
                   </div>
-                </form>
-              )}
+                )}
+                {errorMessage && (
+                  <div className="p-4 mb-4 text-red-500 bg-red-50 border border-red-200 rounded-md">
+                    {errorMessage}
+                  </div>
+                )}
+                
+                <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+                  <div className="space-y-2 md:col-span-2">
+                    <Label htmlFor="name">Full Name</Label>
+                    <Input 
+                      id="name" 
+                      value={formData.name} 
+                      onChange={handleChange} 
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input 
+                      id="email" 
+                      value={formData.email} 
+                      type="email" 
+                      disabled 
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone number</Label>
+                    <Input 
+                      id="phone" 
+                      value={formData.phone} 
+                      onChange={handleChange} 
+                    />
+                  </div>
+                </div>
+                
+                <div className="flex justify-end pt-4">
+                  <Button type="submit" disabled={saving}>
+                    {saving ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      'Save Changes'
+                    )}
+                  </Button>
+                </div>
+              </form>
             </CardContent>
-            <CardFooter className="flex justify-end">
-              <Button 
-                type="submit"
-                onClick={(e) => handleSubmit(e, 'account')}
-                disabled={loading || saving}
-              >
-                {saving ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving...
-                  </>
-                ) : 'Save Changes'}
-              </Button>
-            </CardFooter>
           </Card>
         </TabsContent>
         
@@ -269,137 +238,64 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle>Company Information</CardTitle>
               <CardDescription>
-                Update your company details and settings.
+                Update your company details and preferences.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {loading ? (
-                <div className="flex justify-center items-center py-8">
-                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                  <span className="ml-2">Loading company data...</span>
-                </div>
-              ) : error ? (
-                <div className="p-4 text-red-500 bg-red-50 border border-red-200 rounded-md">
-                  {error}
-                </div>
-              ) : (
-                <form onSubmit={(e) => handleSubmit(e, 'company')}>
-                  {successMessage && (
-                    <div className="p-4 mb-4 text-green-700 bg-green-50 border border-green-200 rounded-md">
-                      {successMessage}
-                    </div>
-                  )}
-                  {errorMessage && (
-                    <div className="p-4 mb-4 text-red-500 bg-red-50 border border-red-200 rounded-md">
-                      {errorMessage}
-                    </div>
-                  )}
-                  
-                  <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
-                    <div className="space-y-2 md:col-span-2">
-                      <Label htmlFor="company_name">Company name</Label>
-                      <Input 
-                        id="company_name" 
-                        value={formData.company_name || ''} 
-                        onChange={handleChange} 
-                      />
-                    </div>
-                    <div className="space-y-2 md:col-span-2">
-                      <Label htmlFor="company_type">Company type</Label>
-                      <select
-                        id="company_type"
-                        className="flex h-10 w-full rounded-md border border-gray-200 bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                        value={formData.company_type || ''}
-                        onChange={handleChange}
-                      >
-                        <option value="">Select a company type</option>
-                        <option value="carrier">Carrier</option>
-                        <option value="3pl">3PL Provider</option>
-                        <option value="shipper">Shipper</option>
-                        <option value="warehouse">Warehouse Operator</option>
-                        <option value="other">Other</option>
-                      </select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="business_email">Business email</Label>
-                      <Input 
-                        id="business_email" 
-                        defaultValue={user?.email || ''} 
-                        type="email" 
-                        disabled 
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="business_phone">Business phone</Label>
-                      <Input 
-                        id="business_phone" 
-                        value={formData.phone || ''} 
-                        onChange={handleChange} 
-                      />
-                    </div>
-                    
-                    <div className="space-y-2 md:col-span-2">
-                      <Label htmlFor="company_address">Address</Label>
-                      <Input 
-                        id="company_address" 
-                        value={formData.company_address || ''}
-                        onChange={handleChange}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="company_city">City</Label>
-                      <Input 
-                        id="company_city" 
-                        value={formData.company_city || ''}
-                        onChange={handleChange}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="company_state">State/Province</Label>
-                      <Input 
-                        id="company_state" 
-                        value={formData.company_state || ''}
-                        onChange={handleChange}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="company_zip">ZIP/Postal Code</Label>
-                      <Input 
-                        id="company_zip" 
-                        value={formData.company_zip || ''}
-                        onChange={handleChange}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="company_country">Country</Label>
-                      <select
-                        id="company_country"
-                        className="flex h-10 w-full rounded-md border border-gray-200 bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                        value={formData.company_country || 'US'}
-                        onChange={handleChange}
-                      >
-                        <option value="US">United States</option>
-                        <option value="CA">Canada</option>
-                        <option value="UK">United Kingdom</option>
-                        <option value="AU">Australia</option>
-                      </select>
-                    </div>
+              <form onSubmit={(e) => handleSubmit(e, 'company')}>
+                {successMessage && (
+                  <div className="p-4 mb-4 text-green-700 bg-green-50 border border-green-200 rounded-md">
+                    {successMessage}
                   </div>
-                </form>
-              )}
+                )}
+                {errorMessage && (
+                  <div className="p-4 mb-4 text-red-500 bg-red-50 border border-red-200 rounded-md">
+                    {errorMessage}
+                  </div>
+                )}
+                
+                <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+                  <div className="space-y-2 md:col-span-2">
+                    <Label htmlFor="company_name">Company Name</Label>
+                    <Input 
+                      id="company_name" 
+                      value={formData.company_name} 
+                      onChange={handleChange} 
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="company_email">Company Email</Label>
+                    <Input 
+                      id="company_email" 
+                      value={formData.company_email} 
+                      onChange={handleChange} 
+                      type="email"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="company_code">Company Code</Label>
+                    <Input 
+                      id="company_code" 
+                      value={formData.company_code} 
+                      disabled 
+                    />
+                  </div>
+                </div>
+                
+                <div className="flex justify-end pt-4">
+                  <Button type="submit" disabled={saving}>
+                    {saving ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      'Save Changes'
+                    )}
+                  </Button>
+                </div>
+              </form>
             </CardContent>
-            <CardFooter className="flex justify-end">
-              <Button 
-                onClick={(e) => handleSubmit(e, 'company')}
-                disabled={loading || saving}
-              >
-                {saving ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving...
-                  </>
-                ) : 'Save Changes'}
-              </Button>
-            </CardFooter>
           </Card>
         </TabsContent>
         

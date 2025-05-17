@@ -1,8 +1,11 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { MoreHorizontal, Plus, Users } from 'lucide-react';
+import { MoreHorizontal, Plus, Users, Loader2, Mail } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,62 +14,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-
-// Mock data for team members
-const teamMembers = [
-  {
-    id: 1,
-    name: 'John Smith',
-    email: 'john.smith@company.com',
-    title: 'Admin',
-    avatarUrl: '/placeholder-avatar.jpg',
-    initials: 'JS',
-    lastActive: '5 minutes ago',
-  },
-  {
-    id: 2,
-    name: 'Sarah Johnson',
-    email: 'sarah.johnson@company.com',
-    title: 'Manager',
-    avatarUrl: '/placeholder-avatar.jpg',
-    initials: 'SJ',
-    lastActive: '1 hour ago',
-  },
-  {
-    id: 3,
-    name: 'Michael Chen',
-    email: 'michael.chen@company.com',
-    title: 'Team Member',
-    avatarUrl: '/placeholder-avatar.jpg',
-    initials: 'MC',
-    lastActive: '3 hours ago',
-  },
-  {
-    id: 4,
-    name: 'Jessica Taylor',
-    email: 'jessica.taylor@company.com',
-    title: 'Team Member',
-    avatarUrl: '/placeholder-avatar.jpg',
-    initials: 'JT',
-    lastActive: 'Yesterday',
-  },
-  {
-    id: 5,
-    name: 'David Rodriguez',
-    email: 'david.rodriguez@company.com',
-    title: 'Manager',
-    avatarUrl: '/placeholder-avatar.jpg',
-    initials: 'DR',
-    lastActive: '2 days ago',
-  },
-];
+import { getMembers, Member } from '@/lib/services/users';
 
 // Badge color based on role
 const getRoleBadgeColor = (role: string) => {
   switch (role) {
-    case 'Admin':
+    case 'admin':
       return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
-    case 'Manager':
+    case 'manager':
       return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
     default:
       return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
@@ -74,6 +29,25 @@ const getRoleBadgeColor = (role: string) => {
 };
 
 export default function UsersPage() {
+  const [members, setMembers] = useState<Member[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchMembers = async () => {
+      try {
+        const data = await getMembers();
+        setMembers(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch members');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMembers();
+  }, []);
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -102,57 +76,73 @@ export default function UsersPage() {
               <div className="bg-primary/10 p-2 rounded-full">
                 <Users className="h-5 w-5 text-primary" />
               </div>
-              <span className="text-lg font-semibold">{teamMembers.length}</span>
+              <span className="text-lg font-semibold">{members.length}</span>
             </div>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md border">
-            <div className="grid grid-cols-11 gap-4 p-4 bg-muted/50 font-medium text-sm">
-              <div className="col-span-4">Name</div>
-              <div className="col-span-3">Email</div>
-              <div className="col-span-2">Title</div>
-              <div className="col-span-1">Last Active</div>
-              <div className="col-span-1"></div>
+          {loading ? (
+            <div className="flex justify-center items-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <span className="ml-2">Loading members...</span>
             </div>
-            <div className="divide-y">
-              {teamMembers.map((member) => (
-                <div key={member.id} className="grid grid-cols-11 gap-4 p-4 items-center">
-                  <div className="col-span-4 flex items-center gap-3">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={member.avatarUrl} alt={member.name} />
-                      <AvatarFallback>{member.initials}</AvatarFallback>
-                    </Avatar>
-                    <span className="font-medium">{member.name}</span>
-                  </div>
-                  <div className="col-span-3 text-sm text-muted-foreground">{member.email}</div>
-                  <div className="col-span-2 text-sm">{member.title}</div>
-                  <div className="col-span-1 text-sm text-muted-foreground">{member.lastActive}</div>
-                  <div className="col-span-1 text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Open menu</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>Edit details</DropdownMenuItem>
-                        <DropdownMenuItem>Change role</DropdownMenuItem>
-                        <DropdownMenuItem>Reset password</DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-red-600">
-                          Remove user
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                </div>
-              ))}
+          ) : error ? (
+            <div className="p-4 text-red-500 bg-red-50 border border-red-200 rounded-md">
+              {error}
             </div>
-          </div>
+          ) : (
+            <div className="rounded-md border">
+              <div className="grid grid-cols-11 gap-4 p-4 bg-muted/50 font-medium text-sm">
+                <div className="col-span-4">Name</div>
+                <div className="col-span-3">Email</div>
+                <div className="col-span-2">Role</div>
+                <div className="col-span-1">Joined</div>
+                <div className="col-span-1"></div>
+              </div>
+              <div className="divide-y">
+                {members.map((member) => (
+                  <div key={member.id} className="grid grid-cols-11 gap-4 p-4 items-center">
+                    <div className="col-span-4 flex items-center gap-3">
+                      <Avatar className="h-8 w-8">
+                        <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                      </Avatar>
+                      <span className="font-medium">{member.name}</span>
+                    </div>
+                    <div className="col-span-3 text-sm text-muted-foreground">{member.email}</div>
+                    <div className="col-span-2">
+                      <Badge className={getRoleBadgeColor(member.role)}>
+                        {member.role.charAt(0).toUpperCase() + member.role.slice(1)}
+                      </Badge>
+                    </div>
+                    <div className="col-span-1 text-sm text-muted-foreground">
+                      {new Date(member.date_created).toLocaleDateString()}
+                    </div>
+                    <div className="col-span-1 text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="h-4 w-4" />
+                            <span className="sr-only">Open menu</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem>Edit details</DropdownMenuItem>
+                          <DropdownMenuItem>Change role</DropdownMenuItem>
+                          <DropdownMenuItem>Reset password</DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className="text-red-600">
+                            Remove user
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -164,9 +154,15 @@ export default function UsersPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md border border-dashed bg-muted/50 p-8 text-center">
-            <p className="text-muted-foreground mb-4">No pending invitations</p>
-            <Button variant="outline" className="flex items-center gap-1">
+          <div className="flex flex-col items-center justify-center py-12 bg-muted/50 rounded-md border border-dashed">
+            <div className="mb-2 text-muted-foreground flex flex-col items-center">
+              <Mail className="h-10 w-10 mb-2 text-primary" />
+              <span className="text-lg font-semibold">No pending invitations</span>
+              <span className="text-sm text-muted-foreground mt-1">
+                Invite your team to get started!
+              </span>
+            </div>
+            <Button variant="default" className="mt-4 flex items-center gap-1">
               <Plus className="h-4 w-4" />
               <span>Send New Invitation</span>
             </Button>
