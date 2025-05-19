@@ -11,7 +11,7 @@ import { Toaster } from 'sonner';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'striana - Advanced Tools for Logistics',
+  title: 'movomint - Advanced Tools for Logistics',
   description: 'A comprehensive suite of tools for logistics and supply chain optimization',
 };
 
