@@ -1,10 +1,10 @@
 /**
  * API utility functions for making authenticated requests
  */
-import { getToken } from '../services/auth';
+import { getToken } from "../services/auth";
 
 // Base API URL - update this with your backend URL
-export const API_BASE_URL = 'http://localhost:8000';
+export const API_BASE_URL = "http://localhost:8000";
 
 /**
  * Create headers with authentication token
@@ -12,11 +12,11 @@ export const API_BASE_URL = 'http://localhost:8000';
 export const createAuthHeaders = () => {
   const token = getToken();
   const headers = new Headers({
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   });
 
   if (token) {
-    headers.append('Authorization', `Bearer ${token}`);
+    headers.append("Authorization", `Bearer ${token}`);
   }
 
   return headers;
@@ -28,7 +28,7 @@ export const createAuthHeaders = () => {
 export async function authGet<T>(endpoint: string): Promise<T> {
   const headers = createAuthHeaders();
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    method: 'GET',
+    method: "GET",
     headers,
   });
 
@@ -43,10 +43,13 @@ export async function authGet<T>(endpoint: string): Promise<T> {
 /**
  * Make an authenticated POST request
  */
-export async function authPost<T>(endpoint: string, data: any): Promise<T> {
+export async function authPost<T, U = Record<string, unknown>>(
+  endpoint: string,
+  data: U,
+): Promise<T> {
   const headers = createAuthHeaders();
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    method: 'POST',
+    method: "POST",
     headers,
     body: JSON.stringify(data),
   });
@@ -62,10 +65,13 @@ export async function authPost<T>(endpoint: string, data: any): Promise<T> {
 /**
  * Make an authenticated PUT request
  */
-export async function authPut<T>(endpoint: string, data: any): Promise<T> {
+export async function authPut<T, U = Record<string, unknown>>(
+  endpoint: string,
+  data: U,
+): Promise<T> {
   const headers = createAuthHeaders();
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    method: 'PUT',
+    method: "PUT",
     headers,
     body: JSON.stringify(data),
   });
@@ -84,7 +90,7 @@ export async function authPut<T>(endpoint: string, data: any): Promise<T> {
 export async function authDelete<T>(endpoint: string): Promise<T> {
   const headers = createAuthHeaders();
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    method: 'DELETE',
+    method: "DELETE",
     headers,
   });
 

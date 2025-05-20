@@ -1,47 +1,56 @@
 // src/app/(auth)/login/page.tsx
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Truck } from 'lucide-react';
-import { login, saveToken } from '@/lib/services/auth';
-import { useAuth } from '@/lib/context/AuthContext';
-import Image from 'next/image';
+import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { login, saveToken } from "@/lib/services/auth";
+import { useAuth } from "@/lib/context/AuthContext";
+import Image from "next/image";
 
 export default function LoginPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const { setAuthenticated } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
-    
+    setError("");
+
     try {
       // Call backend login API
       const response = await login({ email, password });
-      
+
       // Save the token
       saveToken(response.access_token);
-      
+
       // Update auth state
       setAuthenticated(true);
-      
+
       // On success, redirect to the main dashboard
-      router.push('/dashboard');
+      router.push("/dashboard");
     } catch (error) {
       // Handle errors
       console.error(error);
-      setError(error instanceof Error ? error.message : 'Login failed. Please try again.');
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Login failed. Please try again.",
+      );
       setIsLoading(false);
     }
   };
@@ -52,51 +61,54 @@ export default function LoginPage() {
         <CardHeader className="space-y-1 text-center">
           <div className="flex flex-col items-center mb-4">
             <div className="bg-primary/10 p-3 rounded-full">
-              <Image src="/movomintlogo.png" alt="Movomint Logo" width={48} height={48} />
+              <Image
+                src="/movomintlogo.png"
+                alt="Movomint Logo"
+                width={48}
+                height={48}
+              />
             </div>
             <span className="mt-2 text-2xl font-bold">movomint</span>
           </div>
-          <CardDescription>
-            Sign in to your account to continue
-          </CardDescription>
+          <CardDescription>Sign in to your account to continue</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input 
-                id="email" 
-                type="email" 
-                placeholder="your@email.com" 
+              <Input
+                id="email"
+                type="email"
+                placeholder="your@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required 
+                required
               />
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Password</Label>
-                <Link 
-                  href="/forgot-password" 
+                <Link
+                  href="/forgot-password"
                   className="text-sm text-primary hover:underline"
                 >
                   Forgot password?
                 </Link>
               </div>
-              <Input 
-                id="password" 
-                type="password" 
-                placeholder="••••••••" 
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required 
+                required
               />
             </div>
             <div className="flex items-center space-x-2 mb-4">
-              <input 
-                type="checkbox" 
-                id="remember" 
-                className="rounded border-gray-300 text-primary focus:ring-primary" 
+              <input
+                type="checkbox"
+                id="remember"
+                className="rounded border-gray-300 text-primary focus:ring-primary"
               />
               <Label htmlFor="remember" className="text-sm cursor-pointer">
                 Remember me for 30 days
@@ -110,12 +122,12 @@ export default function LoginPage() {
               </div>
             )}
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Signing in...' : 'Sign In'}
+              {isLoading ? "Signing in..." : "Sign In"}
             </Button>
             <div className="text-center text-sm">
-              Don&apos;t have an account?{' '}
-              <Link 
-                href="/auth/register" 
+              Don&apos;t have an account?{" "}
+              <Link
+                href="/auth/register"
                 className="text-primary hover:underline"
               >
                 Sign up

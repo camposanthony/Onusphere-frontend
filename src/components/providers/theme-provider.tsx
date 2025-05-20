@@ -1,7 +1,7 @@
 // src/components/theme-provider.tsx
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect } from "react";
 
 type Theme = "light";
 

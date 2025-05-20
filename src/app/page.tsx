@@ -2,30 +2,22 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useEffect, useRef, useLayoutEffect } from "react";
-import { 
-  ArrowRight, 
-  BarChart3, 
-  Truck, 
-  Box, 
-  Users, 
-  Shield, 
-  Clock, 
-  ChevronRight, 
-  Check, 
-  Star, 
-  Twitter, 
-  Linkedin, 
-  Facebook, 
+import { useState, useEffect } from "react";
+import {
+  ArrowRight,
+  Truck,
+  Users,
+  ChevronRight,
+  Twitter,
+  Linkedin,
+  Facebook,
   Menu,
   Zap,
   LineChart,
-  Globe,
   Settings,
-  Code
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import LottieAnimation from "@/components/LottieAnimation";
+import LottieAnimation from "@/components/lottie/LottieAnimation";
 import logisticsAnimation from "../public/animations/logistics.json";
 import tetrisAnimation from "../public/animations/tetris.json";
 import loadPlanProAnimation from "../public/animations/load-plan-pro.json";
@@ -34,17 +26,19 @@ import moreToolsAnimation from "../public/animations/more-tools.json";
 import connectedAnimation from "../public/animations/connected.json";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export default function LandingPage() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set());
+  const [visibleSections, setVisibleSections] = useState<Set<string>>(
+    new Set(),
+  );
   const [featureTab, setFeatureTab] = useState(0);
-  
-  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+
+  // Removed tabRefs as it was unused
+  // Removed indicatorStyle and setIndicatorStyle as they are unused
 
   useEffect(() => {
     const handleScroll = () => {
@@ -54,8 +48,8 @@ export default function LandingPage() {
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [scrolled]);
 
   useEffect(() => {
@@ -69,68 +63,60 @@ export default function LandingPage() {
       },
       {
         threshold: 0.1,
-        rootMargin: '0px 0px -10% 0px'
-      }
+        rootMargin: "0px 0px -10% 0px",
+      },
     );
 
-    const sections = document.querySelectorAll('section[id]');
+    const sections = document.querySelectorAll("section[id]");
     sections.forEach((section) => observer.observe(section));
 
     return () => observer.disconnect();
   }, []);
 
-  useLayoutEffect(() => {
-    const node = tabRefs.current[featureTab];
-    if (node) {
-      setIndicatorStyle({
-        left: node.offsetLeft,
-        width: node.offsetWidth,
-      });
-    }
-  }, [featureTab]);
+  // Removed useLayoutEffect for indicatorStyle
 
   const getAnimationClass = (id: string) => {
     if (!visibleSections.has(id)) {
       switch (id) {
-        case 'hero':
-          return 'opacity-0 scale-95';
-        case 'features':
-          return 'opacity-0 translate-x-8';
-        case 'how-it-works':
-          return 'opacity-0 translate-y-12';
-        case 'integrations':
-          return 'opacity-0 -translate-x-8';
-        case 'pricing':
-          return 'opacity-0 translate-y-8';
-        case 'social-proof':
-          return 'opacity-0 scale-105';
-        case 'cta':
-          return 'opacity-0 translate-y-12';
+        case "hero":
+          return "opacity-0 scale-95";
+        case "features":
+          return "opacity-0 translate-x-8";
+        case "how-it-works":
+          return "opacity-0 translate-y-12";
+        case "integrations":
+          return "opacity-0 -translate-x-8";
+        case "pricing":
+          return "opacity-0 translate-y-8";
+        case "social-proof":
+          return "opacity-0 scale-105";
+        case "cta":
+          return "opacity-0 translate-y-12";
         default:
-          return 'opacity-0';
+          return "opacity-0";
       }
     }
-    return 'opacity-100 translate-y-0 translate-x-0 scale-100';
+    return "opacity-100 translate-y-0 translate-x-0 scale-100";
   };
 
   const getAnimationDelay = (id: string) => {
     switch (id) {
-      case 'hero':
-        return 'delay-0';
-      case 'features':
-        return 'delay-100';
-      case 'how-it-works':
-        return 'delay-200';
-      case 'integrations':
-        return 'delay-300';
-      case 'pricing':
-        return 'delay-400';
-      case 'social-proof':
-        return 'delay-500';
-      case 'cta':
-        return 'delay-600';
+      case "hero":
+        return "delay-0";
+      case "features":
+        return "delay-100";
+      case "how-it-works":
+        return "delay-200";
+      case "integrations":
+        return "delay-300";
+      case "pricing":
+        return "delay-400";
+      case "social-proof":
+        return "delay-500";
+      case "cta":
+        return "delay-600";
       default:
-        return 'delay-0';
+        return "delay-0";
     }
   };
 
@@ -139,9 +125,9 @@ export default function LandingPage() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
-      }
-    }
+        staggerChildren: 0.1,
+      },
+    },
   };
 
   const itemVariants = {
@@ -151,9 +137,9 @@ export default function LandingPage() {
       y: 0,
       transition: {
         duration: 0.5,
-        ease: "easeOut"
-      }
-    }
+        ease: "easeOut",
+      },
+    },
   };
 
   const featureTabs = [
@@ -190,18 +176,20 @@ export default function LandingPage() {
       </div>
 
       {/* Header/Navigation */}
-      <header 
+      <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled 
-            ? 'py-2 bg-background/70 backdrop-blur-xl backdrop-saturate-150 shadow-lg shadow-primary/5 border-b border-border/40' 
-            : 'py-4 bg-transparent'
+          scrolled
+            ? "py-2 bg-background/70 backdrop-blur-xl backdrop-saturate-150 shadow-lg shadow-primary/5 border-b border-border/40"
+            : "py-4 bg-transparent"
         }`}
       >
         <div className="container mx-auto flex h-16 max-w-screen-2xl items-center justify-between px-4">
           <Link href="/" className="flex items-center gap-2">
-            <div className={`h-8 w-8 rounded-full flex items-center justify-center transition-transform duration-300 ${
-              scrolled ? 'scale-90' : 'scale-100'
-            }`}>
+            <div
+              className={`h-8 w-8 rounded-full flex items-center justify-center transition-transform duration-300 ${
+                scrolled ? "scale-90" : "scale-100"
+              }`}
+            >
               <Image
                 src="/movomintlogo.png"
                 alt="movomintlogo logo"
@@ -211,57 +199,62 @@ export default function LandingPage() {
                 priority
               />
             </div>
-            <h1 className={`text-xl font-bold tracking-tight text-foreground transition-all duration-300 ${
-              scrolled ? 'text-lg' : 'text-xl'
-            }`}><span>movo</span><span style={{ color: '#00827B' }}>mint</span></h1>
+            <h1
+              className={`text-xl font-bold tracking-tight text-foreground transition-all duration-300 ${
+                scrolled ? "text-lg" : "text-xl"
+              }`}
+            >
+              <span>movo</span>
+              <span style={{ color: "#00827B" }}>mint</span>
+            </h1>
           </Link>
           <nav className="hidden md:flex items-center gap-6">
-            <Link 
-              href="#features" 
+            <Link
+              href="#features"
               className={`text-sm font-medium transition-all duration-300 ${
-                scrolled 
-                  ? 'text-foreground/70 hover:text-foreground' 
-                  : 'text-foreground/60 hover:text-foreground'
+                scrolled
+                  ? "text-foreground/70 hover:text-foreground"
+                  : "text-foreground/60 hover:text-foreground"
               }`}
             >
               Features
             </Link>
-            <Link 
-              href="#integrations" 
+            <Link
+              href="#integrations"
               className={`text-sm font-medium transition-all duration-300 ${
-                scrolled 
-                  ? 'text-foreground/70 hover:text-foreground' 
-                  : 'text-foreground/60 hover:text-foreground'
+                scrolled
+                  ? "text-foreground/70 hover:text-foreground"
+                  : "text-foreground/60 hover:text-foreground"
               }`}
             >
               Integrations
             </Link>
-            <Link 
-              href="#how-it-works" 
+            <Link
+              href="#how-it-works"
               className={`text-sm font-medium transition-all duration-300 ${
-                scrolled 
-                  ? 'text-foreground/70 hover:text-foreground' 
-                  : 'text-foreground/60 hover:text-foreground'
+                scrolled
+                  ? "text-foreground/70 hover:text-foreground"
+                  : "text-foreground/60 hover:text-foreground"
               }`}
             >
               How It Works
             </Link>
-            <Link 
-              href="#why-choose-us" 
+            <Link
+              href="#why-choose-us"
               className={`text-sm font-medium transition-all duration-300 ${
-                scrolled 
-                  ? 'text-foreground/70 hover:text-foreground' 
-                  : 'text-foreground/60 hover:text-foreground'
+                scrolled
+                  ? "text-foreground/70 hover:text-foreground"
+                  : "text-foreground/60 hover:text-foreground"
               }`}
             >
               Why Choose Us
             </Link>
-            <Link 
-              href="#cta" 
+            <Link
+              href="#cta"
               className={`text-sm font-medium transition-all duration-300 ${
-                scrolled 
-                  ? 'text-foreground/70 hover:text-foreground' 
-                  : 'text-foreground/60 hover:text-foreground'
+                scrolled
+                  ? "text-foreground/70 hover:text-foreground"
+                  : "text-foreground/60 hover:text-foreground"
               }`}
             >
               Get a Demo
@@ -274,20 +267,20 @@ export default function LandingPage() {
                 size="sm"
                 className={`rounded-full px-6 py-2 font-semibold shadow-sm transition-all duration-300 ${
                   scrolled
-                    ? 'border-primary/60 text-primary hover:bg-primary/5 hover:text-primary/100'
-                    : 'border-border text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                    ? "border-primary/60 text-primary hover:bg-primary/5 hover:text-primary/100"
+                    : "border-border text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                 }`}
               >
                 Log In
               </Button>
             </Link>
             <Link href="/demo">
-              <Button 
-                size="sm" 
+              <Button
+                size="sm"
                 className={`rounded-full px-6 py-2 font-semibold shadow-md transition-all duration-300 ${
-                  scrolled 
-                    ? 'bg-primary/90 hover:bg-primary' 
-                    : 'bg-primary hover:bg-primary/90'
+                  scrolled
+                    ? "bg-primary/90 hover:bg-primary"
+                    : "bg-primary hover:bg-primary/90"
                 }`}
               >
                 Request a Demo
@@ -300,10 +293,17 @@ export default function LandingPage() {
                   <span className="sr-only">Toggle menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-full max-w-xs border-l border-border/40 bg-background/80 backdrop-blur-xl backdrop-saturate-150">
+              <SheetContent
+                side="right"
+                className="w-full max-w-xs border-l border-border/40 bg-background/80 backdrop-blur-xl backdrop-saturate-150"
+              >
                 <div className="flex flex-col h-full">
                   <div className="flex items-center justify-between border-b border-border/40 py-4">
-                    <Link href="/" className="flex items-center gap-2" onClick={() => setOpen(false)}>
+                    <Link
+                      href="/"
+                      className="flex items-center gap-2"
+                      onClick={() => setOpen(false)}
+                    >
                       <Image
                         src="/movomintlogo.png"
                         alt="movomintlogo logo"
@@ -312,27 +312,50 @@ export default function LandingPage() {
                         className="object-contain"
                         priority
                       />
-                      <span className="font-bold text-foreground"><span>movo</span><span style={{ color: '#00827B' }}>mint</span></span>
+                      <span className="font-bold text-foreground">
+                        <span>movo</span>
+                        <span style={{ color: "#00827B" }}>mint</span>
+                      </span>
                     </Link>
                   </div>
                   <nav className="flex flex-col gap-1 py-6">
-                    <Link href="#features" className="flex items-center justify-between p-3 text-sm hover:bg-muted rounded-md text-foreground" onClick={() => setOpen(false)}>
+                    <Link
+                      href="#features"
+                      className="flex items-center justify-between p-3 text-sm hover:bg-muted rounded-md text-foreground"
+                      onClick={() => setOpen(false)}
+                    >
                       Features
                       <ChevronRight className="h-4 w-4 opacity-50" />
                     </Link>
-                    <Link href="#integrations" className="flex items-center justify-between p-3 text-sm hover:bg-muted rounded-md text-foreground" onClick={() => setOpen(false)}>
+                    <Link
+                      href="#integrations"
+                      className="flex items-center justify-between p-3 text-sm hover:bg-muted rounded-md text-foreground"
+                      onClick={() => setOpen(false)}
+                    >
                       Integrations
                       <ChevronRight className="h-4 w-4 opacity-50" />
                     </Link>
-                    <Link href="#how-it-works" className="flex items-center justify-between p-3 text-sm hover:bg-muted rounded-md text-foreground" onClick={() => setOpen(false)}>
+                    <Link
+                      href="#how-it-works"
+                      className="flex items-center justify-between p-3 text-sm hover:bg-muted rounded-md text-foreground"
+                      onClick={() => setOpen(false)}
+                    >
                       How It Works
                       <ChevronRight className="h-4 w-4 opacity-50" />
                     </Link>
-                    <Link href="#why-choose-us" className="flex items-center justify-between p-3 text-sm hover:bg-muted rounded-md text-foreground" onClick={() => setOpen(false)}>
+                    <Link
+                      href="#why-choose-us"
+                      className="flex items-center justify-between p-3 text-sm hover:bg-muted rounded-md text-foreground"
+                      onClick={() => setOpen(false)}
+                    >
                       Why Choose Us
                       <ChevronRight className="h-4 w-4 opacity-50" />
                     </Link>
-                    <Link href="#cta" className="flex items-center justify-between p-3 text-sm hover:bg-muted rounded-md text-foreground" onClick={() => setOpen(false)}>
+                    <Link
+                      href="#cta"
+                      className="flex items-center justify-between p-3 text-sm hover:bg-muted rounded-md text-foreground"
+                      onClick={() => setOpen(false)}
+                    >
                       Get a Demo
                       <ChevronRight className="h-4 w-4 opacity-50" />
                     </Link>
@@ -343,7 +366,11 @@ export default function LandingPage() {
                         Request a Demo
                       </Button>
                     </Link>
-                    <Link href="/auth/login" onClick={() => setOpen(false)} className="w-full text-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors mt-2">
+                    <Link
+                      href="/auth/login"
+                      onClick={() => setOpen(false)}
+                      className="w-full text-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors mt-2"
+                    >
                       Log In
                     </Link>
                   </div>
@@ -353,21 +380,24 @@ export default function LandingPage() {
           </div>
         </div>
       </header>
-      
+
       <main className="flex-1 z-10 pt-24 flex flex-col">
         {/* Hero Section */}
-        <section 
-          id="hero" 
-          className={`relative min-h-[90vh] flex items-center justify-center transition-all duration-500 ease-out ${getAnimationClass('hero')} ${getAnimationDelay('hero')}`}
+        <section
+          id="hero"
+          className={`relative min-h-[90vh] flex items-center justify-center transition-all duration-500 ease-out ${getAnimationClass("hero")} ${getAnimationDelay("hero")}`}
         >
           <div className="container px-4 md:px-6 mx-auto flex flex-col lg:flex-row items-center justify-center text-center lg:text-left relative gap-8 pb-8 pt-8 md:pt-16 md:pb-16">
-            <motion.div 
+            <motion.div
               className="space-y-8 max-w-2xl mx-auto flex-1 relative z-10"
               variants={containerVariants}
               initial="hidden"
-              animate={visibleSections.has('hero') ? "visible" : "hidden"}
+              animate={visibleSections.has("hero") ? "visible" : "hidden"}
             >
-              <motion.div variants={itemVariants} className="inline-flex items-center rounded-full border px-3 py-1 text-sm font-medium mx-auto lg:mx-0 bg-background/80 backdrop-blur-sm">
+              <motion.div
+                variants={itemVariants}
+                className="inline-flex items-center rounded-full border px-3 py-1 text-sm font-medium mx-auto lg:mx-0 bg-background/80 backdrop-blur-sm"
+              >
                 <span className="bg-primary/20 text-primary rounded-full w-6 h-6 flex items-center justify-center mr-2">
                   <Zap className="h-3.5 w-3.5" />
                 </span>
@@ -376,13 +406,20 @@ export default function LandingPage() {
               <motion.div variants={itemVariants} className="space-y-4">
                 <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl xl:text-7xl text-foreground drop-shadow-lg">
                   <span className="block">Your Complete</span>
-                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">Logistics Toolkit</span>
+                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+                    Logistics Toolkit
+                  </span>
                 </h1>
                 <p className="max-w-[600px] text-muted-foreground md:text-xl mx-auto lg:mx-0 drop-shadow">
-                  Access powerful algorithms and tools built by top-tier engineers. Need something specific? We'll build it for you.
+                  Access powerful algorithms and tools built by top-tier
+                  engineers. Need something specific? We&apops;ll build it for
+                  you.
                 </p>
               </motion.div>
-              <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <motion.div
+                variants={itemVariants}
+                className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+              >
                 <Link href="/demo">
                   <Button size="lg" className="rounded-full w-full sm:w-auto">
                     Request a Demo
@@ -390,12 +427,19 @@ export default function LandingPage() {
                   </Button>
                 </Link>
                 <Link href="/demo#video">
-                  <Button size="lg" variant="outline" className="rounded-full w-full sm:w-auto">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="rounded-full w-full sm:w-auto"
+                  >
                     Watch Demo Video
                   </Button>
                 </Link>
               </motion.div>
-              <motion.div variants={itemVariants} className="flex items-center gap-8 pt-8 justify-center lg:justify-start">
+              <motion.div
+                variants={itemVariants}
+                className="flex items-center gap-8 pt-8 justify-center lg:justify-start"
+              >
                 <div className="w-full text-center lg:text-left">
                   <span className="inline-block text-base md:text-lg font-semibold text-primary bg-primary/10 px-4 py-2 rounded-xl shadow-sm">
                     See how movomint can transform your logistics in 15 minutes.
@@ -415,16 +459,17 @@ export default function LandingPage() {
               <div
                 className="absolute inset-0 z-0 rounded-full pointer-events-none w-full h-full"
                 style={{
-                  background: "radial-gradient(circle at 65% 50%, #39BEB7 0%, #00827B 60%, rgba(56,190,183,0.18) 100%)",
+                  background:
+                    "radial-gradient(circle at 65% 50%, #39BEB7 0%, #00827B 60%, rgba(56,190,183,0.18) 100%)",
                   filter: "blur(110px)",
-                  opacity: 0.6
+                  opacity: 0.6,
                 }}
               />
               <LottieAnimation
                 animationData={logisticsAnimation}
                 loop
                 className="relative z-10 w-full h-[260px] sm:h-[340px] md:h-[420px] lg:h-[520px] select-none"
-                style={{ objectFit: 'contain' }}
+                style={{ objectFit: "contain" }}
                 rendererSettings={{ progressiveLoad: true }}
               />
             </motion.div>
@@ -432,22 +477,28 @@ export default function LandingPage() {
         </section>
 
         {/* Features Section */}
-        <section 
-          id="features" 
-          className={`py-20 relative transition-all duration-1000 ease-out ${getAnimationClass('features')} ${getAnimationDelay('features')}`}
+        <section
+          id="features"
+          className={`py-20 relative transition-all duration-1000 ease-out ${getAnimationClass("features")} ${getAnimationDelay("features")}`}
         >
           <div className="container px-4 md:px-6 mx-auto">
-            <motion.div 
+            <motion.div
               className="text-center max-w-3xl mx-auto mb-16"
               initial={{ opacity: 0, y: 20 }}
-              animate={visibleSections.has('features') ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              animate={
+                visibleSections.has("features")
+                  ? { opacity: 1, y: 0 }
+                  : { opacity: 0, y: 20 }
+              }
               transition={{ duration: 0.5 }}
             >
               <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-foreground mb-4">
                 Everything You Need to Succeed
               </h2>
               <p className="text-muted-foreground md:text-xl">
-                Frictionless connection to all your logistics tools. No API keys. No integrations. Just log in and use everything in one place.
+                Frictionless connection to all your logistics tools. No API
+                keys. No integrations. Just log in and use everything in one
+                place.
               </p>
             </motion.div>
             {/* Tabs UI */}
@@ -457,12 +508,17 @@ export default function LandingPage() {
                   <button
                     key={tab.label}
                     className={`px-6 py-2 rounded-full text-base transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40
-                      ${featureTab === idx
-                        ? 'text-primary font-bold'
-                        : 'text-muted-foreground hover:text-primary'}
+                      ${
+                        featureTab === idx
+                          ? "text-primary font-bold"
+                          : "text-muted-foreground hover:text-primary"
+                      }
                     `}
                     onClick={() => setFeatureTab(idx)}
-                    style={{ zIndex: 1, fontWeight: featureTab === idx ? 700 : 500 }}
+                    style={{
+                      zIndex: 1,
+                      fontWeight: featureTab === idx ? 700 : 500,
+                    }}
                   >
                     {tab.label}
                   </button>
@@ -477,7 +533,7 @@ export default function LandingPage() {
                   initial={{ opacity: 0, y: 24 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -24 }}
-                  transition={{ duration: 0.4, ease: 'easeInOut' }}
+                  transition={{ duration: 0.4, ease: "easeInOut" }}
                   className="flex flex-1 flex-col md:flex-row items-center justify-center w-full gap-10 md:gap-16"
                 >
                   <div className="flex-1 flex items-center justify-center">
@@ -485,13 +541,17 @@ export default function LandingPage() {
                       animationData={featureTabs[featureTab].animation}
                       loop
                       className="w-full max-w-[340px] md:max-w-[420px] lg:max-w-[520px] h-[220px] md:h-[320px] lg:h-[400px] select-none"
-                      style={{ objectFit: 'contain' }}
+                      style={{ objectFit: "contain" }}
                       rendererSettings={{ progressiveLoad: true }}
                     />
                   </div>
                   <div className="flex-1 flex flex-col items-center md:items-start text-center md:text-left">
-                    <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">{featureTabs[featureTab].title}</h3>
-                    <p className="text-muted-foreground md:text-lg mb-4 max-w-xl">{featureTabs[featureTab].description}</p>
+                    <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+                      {featureTabs[featureTab].title}
+                    </h3>
+                    <p className="text-muted-foreground md:text-lg mb-4 max-w-xl">
+                      {featureTabs[featureTab].description}
+                    </p>
                   </div>
                 </motion.div>
               </AnimatePresence>
@@ -500,9 +560,9 @@ export default function LandingPage() {
         </section>
 
         {/* How It Works Section */}
-        <section 
-          id="how-it-works" 
-          className={`py-20 relative overflow-hidden transition-all duration-1000 ease-out ${getAnimationClass('how-it-works')} ${getAnimationDelay('how-it-works')}`}
+        <section
+          id="how-it-works"
+          className={`py-20 relative overflow-hidden transition-all duration-1000 ease-out ${getAnimationClass("how-it-works")} ${getAnimationDelay("how-it-works")}`}
         >
           <div className="absolute inset-0 bg-gradient-to-b from-background via-muted/50 to-background" />
           <div className="container px-4 md:px-6 mx-auto relative">
@@ -511,14 +571,18 @@ export default function LandingPage() {
                 How It Works
               </h2>
               <p className="text-muted-foreground md:text-xl">
-                Get started instantly. No integrations, no setup, no API keys. Just sign up, connect your tools, and get more from your logistics.
+                Get started instantly. No integrations, no setup, no API keys.
+                Just sign up, connect your tools, and get more from your
+                logistics.
               </p>
             </div>
             <motion.div
               className="grid md:grid-cols-3 gap-8"
               variants={containerVariants}
               initial="hidden"
-              animate={visibleSections.has('how-it-works') ? "visible" : "hidden"}
+              animate={
+                visibleSections.has("how-it-works") ? "visible" : "hidden"
+              }
             >
               {/* Card 1 */}
               <motion.div
@@ -531,10 +595,15 @@ export default function LandingPage() {
                     <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform duration-300">
                       <Users className="h-6 w-6 text-primary" />
                     </div>
-                    <CardTitle className="text-xl text-card-foreground mb-0">Sign Up Instantly</CardTitle>
+                    <CardTitle className="text-xl text-card-foreground mb-0">
+                      Sign Up Instantly
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="flex-1 flex items-end pt-2 pb-3">
-                    <p className="text-muted-foreground">Create your account in seconds. No technical setup required.</p>
+                    <p className="text-muted-foreground">
+                      Create your account in seconds. No technical setup
+                      required.
+                    </p>
                   </CardContent>
                   <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </Card>
@@ -550,10 +619,15 @@ export default function LandingPage() {
                     <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform duration-300">
                       <Settings className="h-6 w-6 text-primary" />
                     </div>
-                    <CardTitle className="text-xl text-card-foreground mb-0">Connect Your Tools</CardTitle>
+                    <CardTitle className="text-xl text-card-foreground mb-0">
+                      Connect Your Tools
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="flex-1 flex items-end pt-2 pb-3">
-                    <p className="text-muted-foreground">One click to connect all your existing logistics tools. No API keys, no integrations, no hassle.</p>
+                    <p className="text-muted-foreground">
+                      One click to connect all your existing logistics tools. No
+                      API keys, no integrations, no hassle.
+                    </p>
                   </CardContent>
                   <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </Card>
@@ -569,10 +643,15 @@ export default function LandingPage() {
                     <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform duration-300">
                       <Truck className="h-6 w-6 text-primary" />
                     </div>
-                    <CardTitle className="text-xl text-card-foreground mb-0">Use & Optimize</CardTitle>
+                    <CardTitle className="text-xl text-card-foreground mb-0">
+                      Use & Optimize
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="flex-1 flex items-end pt-2 pb-3">
-                    <p className="text-muted-foreground">Access and use all your tools in one place. Get more value, insights, and automation instantly.</p>
+                    <p className="text-muted-foreground">
+                      Access and use all your tools in one place. Get more
+                      value, insights, and automation instantly.
+                    </p>
                   </CardContent>
                   <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </Card>
@@ -582,9 +661,9 @@ export default function LandingPage() {
         </section>
 
         {/* Integration Section */}
-        <section 
-          id="integrations" 
-          className={`py-20 relative transition-all duration-1000 ease-out ${getAnimationClass('integrations')} ${getAnimationDelay('integrations')}`}
+        <section
+          id="integrations"
+          className={`py-20 relative transition-all duration-1000 ease-out ${getAnimationClass("integrations")} ${getAnimationDelay("integrations")}`}
         >
           <div className="container px-4 md:px-6 mx-auto flex flex-col lg:flex-row items-center gap-12">
             {/* Section Content - left on desktop, above on mobile */}
@@ -594,12 +673,13 @@ export default function LandingPage() {
                   Instantly Connected
                 </h2>
                 <p className="text-muted-foreground md:text-xl">
-                  All your favorite logistics tools, unified. No setup, no API keys—just seamless access and better results.
+                  All your favorite logistics tools, unified. No setup, no API
+                  keys—just seamless access and better results.
                 </p>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center">
                 {integrations.map((integration, index) => (
-                  <div 
+                  <div
                     key={index}
                     className="w-32 h-16 flex items-center justify-center p-4 rounded-lg bg-card hover:shadow-lg transition-all duration-300"
                   >
@@ -620,7 +700,7 @@ export default function LandingPage() {
                 animationData={connectedAnimation}
                 loop
                 className="w-full max-w-[340px] md:max-w-[420px] lg:max-w-[520px] h-[220px] md:h-[320px] lg:h-[400px] select-none"
-                style={{ objectFit: 'contain' }}
+                style={{ objectFit: "contain" }}
                 rendererSettings={{ progressiveLoad: true }}
               />
             </div>
@@ -628,8 +708,8 @@ export default function LandingPage() {
         </section>
 
         {/* Why Choose Us Section */}
-        <section 
-          id="why-choose-us" 
+        <section
+          id="why-choose-us"
           className="mt-16 mb-16 py-12 md:py-16 bg-gradient-to-b from-primary/5 via-white to-white overflow-hidden"
         >
           <div className="w-full max-w-6xl px-4 md:px-12 mx-auto flex flex-col lg:flex-row items-center lg:items-stretch gap-12">
@@ -639,45 +719,83 @@ export default function LandingPage() {
                 animationData={tetrisAnimation}
                 loop
                 className="w-full max-w-[420px] md:max-w-[520px] lg:max-w-[600px] h-[260px] md:h-[400px] lg:h-[520px] select-none"
-                style={{ objectFit: 'contain' }}
+                style={{ objectFit: "contain" }}
                 rendererSettings={{ progressiveLoad: true }}
               />
             </div>
             {/* Content - right on desktop, below on mobile */}
             <div className="flex-1 flex flex-col justify-center">
               <div className="mb-8">
-                <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground mb-4 text-left">Why Choose Us?</h2>
+                <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground mb-4 text-left">
+                  Why Choose Us?
+                </h2>
                 <p className="text-muted-foreground md:text-xl text-left max-w-2xl">
-                  We're building the future of logistics: one platform, every tool, zero friction. Our mission is to make logistics effortless, unified, and powerful for everyone—no technical barriers, no integration headaches, just results.
+                  We&apos;re building the future of logistics: one platform,
+                  every tool, zero friction. Our mission is to make logistics
+                  effortless, unified, and powerful for everyone—no technical
+                  barriers, no integration headaches, just results.
                 </p>
               </div>
               <div className="flex flex-row items-center justify-center gap-12 lg:gap-24 mt-12 mb-2 md:mb-0">
                 <div className="flex flex-col items-center">
                   <div
                     className="rounded-3xl bg-primary/10 flex items-center justify-center shadow-2xl shadow-primary/30 ring-4 ring-primary/10 hover:shadow-primary/40 transition-all duration-300 mb-4"
-                    style={{ width: '160px', height: '160px', minWidth: '160px', minHeight: '160px', borderRadius: '2rem' }}
+                    style={{
+                      width: "160px",
+                      height: "160px",
+                      minWidth: "160px",
+                      minHeight: "160px",
+                      borderRadius: "2rem",
+                    }}
                   >
-                    <Zap className="text-primary" style={{ width: '80px', height: '80px' }} />
+                    <Zap
+                      className="text-primary"
+                      style={{ width: "80px", height: "80px" }}
+                    />
                   </div>
-                  <span className="text-xl font-semibold text-foreground mt-2">Frictionless</span>
+                  <span className="text-xl font-semibold text-foreground mt-2">
+                    Frictionless
+                  </span>
                 </div>
                 <div className="flex flex-col items-center">
                   <div
                     className="rounded-3xl bg-primary/10 flex items-center justify-center shadow-2xl shadow-primary/30 ring-4 ring-primary/10 hover:shadow-primary/40 transition-all duration-300 mb-4"
-                    style={{ width: '160px', height: '160px', minWidth: '160px', minHeight: '160px', borderRadius: '2rem' }}
+                    style={{
+                      width: "160px",
+                      height: "160px",
+                      minWidth: "160px",
+                      minHeight: "160px",
+                      borderRadius: "2rem",
+                    }}
                   >
-                    <Settings className="text-primary" style={{ width: '80px', height: '80px' }} />
+                    <Settings
+                      className="text-primary"
+                      style={{ width: "80px", height: "80px" }}
+                    />
                   </div>
-                  <span className="text-xl font-semibold text-foreground mt-2">Unified</span>
+                  <span className="text-xl font-semibold text-foreground mt-2">
+                    Unified
+                  </span>
                 </div>
                 <div className="flex flex-col items-center">
                   <div
                     className="rounded-3xl bg-primary/10 flex items-center justify-center shadow-2xl shadow-primary/30 ring-4 ring-primary/10 hover:shadow-primary/40 transition-all duration-300 mb-4"
-                    style={{ width: '160px', height: '160px', minWidth: '160px', minHeight: '160px', borderRadius: '2rem' }}
+                    style={{
+                      width: "160px",
+                      height: "160px",
+                      minWidth: "160px",
+                      minHeight: "160px",
+                      borderRadius: "2rem",
+                    }}
                   >
-                    <LineChart className="text-primary" style={{ width: '80px', height: '80px' }} />
+                    <LineChart
+                      className="text-primary"
+                      style={{ width: "80px", height: "80px" }}
+                    />
                   </div>
-                  <span className="text-xl font-semibold text-foreground mt-2">Evolving</span>
+                  <span className="text-xl font-semibold text-foreground mt-2">
+                    Evolving
+                  </span>
                 </div>
               </div>
             </div>
@@ -685,17 +803,18 @@ export default function LandingPage() {
         </section>
 
         {/* Final CTA Section */}
-        <section 
-          id="cta" 
-          className={`pt-4 md:pt-2 relative overflow-hidden transition-all duration-1000 bg-white ${getAnimationClass('cta')} ${getAnimationDelay('cta')}`}
+        <section
+          id="cta"
+          className={`pt-4 md:pt-2 relative overflow-hidden transition-all duration-1000 bg-white ${getAnimationClass("cta")} ${getAnimationDelay("cta")}`}
         >
           <div className="container px-4 md:px-6 mx-auto relative">
             <div className="max-w-4xl mx-auto text-center">
               <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-foreground mb-6">
-                See movo<span style={{ color: '#00827B' }}>mint</span> in Action
+                See movo<span style={{ color: "#00827B" }}>mint</span> in Action
               </h2>
               <p className="text-muted-foreground md:text-xl mb-8">
-                Book a personalized demo and discover how our unified platform can streamline your operations—no setup, no hassle.
+                Book a personalized demo and discover how our unified platform
+                can streamline your operations—no setup, no hassle.
               </p>
               <div className="flex flex-col gap-4 justify-center items-center">
                 <Link href="/demo">
@@ -705,7 +824,8 @@ export default function LandingPage() {
                   </Button>
                 </Link>
                 <span className="block text-base text-muted-foreground mt-4">
-                  Our team will walk you through the platform and answer all your questions.
+                  Our team will walk you through the platform and answer all
+                  your questions.
                 </span>
               </div>
             </div>
@@ -731,67 +851,173 @@ export default function LandingPage() {
                     priority
                   />
                 </div>
-                <h1 className="text-xl font-bold tracking-tight text-foreground"><span>movo</span><span style={{ color: '#00827B' }}>mint</span></h1>
+                <h1 className="text-xl font-bold tracking-tight text-foreground">
+                  <span>movo</span>
+                  <span style={{ color: "#00827B" }}>mint</span>
+                </h1>
               </Link>
               <p className="text-sm text-muted-foreground max-w-xs">
-                The complete toolkit for modern logistics companies. Built by engineers, for engineers.
+                The complete toolkit for modern logistics companies. Built by
+                engineers, for engineers.
               </p>
               <div className="flex mt-4 space-x-3">
-                <a href="#" className="h-8 w-8 flex items-center justify-center rounded-full bg-muted hover:bg-muted-foreground/10">
+                <a
+                  href="#"
+                  className="h-8 w-8 flex items-center justify-center rounded-full bg-muted hover:bg-muted-foreground/10"
+                >
                   <Twitter className="h-4 w-4 text-foreground" />
                 </a>
-                <a href="#" className="h-8 w-8 flex items-center justify-center rounded-full bg-muted hover:bg-muted-foreground/10">
+                <a
+                  href="#"
+                  className="h-8 w-8 flex items-center justify-center rounded-full bg-muted hover:bg-muted-foreground/10"
+                >
                   <Linkedin className="h-4 w-4 text-foreground" />
                 </a>
-                <a href="#" className="h-8 w-8 flex items-center justify-center rounded-full bg-muted hover:bg-muted-foreground/10">
+                <a
+                  href="#"
+                  className="h-8 w-8 flex items-center justify-center rounded-full bg-muted hover:bg-muted-foreground/10"
+                >
                   <Facebook className="h-4 w-4 text-foreground" />
                 </a>
               </div>
             </div>
-            
+
             <div>
               <h3 className="font-medium mb-3 text-foreground">Platform</h3>
               <ul className="space-y-2">
-                <li><Link href="/tools" className="text-sm text-muted-foreground hover:text-foreground">Tools</Link></li>
-                <li><Link href="/algorithms" className="text-sm text-muted-foreground hover:text-foreground">Algorithms</Link></li>
-                <li><Link href="/custom-solutions" className="text-sm text-muted-foreground hover:text-foreground">Custom Solutions</Link></li>
-                <li><Link href="/pricing" className="text-sm text-muted-foreground hover:text-foreground">Pricing</Link></li>
+                <li>
+                  <Link
+                    href="/tools"
+                    className="text-sm text-muted-foreground hover:text-foreground"
+                  >
+                    Tools
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/algorithms"
+                    className="text-sm text-muted-foreground hover:text-foreground"
+                  >
+                    Algorithms
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/custom-solutions"
+                    className="text-sm text-muted-foreground hover:text-foreground"
+                  >
+                    Custom Solutions
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/pricing"
+                    className="text-sm text-muted-foreground hover:text-foreground"
+                  >
+                    Pricing
+                  </Link>
+                </li>
               </ul>
             </div>
-            
+
             <div>
               <h3 className="font-medium mb-3 text-foreground">Resources</h3>
               <ul className="space-y-2">
-                <li><Link href="/documentation" className="text-sm text-muted-foreground hover:text-foreground">Documentation</Link></li>
-                <li><Link href="/api" className="text-sm text-muted-foreground hover:text-foreground">API Reference</Link></li>
-                <li><Link href="/blog" className="text-sm text-muted-foreground hover:text-foreground">Blog</Link></li>
-                <li><Link href="/support" className="text-sm text-muted-foreground hover:text-foreground">Support</Link></li>
+                <li>
+                  <Link
+                    href="/documentation"
+                    className="text-sm text-muted-foreground hover:text-foreground"
+                  >
+                    Documentation
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/api"
+                    className="text-sm text-muted-foreground hover:text-foreground"
+                  >
+                    API Reference
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/blog"
+                    className="text-sm text-muted-foreground hover:text-foreground"
+                  >
+                    Blog
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/support"
+                    className="text-sm text-muted-foreground hover:text-foreground"
+                  >
+                    Support
+                  </Link>
+                </li>
               </ul>
             </div>
-            
+
             <div>
               <h3 className="font-medium mb-3 text-foreground">Company</h3>
               <ul className="space-y-2">
-                <li><Link href="/about" className="text-sm text-muted-foreground hover:text-foreground">About</Link></li>
-                <li><Link href="/careers" className="text-sm text-muted-foreground hover:text-foreground">Careers</Link></li>
-                <li><Link href="/contact" className="text-sm text-muted-foreground hover:text-foreground">Contact</Link></li>
-                <li><Link href="/partners" className="text-sm text-muted-foreground hover:text-foreground">Partners</Link></li>
+                <li>
+                  <Link
+                    href="/about"
+                    className="text-sm text-muted-foreground hover:text-foreground"
+                  >
+                    About
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/careers"
+                    className="text-sm text-muted-foreground hover:text-foreground"
+                  >
+                    Careers
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/contact"
+                    className="text-sm text-muted-foreground hover:text-foreground"
+                  >
+                    Contact
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/partners"
+                    className="text-sm text-muted-foreground hover:text-foreground"
+                  >
+                    Partners
+                  </Link>
+                </li>
               </ul>
             </div>
           </div>
-          
+
           <div className="flex flex-col md:flex-row justify-between items-center border-t border-border/40 mt-12 pt-8">
             <p className="text-xs text-muted-foreground">
               © 2024 movomint. All rights reserved.
             </p>
             <div className="flex gap-4 mt-4 md:mt-0">
-              <Link href="/terms" className="text-xs text-muted-foreground hover:text-foreground">
+              <Link
+                href="/terms"
+                className="text-xs text-muted-foreground hover:text-foreground"
+              >
                 Terms of Service
               </Link>
-              <Link href="/privacy" className="text-xs text-muted-foreground hover:text-foreground">
+              <Link
+                href="/privacy"
+                className="text-xs text-muted-foreground hover:text-foreground"
+              >
                 Privacy Policy
               </Link>
-              <Link href="/cookies" className="text-xs text-muted-foreground hover:text-foreground">
+              <Link
+                href="/cookies"
+                className="text-xs text-muted-foreground hover:text-foreground"
+              >
                 Cookies
               </Link>
             </div>
@@ -802,126 +1028,37 @@ export default function LandingPage() {
   );
 }
 
-const features = [
-  {
-    icon: <Truck className="h-6 w-6 text-primary" />,
-    title: "Smart Fleet Management",
-    description: "Optimize routes, track vehicles in real-time, and manage maintenance schedules efficiently."
-  },
-  {
-    icon: <Box className="h-6 w-6 text-primary" />,
-    title: "Inventory Control",
-    description: "Monitor stock levels, automate reordering, and reduce warehouse inefficiencies."
-  },
-  {
-    icon: <LineChart className="h-6 w-6 text-primary" />,
-    title: "Advanced Analytics",
-    description: "Get actionable insights with powerful reporting tools and customizable dashboards."
-  },
-  {
-    icon: <Globe className="h-6 w-6 text-primary" />,
-    title: "Global Integration",
-    description: "Connect with carriers, suppliers, and customers worldwide through our extensive network."
-  },
-  {
-    icon: <Settings className="h-6 w-6 text-primary" />,
-    title: "Automation Tools",
-    description: "Automate repetitive tasks, streamline workflows, and reduce manual intervention."
-  },
-  {
-    icon: <Code className="h-6 w-6 text-primary" />,
-    title: "Developer API",
-    description: "Build custom integrations and extend functionality with our robust API."
-  }
-];
-
-const steps = [
-  {
-    icon: <Users className="h-6 w-6 text-primary" />,
-    title: "Create Your Account",
-    description: "Sign up in minutes and set up your company profile with our guided onboarding process."
-  },
-  {
-    icon: <Settings className="h-6 w-6 text-primary" />,
-    title: "Configure Your Settings",
-    description: "Customize your preferences, integrate your tools, and set up your workflows."
-  },
-  {
-    icon: <Truck className="h-6 w-6 text-primary" />,
-    title: "Start Managing",
-    description: "Begin optimizing your logistics operations with our powerful tools and features."
-  }
-];
-
 const integrations = [
   {
     name: "Shopify",
-    logo: "/integrations/shopify.svg"
+    logo: "/integrations/shopify.svg",
   },
   {
     name: "WooCommerce",
-    logo: "/integrations/woocommerce.svg"
+    logo: "/integrations/woocommerce.svg",
   },
   {
     name: "QuickBooks",
-    logo: "/integrations/quickbooks.svg"
+    logo: "/integrations/quickbooks.svg",
   },
   {
     name: "Salesforce",
-    logo: "/integrations/salesforce.svg"
+    logo: "/integrations/salesforce.svg",
   },
   {
     name: "Zapier",
-    logo: "/integrations/zapier.svg"
+    logo: "/integrations/zapier.svg",
   },
   {
     name: "Stripe",
-    logo: "/integrations/stripe.svg"
+    logo: "/integrations/stripe.svg",
   },
   {
     name: "Amazon",
-    logo: "/integrations/amazon.svg"
+    logo: "/integrations/amazon.svg",
   },
   {
     name: "eBay",
-    logo: "/integrations/ebay.svg"
-  }
+    logo: "/integrations/ebay.svg",
+  },
 ];
-
-const testimonials = [
-  {
-    name: "Sarah Chen",
-    role: "CTO at Global Freight Solutions",
-    content: "movomint's custom algorithms have revolutionized our route optimization. We've seen a 40% reduction in fuel costs and improved delivery times by 25%."
-  },
-  {
-    name: "Michael Rodriguez",
-    role: "Operations Director at Express Logistics",
-    content: "The ability to request custom solutions has been a game-changer. Their team built exactly what we needed, and the results have exceeded our expectations."
-  },
-  {
-    name: "David Kim",
-    role: "CEO at Smart Transport Co.",
-    content: "Having access to enterprise-grade logistics tools without the enterprise price tag has transformed our business. The ROI has been incredible."
-  }
-];
-
-const metrics = [
-  {
-    value: "500+",
-    label: "Companies Using movomint"
-  },
-  {
-    value: "40%",
-    label: "Average Cost Reduction"
-  },
-  {
-    value: "25%",
-    label: "Improved Efficiency"
-  },
-  {
-    value: "100+",
-    label: "Custom Solutions Built"
-  }
-];
-

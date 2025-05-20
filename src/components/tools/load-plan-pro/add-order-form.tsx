@@ -1,14 +1,8 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { 
-  Plus, 
-  Trash2, 
-  Calendar, 
-  Loader2,
-  PackagePlus
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useState } from "react";
+import { Plus, Trash2, Loader2, PackagePlus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -17,39 +11,53 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+
+type OrderStatus = "pending";
+type Priority = "low" | "medium" | "high";
+
+interface Order {
+  id: string;
+  customer: string;
+  customerId: string;
+  products: string[];
+  status: OrderStatus;
+  date: string;
+  priority: Priority;
+  notes: string;
+}
 
 interface AddOrderFormProps {
   customerId: string;
   customerName: string;
-  onOrderAdded: (newOrder: any) => void;
+  onOrderAdded: (newOrder: Order) => void;
 }
 
-export default function AddOrderForm({ 
-  customerId, 
-  customerName, 
-  onOrderAdded 
+export default function AddOrderForm({
+  customerId,
+  customerName,
+  onOrderAdded,
 }: AddOrderFormProps) {
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [products, setProducts] = useState<{name: string; quantity: string}[]>([
-    { name: '', quantity: '' }
-  ]);
-  const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium');
-  const [notes, setNotes] = useState('');
+  const [products, setProducts] = useState<
+    { name: string; quantity: string }[]
+  >([{ name: "", quantity: "" }]);
+  const [priority, setPriority] = useState<Priority>("medium");
+  const [notes, setNotes] = useState("");
 
   const handleAddProduct = () => {
-    setProducts([...products, { name: '', quantity: '' }]);
+    setProducts([...products, { name: "", quantity: "" }]);
   };
 
   const handleRemoveProduct = (index: number) => {
@@ -59,7 +67,11 @@ export default function AddOrderForm({
     setProducts(newProducts);
   };
 
-  const handleProductChange = (index: number, field: 'name' | 'quantity', value: string) => {
+  const handleProductChange = (
+    index: number,
+    field: "name" | "quantity",
+    value: string,
+  ) => {
     const newProducts = [...products];
     newProducts[index][field] = value;
     setProducts(newProducts);
@@ -67,38 +79,40 @@ export default function AddOrderForm({
 
   const handleSubmit = () => {
     setIsSubmitting(true);
-    
+
     // Simulate API call
     setTimeout(() => {
       // Format products for the order
       const formattedProducts = products
-        .filter(p => p.name.trim() !== '')
-        .map(p => `${p.name} (${p.quantity})`);
-      
-      const newOrder = {
+        .filter((p) => p.name.trim() !== "")
+        .map((p) => `${p.name} (${p.quantity})`);
+
+      const newOrder: Order = {
         id: `o${Math.floor(Math.random() * 10000)}`,
         customer: customerName,
         customerId: customerId,
         products: formattedProducts,
-        status: 'pending' as const,
+        status: "pending",
         date: new Date().toISOString().slice(0, 10),
         priority,
-        notes
+        notes,
       };
-      
+
       onOrderAdded(newOrder);
       setIsSubmitting(false);
       setOpen(false);
-      
+
       // Reset form
-      setProducts([{ name: '', quantity: '' }]);
-      setPriority('medium');
-      setNotes('');
+      setProducts([{ name: "", quantity: "" }]);
+      setPriority("medium");
+      setNotes("");
     }, 1000);
   };
 
   const isFormValid = () => {
-    return products.some(p => p.name.trim() !== '' && p.quantity.trim() !== '');
+    return products.some(
+      (p) => p.name.trim() !== "" && p.quantity.trim() !== "",
+    );
   };
 
   return (
@@ -116,7 +130,7 @@ export default function AddOrderForm({
             Create a new order for {customerName}
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
             <Label className="font-medium">Products</Label>
@@ -126,14 +140,18 @@ export default function AddOrderForm({
                   <Input
                     placeholder="Product name"
                     value={product.name}
-                    onChange={(e) => handleProductChange(index, 'name', e.target.value)}
+                    onChange={(e) =>
+                      handleProductChange(index, "name", e.target.value)
+                    }
                   />
                 </div>
                 <div className="w-24">
                   <Input
                     placeholder="Qty"
                     value={product.quantity}
-                    onChange={(e) => handleProductChange(index, 'quantity', e.target.value)}
+                    onChange={(e) =>
+                      handleProductChange(index, "quantity", e.target.value)
+                    }
                   />
                 </div>
                 <Button
@@ -156,10 +174,13 @@ export default function AddOrderForm({
               Add Product
             </Button>
           </div>
-          
+
           <div className="grid gap-2">
             <Label htmlFor="priority">Priority</Label>
-            <Select value={priority} onValueChange={(val: any) => setPriority(val)}>
+            <Select
+              value={priority}
+              onValueChange={(val: Priority) => setPriority(val)}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select priority" />
               </SelectTrigger>
@@ -170,14 +191,16 @@ export default function AddOrderForm({
               </SelectContent>
             </Select>
           </div>
-          
+
           <div className="grid gap-2">
             <Label htmlFor="notes">Order Notes (optional)</Label>
             <Textarea
               id="notes"
               placeholder="Add any notes about this order..."
               value={notes}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNotes(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setNotes(e.target.value)
+              }
             />
           </div>
         </div>

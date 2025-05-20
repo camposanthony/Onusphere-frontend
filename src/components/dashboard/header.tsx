@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Bell, Moon, Sun, Search, LogOut, User, Settings, X, Trash2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useState } from "react";
+import { Bell, Search, X, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,19 +10,16 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { useTheme } from '@/components/theme-provider';
-import { useAuth } from '@/lib/context/AuthContext';
-import { useUser } from '@/lib/hooks/useUser';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { 
+} from "@/components/ui/dialog";
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -31,13 +28,10 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog";
 
 export default function Header() {
-  const { theme, setTheme } = useTheme();
   const [notificationCount, setNotificationCount] = useState(3);
-  const { logout } = useAuth();
-  const { user, loading } = useUser();
   const [showAllNotifications, setShowAllNotifications] = useState(false);
   const [clearAllDialogOpen, setClearAllDialogOpen] = useState(false);
   const [notificationItems, setNotificationItems] = useState([
@@ -45,32 +39,32 @@ export default function Header() {
       id: 1,
       title: "New shipment request",
       description: "ABC Logistics added a new delivery request",
-      time: "2 hours ago"
+      time: "2 hours ago",
     },
     {
       id: 2,
       title: "Route optimization complete",
       description: "Your routes have been optimized for today",
-      time: "5 hours ago"
+      time: "5 hours ago",
     },
     {
       id: 3,
       title: "System update",
       description: "Platform updated to version 2.5.0",
-      time: "Yesterday"
+      time: "Yesterday",
     },
     {
       id: 4,
       title: "Maintenance notification",
       description: "Scheduled maintenance on Saturday",
-      time: "2 days ago"
+      time: "2 days ago",
     },
     {
       id: 5,
       title: "Account update",
       description: "Your profile information was updated",
-      time: "3 days ago"
-    }
+      time: "3 days ago",
+    },
   ]);
 
   return (
@@ -79,11 +73,7 @@ export default function Header() {
       <div className="hidden md:flex md:w-1/3 lg:w-1/4">
         <div className="w-full relative">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
-          <Input
-            type="text"
-            placeholder="Search..."
-            className="w-full pl-8"
-          />
+          <Input type="text" placeholder="Search..." className="w-full pl-8" />
         </div>
       </div>
 
@@ -105,9 +95,9 @@ export default function Header() {
             <div className="flex items-center justify-between px-2">
               <DropdownMenuLabel>Notifications</DropdownMenuLabel>
               {notificationItems.length > 0 && (
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={() => setClearAllDialogOpen(true)}
                   className="text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
                 >
@@ -122,9 +112,15 @@ export default function Header() {
                   <div key={notification.id}>
                     <div className="group cursor-pointer flex items-start p-3">
                       <div className="flex flex-col space-y-1 w-full">
-                        <span className="font-medium break-words">{notification.title}</span>
-                        <span className="text-sm text-gray-500 break-words">{notification.description}</span>
-                        <span className="text-xs text-gray-400">{notification.time}</span>
+                        <span className="font-medium break-words">
+                          {notification.title}
+                        </span>
+                        <span className="text-sm text-gray-500 break-words">
+                          {notification.description}
+                        </span>
+                        <span className="text-xs text-gray-400">
+                          {notification.time}
+                        </span>
                       </div>
                       <Button
                         variant="ghost"
@@ -132,7 +128,9 @@ export default function Header() {
                         className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
                         onClick={(e) => {
                           e.stopPropagation();
-                          const newItems = notificationItems.filter(item => item.id !== notification.id);
+                          const newItems = notificationItems.filter(
+                            (item) => item.id !== notification.id,
+                          );
                           setNotificationItems(newItems);
                           setNotificationCount(newItems.length);
                         }}
@@ -152,17 +150,25 @@ export default function Header() {
             {notificationItems.length > 0 && (
               <>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer" onClick={() => setShowAllNotifications(true)}>
-                  <span className="text-primary mx-auto">View all notifications</span>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() => setShowAllNotifications(true)}
+                >
+                  <span className="text-primary mx-auto">
+                    View all notifications
+                  </span>
                 </DropdownMenuItem>
               </>
             )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      
+
       {/* Clear All Confirmation Dialog */}
-      <AlertDialog open={clearAllDialogOpen} onOpenChange={setClearAllDialogOpen}>
+      <AlertDialog
+        open={clearAllDialogOpen}
+        onOpenChange={setClearAllDialogOpen}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Clear all notifications?</AlertDialogTitle>
@@ -172,11 +178,13 @@ export default function Header() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => {
-              setNotificationItems([]);
-              setNotificationCount(0);
-              setClearAllDialogOpen(false);
-            }}>
+            <AlertDialogAction
+              onClick={() => {
+                setNotificationItems([]);
+                setNotificationCount(0);
+                setClearAllDialogOpen(false);
+              }}
+            >
               Clear all
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -184,7 +192,10 @@ export default function Header() {
       </AlertDialog>
 
       {/* All Notifications Dialog */}
-      <Dialog open={showAllNotifications} onOpenChange={setShowAllNotifications}>
+      <Dialog
+        open={showAllNotifications}
+        onOpenChange={setShowAllNotifications}
+      >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <div className="flex flex-row items-center justify-between w-full pr-6">
@@ -195,8 +206,8 @@ export default function Header() {
                 </DialogDescription>
               </div>
               {notificationItems.length > 0 && (
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   size="sm"
                   onClick={() => setClearAllDialogOpen(true)}
                   className="flex items-center gap-1"
@@ -210,13 +221,18 @@ export default function Header() {
           <div className="max-h-[70vh] overflow-y-auto space-y-4 mt-4">
             {notificationItems.length > 0 ? (
               notificationItems.map((notification) => (
-                <div key={notification.id} className="border rounded-md p-4 group relative">
+                <div
+                  key={notification.id}
+                  className="border rounded-md p-4 group relative"
+                >
                   <Button
                     variant="ghost"
                     size="icon"
                     className="absolute top-2 right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
                     onClick={() => {
-                      const newItems = notificationItems.filter(item => item.id !== notification.id);
+                      const newItems = notificationItems.filter(
+                        (item) => item.id !== notification.id,
+                      );
                       setNotificationItems(newItems);
                       setNotificationCount(newItems.length);
                     }}
@@ -224,9 +240,15 @@ export default function Header() {
                     <X className="h-4 w-4" />
                   </Button>
                   <div className="flex flex-col space-y-1">
-                    <span className="font-medium break-words">{notification.title}</span>
-                    <span className="text-sm text-gray-500 break-words">{notification.description}</span>
-                    <span className="text-xs text-gray-400">{notification.time}</span>
+                    <span className="font-medium break-words">
+                      {notification.title}
+                    </span>
+                    <span className="text-sm text-gray-500 break-words">
+                      {notification.description}
+                    </span>
+                    <span className="text-xs text-gray-400">
+                      {notification.time}
+                    </span>
                   </div>
                 </div>
               ))

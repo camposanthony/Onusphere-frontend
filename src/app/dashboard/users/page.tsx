@@ -1,11 +1,17 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { MoreHorizontal, Plus, Users, Loader2, Mail } from 'lucide-react';
+import { useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { MoreHorizontal, Plus, Users, Loader2, Mail } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,18 +19,18 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { getMembers, Member } from '@/lib/services/users';
+} from "@/components/ui/dropdown-menu";
+import { getMembers, Member } from "@/lib/services/users";
 
 // Badge color based on role
 const getRoleBadgeColor = (role: string) => {
   switch (role) {
-    case 'admin':
-      return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
-    case 'manager':
-      return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
+    case "admin":
+      return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
+    case "manager":
+      return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
     default:
-      return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+      return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
   }
 };
 
@@ -39,7 +45,9 @@ export default function UsersPage() {
         const data = await getMembers();
         setMembers(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch members');
+        setError(
+          err instanceof Error ? err.message : "Failed to fetch members",
+        );
       } finally {
         setLoading(false);
       }
@@ -101,17 +109,28 @@ export default function UsersPage() {
               </div>
               <div className="divide-y">
                 {members.map((member) => (
-                  <div key={member.id} className="grid grid-cols-11 gap-4 p-4 items-center">
+                  <div
+                    key={member.id}
+                    className="grid grid-cols-11 gap-4 p-4 items-center"
+                  >
                     <div className="col-span-4 flex items-center gap-3">
                       <Avatar className="h-8 w-8">
-                        <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                        <AvatarFallback>
+                          {member.name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")}
+                        </AvatarFallback>
                       </Avatar>
                       <span className="font-medium">{member.name}</span>
                     </div>
-                    <div className="col-span-3 text-sm text-muted-foreground">{member.email}</div>
+                    <div className="col-span-3 text-sm text-muted-foreground">
+                      {member.email}
+                    </div>
                     <div className="col-span-2">
                       <Badge className={getRoleBadgeColor(member.role)}>
-                        {member.role.charAt(0).toUpperCase() + member.role.slice(1)}
+                        {member.role.charAt(0).toUpperCase() +
+                          member.role.slice(1)}
                       </Badge>
                     </div>
                     <div className="col-span-1 text-sm text-muted-foreground">
@@ -157,7 +176,9 @@ export default function UsersPage() {
           <div className="flex flex-col items-center justify-center py-12 bg-muted/50 rounded-md border border-dashed">
             <div className="mb-2 text-muted-foreground flex flex-col items-center">
               <Mail className="h-10 w-10 mb-2 text-primary" />
-              <span className="text-lg font-semibold">No pending invitations</span>
+              <span className="text-lg font-semibold">
+                No pending invitations
+              </span>
               <span className="text-sm text-muted-foreground mt-1">
                 Invite your team to get started!
               </span>

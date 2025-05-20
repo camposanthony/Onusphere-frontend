@@ -1,14 +1,8 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { 
-  Mail, 
-  Info, 
-  Copy, 
-  Check,
-  AlertCircle
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useState } from "react";
+import { Mail, Info, Copy, Check, AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -17,22 +11,19 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from '@/components/ui/alert';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+} from "@/components/ui/dialog";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface EmailOrderProcessorProps {
   className?: string;
 }
 
-export default function EmailOrderProcessor({ className }: EmailOrderProcessorProps) {
+export default function EmailOrderProcessor({
+  className,
+}: EmailOrderProcessorProps) {
   const [copied, setCopied] = useState(false);
-  const emailAddress = 'orders@onusphere.com';
+  const emailAddress = "orders@onusphere.com";
 
   const handleCopyEmail = () => {
     navigator.clipboard.writeText(emailAddress);
@@ -55,96 +46,127 @@ export default function EmailOrderProcessor({ className }: EmailOrderProcessorPr
             Learn how to easily add new orders using email
           </DialogDescription>
         </DialogHeader>
-        
+
         <Tabs defaultValue="instructions" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="instructions">Instructions</TabsTrigger>
             <TabsTrigger value="faq">FAQ</TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="instructions" className="space-y-4 pt-4">
             <Alert>
               <Info className="h-4 w-4" />
               <AlertTitle>Quick Setup</AlertTitle>
               <AlertDescription>
-                Forward your supplier order emails to our system to automatically add them to the customer's account.
+                Forward your supplier order emails to our system to
+                automatically add them to the customer&apos;s account.
               </AlertDescription>
             </Alert>
-            
+
             <div className="space-y-4">
               <div className="rounded-md border p-4">
-                <h3 className="text-sm font-medium mb-2">Step 1: Forward order emails</h3>
+                <h3 className="text-sm font-medium mb-2">
+                  Step 1: Forward order emails
+                </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
                   Forward any order confirmation emails to:
                 </p>
                 <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-900 p-2 rounded">
                   <code className="text-sm font-mono">{emailAddress}</code>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={handleCopyEmail}
                     className="h-8 px-2"
                   >
-                    {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                    {copied ? (
+                      <Check className="h-4 w-4" />
+                    ) : (
+                      <Copy className="h-4 w-4" />
+                    )}
                   </Button>
                 </div>
                 <div className="mt-3">
                   <p className="text-sm text-gray-600 dark:text-gray-400 flex items-start">
                     <AlertCircle className="h-4 w-4 mr-1 mt-0.5 text-amber-500" />
-                    <span><strong>Important:</strong> Include the customer ID in the subject line using format: "[CUSTOMER_ID] Original Subject"</span>
+                    <span>
+                      <strong>Important:</strong> Include the customer ID in the
+                      subject line using format: [&quot;CUSTOMER_ID&quot;]
+                      Original Subject
+                    </span>
                   </p>
                 </div>
               </div>
-              
+
               <div className="rounded-md border p-4">
-                <h3 className="text-sm font-medium mb-2">Step 2: Wait for processing</h3>
+                <h3 className="text-sm font-medium mb-2">
+                  Step 2: Wait for processing
+                </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Our system automatically extracts order information and associates it with the relevant customer. 
-                  Orders typically appear within 5 minutes of forwarding the email.
+                  Our system automatically extracts order information and
+                  associates it with the relevant customer. Orders typically
+                  appear within 5 minutes of forwarding the email.
                 </p>
               </div>
-              
+
               <div className="rounded-md border p-4">
-                <h3 className="text-sm font-medium mb-2">Step 3: Review &amp; manage orders</h3>
+                <h3 className="text-sm font-medium mb-2">
+                  Step 3: Review &amp; manage orders
+                </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Once processed, orders will appear in the customer's order list with a "Pending" status.
-                  You can then update the status as needed.
+                  Once processed, orders will appear in the customer&apos;s
+                  order list with a &quot;Pending&quot; status. You can then
+                  update the status as needed.
                 </p>
               </div>
             </div>
           </TabsContent>
-          
+
           <TabsContent value="faq" className="space-y-4 pt-4">
             <div className="space-y-4">
               <div className="rounded-md border p-4">
-                <h3 className="text-sm font-medium mb-2">Which email formats are supported?</h3>
+                <h3 className="text-sm font-medium mb-2">
+                  Which email formats are supported?
+                </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Our system can process most standard order confirmation emails. For best results, forward the original 
-                  email without modifications.
+                  Our system can process most standard order confirmation
+                  emails. For best results, forward the original email without
+                  modifications.
                 </p>
               </div>
-              
+
               <div className="rounded-md border p-4">
-                <h3 className="text-sm font-medium mb-2">How are orders matched to customers?</h3>
+                <h3 className="text-sm font-medium mb-2">
+                  How are orders matched to customers?
+                </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Orders are matched to customers based on the customer ID in the subject line (format: "[CUSTOMER_ID] Original Subject").
-                  This ensures orders are correctly associated even when the sender's email isn't registered with your account.
+                  Orders are matched to customers based on the customer ID in
+                  the subject line (format: [&quot;CUSTOMER_ID&quot;] Original
+                  Subject). This ensures orders are correctly associated even
+                  when the sender&apos;s email isn&apos;t registered with your
+                  account.
                 </p>
               </div>
-              
+
               <div className="rounded-md border p-4">
-                <h3 className="text-sm font-medium mb-2">What if an order isn't processed correctly?</h3>
+                <h3 className="text-sm font-medium mb-2">
+                  What if an order isn&apos;t processed correctly?
+                </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  If an order doesn't appear after 10 minutes, you can manually add it through the "Add Order" 
-                  function in the customer detail page.
+                  If an order doesn&apos;t appear after 10 minutes, you can
+                  manually add it through the &quot;Add Order&quot; function in
+                  the customer detail page.
                 </p>
               </div>
-              
+
               <div className="rounded-md border p-4">
-                <h3 className="text-sm font-medium mb-2">Can I forward past order emails?</h3>
+                <h3 className="text-sm font-medium mb-2">
+                  Can I forward past order emails?
+                </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Yes, you can forward past order emails to populate the system with historical data. The 
-                  order dates will be preserved from the email content.
+                  Yes, you can forward past order emails to populate the system
+                  with historical data. The order dates will be preserved from
+                  the email content.
                 </p>
               </div>
             </div>
@@ -153,7 +175,7 @@ export default function EmailOrderProcessor({ className }: EmailOrderProcessorPr
 
         <DialogFooter>
           <Button variant="outline" onClick={handleCopyEmail}>
-            {copied ? 'Email Copied!' : 'Copy Email Address'}
+            {copied ? "Email Copied!" : "Copy Email Address"}
           </Button>
         </DialogFooter>
       </DialogContent>
