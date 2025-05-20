@@ -145,3 +145,33 @@ export const updateCompanySettings = async (settings: Partial<CompanySettings>):
 
   return await response.json();
 }; 
+
+export async function getCompanyCode(): Promise<string | null> {
+  try {
+    const token = getToken();
+    if (!token) {
+      // Handle not authenticated case, perhaps throw an error or return null
+      // depending on how you want to manage this scenario.
+      // For now, let's log and return null, consistent with the catch block.
+      console.error('Not authenticated: Cannot fetch company code.');
+      return null;
+    }
+
+    const response = await fetch(`${API_URL}/account/settings`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    }); 
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ detail: response.statusText }));
+      console.error('Failed to fetch company settings:', errorData.detail);
+      throw new Error(`Failed to fetch company settings: ${errorData.detail}`);
+    }
+    const data = await response.json();
+    return data.company_code || null;
+  } catch (error) {
+    console.error('Error fetching company code:', error);
+    return null;
+  }
+}
