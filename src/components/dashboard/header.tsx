@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Bell, Search, X, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,43 +29,120 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  getNotifications,
+  getUnreadCount,
+  markNotificationsRead,
+  deleteNotification,
+  clearAllNotifications,
+  formatNotificationTime,
+  getNotificationIcon,
+  type Notification,
+} from "@/lib/services/notifications";
 
 export default function Header() {
-  const [notificationCount, setNotificationCount] = useState(3);
+  const [notificationCount, setNotificationCount] = useState(0);
   const [showAllNotifications, setShowAllNotifications] = useState(false);
   const [clearAllDialogOpen, setClearAllDialogOpen] = useState(false);
-  const [notificationItems, setNotificationItems] = useState([
-    {
-      id: 1,
-      title: "New shipment request",
-      description: "ABC Logistics added a new delivery request",
-      time: "2 hours ago",
-    },
-    {
-      id: 2,
-      title: "Route optimization complete",
-      description: "Your routes have been optimized for today",
-      time: "5 hours ago",
-    },
-    {
-      id: 3,
-      title: "System update",
-      description: "Platform updated to version 2.5.0",
-      time: "Yesterday",
-    },
-    {
-      id: 4,
-      title: "Maintenance notification",
-      description: "Scheduled maintenance on Saturday",
-      time: "2 days ago",
-    },
-    {
-      id: 5,
-      title: "Account update",
-      description: "Your profile information was updated",
-      time: "3 days ago",
-    },
-  ]);
+  const [notificationItems, setNotificationItems] = useState<Notification[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Load notifications and count on component mount
+  useEffect(() => {
+    loadNotifications();
+    loadUnreadCount();
+    
+    // Set up polling for real-time updates
+    const interval = setInterval(() => {
+      loadUnreadCount();
+    }, 30000); // Check for new notifications every 30 seconds
+    
+    return () => clearInterval(interval);
+  }, []);
+
+  const loadNotifications = async () => {
+    try {
+      setLoading(true);
+      const notifications = await getNotifications(50, 0, false);
+      setNotificationItems(notifications);
+      setError(null);
+    } catch (err) {
+      console.error('Error loading notifications:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load notifications');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadUnreadCount = async () => {
+    try {
+      const countData = await getUnreadCount();
+      setNotificationCount(countData.unread_count);
+    } catch (err) {
+      console.error('Error loading unread count:', err);
+    }
+  };
+
+  const handleDeleteNotification = async (notificationId: string) => {
+    try {
+      await deleteNotification(notificationId);
+      
+      // Update local state
+      const updatedItems = notificationItems.filter(item => item.id !== notificationId);
+      setNotificationItems(updatedItems);
+      
+      // Update count if the deleted notification was unread
+      const deletedNotification = notificationItems.find(item => item.id === notificationId);
+      if (deletedNotification && !deletedNotification.is_read) {
+        setNotificationCount(prev => Math.max(0, prev - 1));
+      }
+    } catch (err) {
+      console.error('Error deleting notification:', err);
+      setError(err instanceof Error ? err.message : 'Failed to delete notification');
+    }
+  };
+
+  const handleClearAllNotifications = async () => {
+    try {
+      await clearAllNotifications();
+      setNotificationItems([]);
+      setNotificationCount(0);
+      setClearAllDialogOpen(false);
+    } catch (err) {
+      console.error('Error clearing notifications:', err);
+      setError(err instanceof Error ? err.message : 'Failed to clear notifications');
+    }
+  };
+
+  const handleMarkAsRead = async (notificationId: string) => {
+    try {
+      await markNotificationsRead([notificationId]);
+      
+      // Update local state
+      setNotificationItems(prev => 
+        prev.map(item => 
+          item.id === notificationId 
+            ? { ...item, is_read: true, read_at: new Date().toISOString() }
+            : item
+        )
+      );
+      
+      // Update count
+      const notification = notificationItems.find(item => item.id === notificationId);
+      if (notification && !notification.is_read) {
+        setNotificationCount(prev => Math.max(0, prev - 1));
+      }
+    } catch (err) {
+      console.error('Error marking notification as read:', err);
+    }
+  };
+
+  const handleNotificationClick = (notification: Notification) => {
+    if (!notification.is_read) {
+      handleMarkAsRead(notification.id);
+    }
+  };
 
   return (
     <header className="sticky top-0 z-30 h-16 flex items-center justify-between px-6 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
@@ -86,7 +163,7 @@ export default function Header() {
               <Bell className="h-5 w-5" />
               {notificationCount > 0 && (
                 <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs">
-                  {notificationCount}
+                  {notificationCount > 99 ? '99+' : notificationCount}
                 </span>
               )}
             </Button>
@@ -107,20 +184,38 @@ export default function Header() {
             </div>
             <DropdownMenuSeparator />
             <div className="max-h-96 overflow-y-auto overflow-x-hidden">
-              {notificationItems.length > 0 ? (
-                notificationItems.slice(0, 3).map((notification) => (
+              {loading ? (
+                <div className="p-3 text-center text-gray-500 text-sm">
+                  Loading notifications...
+                </div>
+              ) : error ? (
+                <div className="p-3 text-center text-red-500 text-sm">
+                  {error}
+                </div>
+              ) : notificationItems.length > 0 ? (
+                notificationItems.slice(0, 5).map((notification) => (
                   <div key={notification.id}>
-                    <div className="group cursor-pointer flex items-start p-3">
-                      <div className="flex flex-col space-y-1 w-full">
-                        <span className="font-medium break-words">
-                          {notification.title}
-                        </span>
-                        <span className="text-sm text-gray-500 break-words">
-                          {notification.description}
-                        </span>
-                        <span className="text-xs text-gray-400">
-                          {notification.time}
-                        </span>
+                    <div 
+                      className={`group cursor-pointer flex items-start p-3 transition-colors hover:bg-gray-50 dark:hover:bg-gray-700 ${
+                        !notification.is_read ? 'bg-blue-50 dark:bg-blue-900/20' : ''
+                      }`}
+                      onClick={() => handleNotificationClick(notification)}
+                    >
+                      <div className="flex items-start gap-2 w-full">
+                        <span className="text-lg mt-0.5">{getNotificationIcon(notification.type)}</span>
+                        <div className="flex flex-col space-y-1 flex-1 min-w-0">
+                          <span className={`font-medium break-words ${
+                            !notification.is_read ? 'text-blue-900 dark:text-blue-100' : ''
+                          }`}>
+                            {notification.title}
+                          </span>
+                          <span className="text-sm text-gray-500 break-words">
+                            {notification.description}
+                          </span>
+                          <span className="text-xs text-gray-400">
+                            {formatNotificationTime(notification.created_at)}
+                          </span>
+                        </div>
                       </div>
                       <Button
                         variant="ghost"
@@ -128,11 +223,7 @@ export default function Header() {
                         className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
                         onClick={(e) => {
                           e.stopPropagation();
-                          const newItems = notificationItems.filter(
-                            (item) => item.id !== notification.id,
-                          );
-                          setNotificationItems(newItems);
-                          setNotificationCount(newItems.length);
+                          handleDeleteNotification(notification.id);
                         }}
                       >
                         <X className="h-4 w-4" />
@@ -147,7 +238,7 @@ export default function Header() {
                 </div>
               )}
             </div>
-            {notificationItems.length > 0 && (
+            {notificationItems.length > 5 && (
               <>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
@@ -173,18 +264,12 @@ export default function Header() {
           <AlertDialogHeader>
             <AlertDialogTitle>Clear all notifications?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will remove all notifications. This action cannot be undone.
+              This will permanently remove all notifications. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => {
-                setNotificationItems([]);
-                setNotificationCount(0);
-                setClearAllDialogOpen(false);
-              }}
-            >
+            <AlertDialogAction onClick={handleClearAllNotifications}>
               Clear all
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -223,32 +308,37 @@ export default function Header() {
               notificationItems.map((notification) => (
                 <div
                   key={notification.id}
-                  className="border rounded-md p-4 group relative"
+                  className={`border rounded-md p-4 group relative transition-colors cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 ${
+                    !notification.is_read ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-700' : ''
+                  }`}
+                  onClick={() => handleNotificationClick(notification)}
                 >
                   <Button
                     variant="ghost"
                     size="icon"
                     className="absolute top-2 right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                    onClick={() => {
-                      const newItems = notificationItems.filter(
-                        (item) => item.id !== notification.id,
-                      );
-                      setNotificationItems(newItems);
-                      setNotificationCount(newItems.length);
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteNotification(notification.id);
                     }}
                   >
                     <X className="h-4 w-4" />
                   </Button>
-                  <div className="flex flex-col space-y-1">
-                    <span className="font-medium break-words">
-                      {notification.title}
-                    </span>
-                    <span className="text-sm text-gray-500 break-words">
-                      {notification.description}
-                    </span>
-                    <span className="text-xs text-gray-400">
-                      {notification.time}
-                    </span>
+                  <div className="flex items-start gap-2">
+                    <span className="text-lg">{getNotificationIcon(notification.type)}</span>
+                    <div className="flex flex-col space-y-1 flex-1">
+                      <span className={`font-medium break-words ${
+                        !notification.is_read ? 'text-blue-900 dark:text-blue-100' : ''
+                      }`}>
+                        {notification.title}
+                      </span>
+                      <span className="text-sm text-gray-500 break-words">
+                        {notification.description}
+                      </span>
+                      <span className="text-xs text-gray-400">
+                        {formatNotificationTime(notification.created_at)}
+                      </span>
+                    </div>
                   </div>
                 </div>
               ))

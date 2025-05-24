@@ -48,6 +48,19 @@ import {
   redirectToBillingPortal,
   disconnectPaymentMethod,
 } from "@/lib/services/payment";
+import {
+  changePassword,
+  getUserSessions,
+  logoutSession,
+  logoutAllSessions,
+  getNotificationPreferences,
+  updateNotificationPreferences,
+  formatSessionTime,
+  getDeviceIcon,
+  type ChangePasswordRequest,
+  type UserSession,
+  type NotificationPreferences,
+} from "@/lib/services/security";
 
 export default function SettingsPage() {
   // Removed unused userSettings and companySettings state
@@ -75,6 +88,23 @@ export default function SettingsPage() {
   });
   const [paymentHistory, setPaymentHistory] = useState<any[]>([]);
   const [connectingPayment, setConnectingPayment] = useState(false);
+
+  // Security-related state
+  const [userSessions, setUserSessions] = useState<UserSession[]>([]);
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [notificationPreferences, setNotificationPreferences] = useState<NotificationPreferences>({
+    notify_orders: true,
+    notify_customers: true,
+    notify_team: true,
+    notify_system: true,
+    notify_marketing: false,
+    notify_realtime: true,
+    notify_tasks: true
+  });
 
   // Form state
   const [formData, setFormData] = useState({
@@ -149,6 +179,27 @@ export default function SettingsPage() {
     }
   }, [loading]);
 
+  // Load security data
+  useEffect(() => {
+    const fetchSecurityData = async () => {
+      try {
+        const [sessions, preferences] = await Promise.all([
+          getUserSessions(),
+          getNotificationPreferences(),
+        ]);
+        
+        setUserSessions(sessions);
+        setNotificationPreferences(preferences);
+      } catch (err) {
+        console.error("Error loading security data:", err);
+      }
+    };
+
+    if (!loading) {
+      fetchSecurityData();
+    }
+  }, [loading]);
+
   // Check for success/canceled payment on page load
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -177,6 +228,20 @@ export default function SettingsPage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setFormData((prev) => ({ ...prev, [id]: value }));
+  };
+
+  // Handle password input changes
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setPasswordData((prev) => ({ ...prev, [id]: value }));
+  };
+
+  // Handle notification preference changes
+  const handleNotificationChange = (key: keyof NotificationPreferences) => {
+    setNotificationPreferences(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
   };
 
   // Handle connecting payment method
@@ -220,6 +285,78 @@ export default function SettingsPage() {
     }
   };
 
+  // Handle password change
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    setSuccessMessage("");
+    setErrorMessage("");
+
+    try {
+      // Validate passwords match
+      if (passwordData.newPassword !== passwordData.confirmPassword) {
+        throw new Error("New passwords don't match");
+      }
+
+      // Validate password length
+      if (passwordData.newPassword.length < 8) {
+        throw new Error("New password must be at least 8 characters long");
+      }
+
+      await changePassword({
+        current_password: passwordData.currentPassword,
+        new_password: passwordData.newPassword,
+      });
+
+      // Clear password fields
+      setPasswordData({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      });
+
+      setSuccessMessage("Password updated successfully");
+    } catch (err) {
+      console.error("Error changing password:", err);
+      setErrorMessage(
+        err instanceof Error ? err.message : "Failed to change password"
+      );
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Handle session logout
+  const handleLogoutSession = async (sessionId: string) => {
+    try {
+      await logoutSession(sessionId);
+      setUserSessions(prev => prev.filter(session => session.id !== sessionId));
+      setSuccessMessage("Session logged out successfully");
+    } catch (err) {
+      setErrorMessage(
+        err instanceof Error ? err.message : "Failed to logout session"
+      );
+    }
+  };
+
+  // Handle logout all sessions
+  const handleLogoutAllSessions = async () => {
+    setSaving(true);
+    try {
+      await logoutAllSessions();
+      // Refresh sessions list
+      const sessions = await getUserSessions();
+      setUserSessions(sessions);
+      setSuccessMessage("Logged out from all other devices");
+    } catch (err) {
+      setErrorMessage(
+        err instanceof Error ? err.message : "Failed to logout all sessions"
+      );
+    } finally {
+      setSaving(false);
+    }
+  };
+
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent, formType: string) => {
     e.preventDefault();
@@ -240,6 +377,8 @@ export default function SettingsPage() {
           email: formData.company_email,
         });
         // setCompanySettings(updated); // No longer needed
+      } else if (formType === "notifications") {
+        await updateNotificationPreferences(notificationPreferences);
       }
 
       setSuccessMessage(
@@ -512,7 +651,11 @@ export default function SettingsPage() {
                               Receive notifications when orders are created, updated, or delivered
                             </p>
                           </div>
-                          <Switch defaultChecked id="notify-orders" />
+                          <Switch 
+                            checked={notificationPreferences.notify_orders} 
+                            onCheckedChange={() => handleNotificationChange('notify_orders')}
+                            id="notify-orders" 
+                          />
                         </div>
 
                         <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
@@ -522,7 +665,11 @@ export default function SettingsPage() {
                               Receive notifications about customer activity and changes
                             </p>
                           </div>
-                          <Switch defaultChecked id="notify-customers" />
+                          <Switch 
+                            checked={notificationPreferences.notify_customers} 
+                            onCheckedChange={() => handleNotificationChange('notify_customers')}
+                            id="notify-customers" 
+                          />
                         </div>
 
                         <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
@@ -532,7 +679,11 @@ export default function SettingsPage() {
                               Notifications when team members join or roles change
                             </p>
                           </div>
-                          <Switch defaultChecked id="notify-team" />
+                          <Switch 
+                            checked={notificationPreferences.notify_team} 
+                            onCheckedChange={() => handleNotificationChange('notify_team')}
+                            id="notify-team" 
+                          />
                         </div>
 
                         <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
@@ -542,7 +693,11 @@ export default function SettingsPage() {
                               Important system updates, maintenance announcements, and new features
                             </p>
                           </div>
-                          <Switch defaultChecked id="notify-system" />
+                          <Switch 
+                            checked={notificationPreferences.notify_system} 
+                            onCheckedChange={() => handleNotificationChange('notify_system')}
+                            id="notify-system" 
+                          />
                         </div>
 
                         <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
@@ -552,7 +707,11 @@ export default function SettingsPage() {
                               Promotional content, tips, and industry news
                             </p>
                           </div>
-                          <Switch id="notify-marketing" />
+                          <Switch 
+                            checked={notificationPreferences.notify_marketing} 
+                            onCheckedChange={() => handleNotificationChange('notify_marketing')}
+                            id="notify-marketing" 
+                          />
                         </div>
                       </div>
                     </div>
@@ -569,7 +728,11 @@ export default function SettingsPage() {
                               Show alerts for critical events in real-time within the app
                             </p>
                           </div>
-                          <Switch defaultChecked id="notify-realtime" />
+                          <Switch 
+                            checked={notificationPreferences.notify_realtime} 
+                            onCheckedChange={() => handleNotificationChange('notify_realtime')}
+                            id="notify-realtime" 
+                          />
                         </div>
 
                         <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
@@ -579,7 +742,11 @@ export default function SettingsPage() {
                               Notifications when tasks are assigned to you
                             </p>
                           </div>
-                          <Switch defaultChecked id="notify-tasks" />
+                          <Switch 
+                            checked={notificationPreferences.notify_tasks} 
+                            onCheckedChange={() => handleNotificationChange('notify_tasks')}
+                            id="notify-tasks" 
+                          />
                         </div>
                       </div>
                     </div>
@@ -632,25 +799,43 @@ export default function SettingsPage() {
 
                       <div className="grid gap-4 grid-cols-1">
                         <div className="space-y-2">
-                          <Label htmlFor="current-password" className="text-slate-700 dark:text-slate-300 font-medium">Current password</Label>
-                          <Input id="current-password" type="password" className="bg-slate-50 dark:bg-slate-700 border-slate-300 dark:border-slate-600 focus:border-primary h-11" />
+                          <Label htmlFor="currentPassword" className="text-slate-700 dark:text-slate-300 font-medium">Current password</Label>
+                          <Input 
+                            id="currentPassword" 
+                            type="password" 
+                            value={passwordData.currentPassword}
+                            onChange={handlePasswordChange}
+                            className="bg-slate-50 dark:bg-slate-700 border-slate-300 dark:border-slate-600 focus:border-primary h-11" 
+                          />
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="new-password" className="text-slate-700 dark:text-slate-300 font-medium">New password</Label>
-                          <Input id="new-password" type="password" className="bg-slate-50 dark:bg-slate-700 border-slate-300 dark:border-slate-600 focus:border-primary h-11" />
+                          <Label htmlFor="newPassword" className="text-slate-700 dark:text-slate-300 font-medium">New password</Label>
+                          <Input 
+                            id="newPassword" 
+                            type="password" 
+                            value={passwordData.newPassword}
+                            onChange={handlePasswordChange}
+                            className="bg-slate-50 dark:bg-slate-700 border-slate-300 dark:border-slate-600 focus:border-primary h-11" 
+                          />
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="confirm-password" className="text-slate-700 dark:text-slate-300 font-medium">
+                          <Label htmlFor="confirmPassword" className="text-slate-700 dark:text-slate-300 font-medium">
                             Confirm new password
                           </Label>
-                          <Input id="confirm-password" type="password" className="bg-slate-50 dark:bg-slate-700 border-slate-300 dark:border-slate-600 focus:border-primary h-11" />
+                          <Input 
+                            id="confirmPassword" 
+                            type="password" 
+                            value={passwordData.confirmPassword}
+                            onChange={handlePasswordChange}
+                            className="bg-slate-50 dark:bg-slate-700 border-slate-300 dark:border-slate-600 focus:border-primary h-11" 
+                          />
                         </div>
                       </div>
 
                       <Button
                         size="sm"
                         className="mt-4 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 h-10 px-4 transition-all duration-200"
-                        onClick={(e) => handleSubmit(e, "password")}
+                        onClick={(e) => handlePasswordSubmit(e)}
                         disabled={saving}
                       >
                         {saving ? (
@@ -665,70 +850,55 @@ export default function SettingsPage() {
                     </div>
 
                     <div>
-                      <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3">
-                        Two-Factor Authentication
-                      </h3>
-                      <Separator className="mb-4" />
-
-                      <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
-                        <div className="space-y-1">
-                          <h4 className="font-medium text-slate-900 dark:text-white">Enable 2FA</h4>
-                          <p className="text-sm text-slate-600 dark:text-slate-400">
-                            Add an extra layer of security to your account
-                          </p>
-                        </div>
-                        <Switch id="enable-2fa" />
-                      </div>
-                    </div>
-
-                    <div>
                       <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3">Session Management</h3>
                       <Separator className="mb-4" />
 
                       <div className="space-y-4">
-                        <div className="flex justify-between items-center p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
-                          <div>
-                            <h4 className="font-medium text-slate-900 dark:text-white">Current Session</h4>
-                            <p className="text-sm text-slate-600 dark:text-slate-400">
-                              MacBook Pro • Chicago, IL • May 7, 2025
-                            </p>
+                        {userSessions.map((session) => (
+                          <div key={session.id} className="flex justify-between items-center p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
+                            <div className="flex items-center gap-3">
+                              <span className="text-2xl">{getDeviceIcon(session.device_info)}</span>
+                              <div>
+                                <h4 className="font-medium text-slate-900 dark:text-white">{session.device_info}</h4>
+                                <p className="text-sm text-slate-600 dark:text-slate-400">
+                                  {session.ip_address} • {session.location} • Last active: {formatSessionTime(session.last_activity)}
+                                </p>
+                              </div>
+                            </div>
+                            {session.is_current ? (
+                              <Button variant="outline" size="sm" className="border-green-200 text-green-700 hover:bg-green-50 dark:border-green-700 dark:text-green-400 dark:hover:bg-green-900/20">
+                                This Device
+                              </Button>
+                            ) : (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleLogoutSession(session.id)}
+                                className="text-red-600 hover:text-red-700 border-red-200 hover:bg-red-50 dark:border-red-700 dark:text-red-400 dark:hover:bg-red-900/20"
+                              >
+                                Log Out
+                              </Button>
+                            )}
                           </div>
-                          <Button variant="outline" size="sm" className="border-green-200 text-green-700 hover:bg-green-50 dark:border-green-700 dark:text-green-400 dark:hover:bg-green-900/20">
-                            This Device
-                          </Button>
-                        </div>
+                        ))}
 
-                        <div className="flex justify-between items-center p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
-                          <div>
-                            <h4 className="font-medium text-slate-900 dark:text-white">iPhone 16 Pro</h4>
-                            <p className="text-sm text-slate-600 dark:text-slate-400">
-                              Chicago, IL • Last active: 3 hours ago
-                            </p>
-                          </div>
+                        {userSessions.filter(s => !s.is_current).length > 0 && (
                           <Button
                             variant="outline"
-                            size="sm"
-                            className="text-red-600 hover:text-red-700 border-red-200 hover:bg-red-50 dark:border-red-700 dark:text-red-400 dark:hover:bg-red-900/20"
+                            className="w-full text-red-600 hover:text-red-700 border-red-200 hover:bg-red-50 dark:border-red-700 dark:text-red-400 dark:hover:bg-red-900/20 h-11 transition-all duration-200"
+                            onClick={handleLogoutAllSessions}
+                            disabled={saving}
                           >
-                            Log Out
+                            {saving ? (
+                              <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Processing...
+                              </>
+                            ) : (
+                              "Log Out of All Other Devices"
+                            )}
                           </Button>
-                        </div>
-
-                        <Button
-                          variant="outline"
-                          className="w-full text-red-600 hover:text-red-700 border-red-200 hover:bg-red-50 dark:border-red-700 dark:text-red-400 dark:hover:bg-red-900/20 h-11 transition-all duration-200"
-                          onClick={(e) => handleSubmit(e, "logout-all")}
-                          disabled={saving}
-                        >
-                          {saving ? (
-                            <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              Processing...
-                            </>
-                          ) : (
-                            "Log Out of All Devices"
-                          )}
-                        </Button>
+                        )}
                       </div>
                     </div>
                   </div>
