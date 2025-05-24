@@ -2,8 +2,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -21,6 +21,7 @@ import Image from "next/image";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const { setAuthenticated } = useAuth();
   const [registrationType, setRegistrationType] = useState<
@@ -37,6 +38,33 @@ export default function RegisterPage() {
     phone: "",
   });
   const [error, setError] = useState("");
+  const [invitationInfo, setInvitationInfo] = useState<{
+    company_name: string;
+    role: string;
+    inviter_name?: string;
+  } | null>(null);
+
+  // Check for invitation token in URL parameters
+  useEffect(() => {
+    const invitationToken = searchParams?.get('invitation');
+    const companyCode = searchParams?.get('code');
+    
+    if (invitationToken && companyCode) {
+      // Auto-select member registration
+      setRegistrationType("member");
+      
+      // Pre-fill company code
+      setFormData(prev => ({ ...prev, company_code: companyCode }));
+      
+      // You could also fetch invitation details here if needed
+      // For now, just show a message that this is from an invitation
+      setInvitationInfo({
+        company_name: "the team", // This could be fetched from the backend
+        role: "member",
+        inviter_name: undefined
+      });
+    }
+  }, [searchParams]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -117,20 +145,30 @@ export default function RegisterPage() {
             <span className="mt-2 text-2xl font-bold">movomint</span>
           </div>
           <CardDescription>
-            Join the movomint platform to access logistics tools
+            {invitationInfo 
+              ? `You've been invited to join ${invitationInfo.company_name} on OnuSphere`
+              : "Join the movomint platform to access logistics tools"
+            }
           </CardDescription>
+          {invitationInfo && (
+            <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+              <p className="text-sm text-blue-700 dark:text-blue-400">
+                🎉 You're joining as a {invitationInfo.role}! Complete the form below to get started.
+              </p>
+            </div>
+          )}
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <Tabs
-              defaultValue="business"
+              value={registrationType}
               className="w-full"
               onValueChange={(value) =>
                 setRegistrationType(value as "business" | "member")
               }
             >
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="business">
+                <TabsTrigger value="business" disabled={!!invitationInfo}>
                   Create Business Account
                 </TabsTrigger>
                 <TabsTrigger value="member">Join Existing Business</TabsTrigger>
@@ -167,7 +205,13 @@ export default function RegisterPage() {
                     value={formData.company_code}
                     onChange={handleChange}
                     required={registrationType === "member"}
+                    disabled={!!invitationInfo} // Disable if from invitation
                   />
+                  {invitationInfo && (
+                    <p className="text-xs text-green-600 dark:text-green-400">
+                      ✓ Company code automatically filled from your invitation
+                    </p>
+                  )}
                 </div>
               </TabsContent>
             </Tabs>
@@ -257,6 +301,8 @@ export default function RegisterPage() {
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading
                 ? "Creating account..."
+                : invitationInfo
+                ? "Accept Invitation & Join Team"
                 : registrationType === "business"
                   ? "Create Business Account"
                   : "Join Business Account"}

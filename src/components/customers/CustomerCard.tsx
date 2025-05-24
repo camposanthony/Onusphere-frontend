@@ -10,8 +10,10 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, Pencil } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Loader2, Pencil, User, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { authPut } from "@/lib/utils/api";
 
 export interface Customer {
   id: string;
@@ -50,15 +52,11 @@ export default function CustomerCard({
       setSaving(true);
       setError(null);
       try {
-        const res = await fetch(`/api/customers/${customer.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name }),
-        });
-        if (!res.ok) throw new Error("Failed to update name");
+        await authPut(`/customer/${customer.id}`, { name });
         if (onNameUpdate) onNameUpdate(customer.id, name);
-      } catch {
+      } catch (err) {
         setError("Could not update name.");
+        console.error("Failed to update customer name:", err);
       }
       setSaving(false);
     }
@@ -66,29 +64,24 @@ export default function CustomerCard({
   };
 
   return (
-    <Card className="relative flex flex-col h-full px-4 py-3">
+    <div className="group border border-slate-200 dark:border-slate-700 rounded-xl p-6 transition-all duration-200 bg-white dark:bg-slate-800 overflow-hidden relative flex flex-col h-full">
       {/* Notification badge for incomplete orders */}
       {customer.incompleteOrderCount && customer.incompleteOrderCount > 0 && (
-        <div className="absolute top-2 right-2 flex items-center gap-1 bg-yellow-100 text-yellow-800 rounded-full px-3 py-1 shadow z-10 border border-yellow-300 font-medium text-xs">
-          <svg
-            className="w-4 h-4 mr-1 text-yellow-600"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          {customer.incompleteOrderCount} Incomplete Order
-          {customer.incompleteOrderCount > 1 ? "s" : ""}
+        <div className="absolute top-4 right-4 z-10">
+          <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300 border-amber-200 dark:border-amber-800">
+            {customer.incompleteOrderCount} Incomplete
+          </Badge>
         </div>
       )}
-      <CardHeader className="flex-1 flex flex-col justify-center p-0 mb-2">
-        <CardTitle className="flex items-center text-lg font-bold leading-tight min-h-[2.5rem]">
+
+      <div className="flex justify-between items-start mb-4">
+        <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center">
+          <User className="h-6 w-6 text-white" />
+        </div>
+      </div>
+
+      <div className="flex-1 mb-4">
+        <div className="mb-2">
           {editing ? (
             <Input
               value={name}
@@ -108,37 +101,39 @@ export default function CustomerCard({
               maxLength={40}
             />
           ) : (
-            <span
-              className={`cursor-pointer flex items-center gap-1 truncate w-full ${!customer.name ? "text-gray-400 italic" : ""}`}
+            <h3 
+              className={`text-xl font-bold mb-2 text-slate-900 dark:text-white cursor-pointer flex items-center gap-2 ${!customer.name ? "text-slate-400 italic" : ""}`}
               onClick={handleEdit}
               title="Click to edit name"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") handleEdit();
-              }}
-              role="button"
-              aria-label="Edit customer name"
-              style={{ minHeight: 40 }}
             >
-              <span className="truncate">{customer.name || "Add a Name"}</span>
-              <Pencil className="inline h-4 w-4 ml-1 text-gray-400" />
-            </span>
+              <span className="truncate flex-1">{customer.name || "Add a Name"}</span>
+              <Pencil className="h-4 w-4 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+            </h3>
           )}
-        </CardTitle>
-        <CardDescription className="truncate text-xs text-muted-foreground mt-1">{customer.email_domain}</CardDescription>
-        {error && <div className="text-xs text-red-500 mt-1">{error}</div>}
-      </CardHeader>
-      <CardFooter className="mt-auto p-0 pt-2">
-        <Button
-          variant="outline"
-          className="w-full h-9 text-base font-medium"
-          onClick={() => router.push(`/dashboard/tools/load-plan-pro/customer/${customer.id}/orders`)}
-          disabled={isLoading || saving}
-        >
-          {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-          View Orders
-        </Button>
-      </CardFooter>
-    </Card>
+        </div>
+        
+        <p className="text-slate-600 dark:text-slate-400 mb-4 leading-relaxed text-sm">
+          {customer.email_domain}
+        </p>
+
+        {error && (
+          <div className="text-xs text-red-500 mb-2 p-2 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+            {error}
+          </div>
+        )}
+      </div>
+
+      <Button
+        className="w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 transition-all duration-200"
+        onClick={() => router.push(`/dashboard/tools/load-plan-pro/customer/${customer.id}`)}
+        disabled={isLoading || saving}
+      >
+        {saving ? (
+          <Loader2 className="h-4 w-4 animate-spin mr-2" />
+        ) : null}
+        View Orders
+        <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+      </Button>
+    </div>
   );
 }

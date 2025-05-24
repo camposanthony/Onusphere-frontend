@@ -32,6 +32,42 @@ export interface UserSettings {
   role: string;
 }
 
+export interface EmailTemplate {
+  to: string;
+  subject: string;
+  body: string;
+}
+
+export interface Invitation {
+  id: string;
+  email: string;
+  role: 'admin' | 'manager' | 'member';
+  message?: string;
+  date_created: string;
+  expires_at: string;
+  status: 'pending' | 'accepted' | 'expired';
+  invited_by: string;
+  email_template?: EmailTemplate;
+}
+
+export interface SendInvitationData {
+  email: string;
+  role: 'admin' | 'manager' | 'member';
+  message?: string;
+}
+
+/**
+ * Create a mailto link from email template data
+ */
+export const createMailtoLink = (template: EmailTemplate): string => {
+  const params = new URLSearchParams({
+    to: template.to,
+    subject: template.subject,
+    body: template.body,
+  });
+  return `mailto:?${params.toString()}`;
+};
+
 /**
  * Get all members of the current account
  */
@@ -52,6 +88,97 @@ export const getMembers = async (): Promise<Member[]> => {
   }
 
   return await response.json();
+};
+
+/**
+ * Get all pending invitations for the current account
+ */
+export const getPendingInvitations = async (): Promise<Invitation[]> => {
+  const token = getToken();
+  if (!token) throw new Error('Not authenticated');
+
+  const response = await fetch(`${API_URL}/invitations`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.detail || 'Failed to fetch invitations');
+  }
+
+  return await response.json();
+};
+
+/**
+ * Send an invitation to a new team member
+ */
+export const sendInvitation = async (invitationData: SendInvitationData): Promise<Invitation> => {
+  const token = getToken();
+  if (!token) throw new Error('Not authenticated');
+
+  const response = await fetch(`${API_URL}/invitations/send`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(invitationData),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.detail || 'Failed to send invitation');
+  }
+
+  return await response.json();
+};
+
+/**
+ * Resend an existing invitation
+ */
+export const resendInvitation = async (invitationId: string): Promise<Invitation> => {
+  const token = getToken();
+  if (!token) throw new Error('Not authenticated');
+
+  const response = await fetch(`${API_URL}/invitations/resend`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ invitation_id: invitationId }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.detail || 'Failed to resend invitation');
+  }
+
+  return await response.json();
+};
+
+/**
+ * Delete/cancel an invitation
+ */
+export const deleteInvitation = async (invitationId: string): Promise<void> => {
+  const token = getToken();
+  if (!token) throw new Error('Not authenticated');
+
+  const response = await fetch(`${API_URL}/invitations/${invitationId}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.detail || 'Failed to delete invitation');
+  }
 };
 
 /**
