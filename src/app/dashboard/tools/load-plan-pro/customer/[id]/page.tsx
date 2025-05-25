@@ -49,6 +49,7 @@ import {
   getCustomerOrders,
   createTestOrder,
   updateItemDimensions,
+  triggerPackingTool,
   Customer,
   BackendOrder,
 } from "@/lib/services/load-plan-pro-api";
@@ -326,7 +327,21 @@ export default function CustomerPage() {
           }
         }),
       );
-      toast.success("All item dimensions updated!");
+      
+      // Trigger the packing tool after successfully updating all dimensions
+      if (selectedOrder) {
+        try {
+          await triggerPackingTool(selectedOrder.id);
+          toast.success("All item dimensions updated and packing tool triggered!");
+        } catch (error) {
+          console.error("Failed to trigger packing tool:", error);
+          toast.success("All item dimensions updated!");
+          toast.error("Failed to trigger packing tool");
+        }
+      } else {
+        toast.success("All item dimensions updated!");
+      }
+      
       setModalOpen(false);
       await fetchCustomerAndOrders();
     } catch {

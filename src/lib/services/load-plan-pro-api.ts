@@ -77,10 +77,23 @@ export interface BackendOrderBatch {
   number_pallets: number;
   item: BackendOrderBatchItem | null;
 }
-export interface LoadingInstructions {
-  labels: string[];
-  base64Images: string[];
+export interface LoadingInstructionImage {
+  label: string;
+  base64: string;
 }
+
+export interface LoadingInstructions {
+  labels?: string[];
+  base64Images?: string[];
+  sequence?: string[];
+  notes?: string;
+}
+
+// The loading instructions can be either:
+// 1. An array of images with labels and base64 data
+// 2. An object with sequence, notes, etc.
+// 3. An array of text instructions
+export type LoadingInstructionsData = LoadingInstructionImage[] | LoadingInstructions | string[];
 
 export interface BackendOrder {
   // Renamed from original Order interface
@@ -91,7 +104,7 @@ export interface BackendOrder {
   // Assuming 'upcoming_shipment_times' should be 'shipment_times'
   shipment_times: string[];
   status: "incomplete" | "processing" | "done"; // General order lifecycle status
-  loading_instructions: LoadingInstructions; // Support both object and array formats
+  loading_instructions: LoadingInstructionsData; // Support both object and array formats
 }
 
 /**
@@ -220,5 +233,26 @@ export const updateItemDimensions = (
   return authPost<UpdateItemDimensionsResponse>(
     `/item/${itemId}/update`,
     payload,
+  );
+};
+
+/**
+ * Response type for triggering packing tool
+ */
+export interface TriggerPackingToolResponse {
+  status: string;
+  order_id: string;
+  [key: string]: unknown;
+}
+
+/**
+ * Trigger the packing tool for an order
+ */
+export const triggerPackingTool = (
+  orderId: string,
+): Promise<TriggerPackingToolResponse> => {
+  return authPost<TriggerPackingToolResponse>(
+    `/order/${orderId}/trigger-packing-tool`,
+    {},
   );
 };
