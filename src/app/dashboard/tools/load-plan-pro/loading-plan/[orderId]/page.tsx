@@ -352,7 +352,7 @@ export default function LoadingPlanPage() {
                         <div className="space-y-6">
                           <h3 className="text-base font-semibold mb-3 flex items-center text-slate-900 dark:text-white">
                             <ImageIcon className="h-4 w-4 text-slate-600 dark:text-slate-400 mr-2" />
-                            Loading Instruction Images
+                            Visual Loading Instructions
                           </h3>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {images.map((image, index) => (
@@ -604,66 +604,29 @@ export default function LoadingPlanPage() {
                     'base64' in order.loading_instructions[0];
 
                   if (hasImages) {
-                    const images = order.loading_instructions as LoadingInstructionImage[];
-                    
-                    // Create a mapping of common view labels to icons
-                    const getViewIcon = (label: string) => {
-                      const lowerLabel = label.toLowerCase();
-                      if (lowerLabel.includes('front')) return <Layout className="h-4 w-4 text-slate-500 mr-2" />;
-                      if (lowerLabel.includes('top') || lowerLabel.includes('down')) return <ArrowUp className="h-4 w-4 text-slate-500 mr-2" />;
-                      if (lowerLabel.includes('back')) return <RotateCcw className="h-4 w-4 text-slate-500 mr-2" />;
-                      if (lowerLabel.includes('side') || lowerLabel.includes('left') || lowerLabel.includes('right')) return <Sidebar className="h-4 w-4 text-slate-500 mr-2" />;
-                      return <Package className="h-4 w-4 text-slate-500 mr-2" />;
-                    };
-
+                    // If we have images in loading instructions, show a different view here
                     return (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {images.map((image, index) => (
-                          <div key={index} className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 p-4">
-                            <h3 className="text-sm font-medium mb-3 flex items-center text-slate-900 dark:text-white">
-                              {getViewIcon(image.label)}
-                              {image.label.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())} View
-                            </h3>
-                            <div className="aspect-video bg-white dark:bg-slate-900 rounded-lg overflow-hidden">
-                              <img
-                                src={`data:image/png;base64,${image.base64}`}
-                                alt={`${image.label} loading view`}
-                                className="w-full h-full object-contain cursor-pointer hover:scale-105 transition-transform"
-                                onClick={() => {
-                                  // Open image in new tab for full view
-                                  const newWindow = window.open();
-                                  if (newWindow) {
-                                    newWindow.document.write(`
-                                      <html>
-                                        <head><title>${image.label} View</title></head>
-                                        <body style="margin:0;background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh;">
-                                          <img src="data:image/png;base64,${image.base64}" style="max-width:100%;max-height:100%;object-fit:contain;" alt="${image.label} view" />
-                                        </body>
-                                      </html>
-                                    `);
-                                  }
-                                }}
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement;
-                                  target.style.display = 'none';
-                                  const parent = target.parentElement;
-                                  if (parent) {
-                                    parent.innerHTML = `
-                                      <div class="flex items-center justify-center h-full text-slate-500">
-                                        <div class="text-center p-4">
-                                          <svg class="mx-auto h-12 w-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                                          </svg>
-                                          <p class="text-xs">Failed to load ${image.label} view</p>
-                                        </div>
-                                      </div>
-                                    `;
-                                  }
-                                }}
-                              />
-                            </div>
+                      <div className="rounded-xl border border-slate-200 dark:border-slate-700 aspect-video bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                        <div className="text-center p-8 w-full">
+                          <Package className="mx-auto h-16 w-16 text-slate-500 mb-4" />
+                          <h3 className="text-lg font-medium mb-2 text-slate-900 dark:text-white">
+                            Interactive Model View
+                          </h3>
+                          <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 max-w-md mx-auto">
+                            The loading instructions above show the visual diagrams. This section could display 
+                            an interactive 3D model or additional analysis tools.
+                          </p>
+                          <div className="flex flex-wrap justify-center gap-3">
+                            <Button variant="outline" className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700">
+                              <Package className="mr-2 h-4 w-4" />
+                              3D Model
+                            </Button>
+                            <Button variant="outline" className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700">
+                              <Grid className="mr-2 h-4 w-4" />
+                              Analysis
+                            </Button>
                           </div>
-                        ))}
+                        </div>
                       </div>
                     );
                   }
