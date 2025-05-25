@@ -191,13 +191,7 @@ export const getLastPipelineResult = (): Promise<PipelineResult> => {
   return authGet<PipelineResult>("/result");
 };
 
-/**
- * Create a test order (for development only)
- */
-export const createTestOrder = (): Promise<BackendOrder> => {
-  // Assuming it returns BackendOrder structure
-  return authPost<BackendOrder>("/testing/create-test-order", {});
-};
+
 
 export const createCustomer = async (
   payload: CreateCustomerPayload,

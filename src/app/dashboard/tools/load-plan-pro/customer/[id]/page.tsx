@@ -47,7 +47,6 @@ import {
 import {
   getCustomerById,
   getCustomerOrders,
-  createTestOrder,
   updateItemDimensions,
   triggerPackingTool,
   Customer,
@@ -295,16 +294,7 @@ export default function CustomerPage() {
     });
   };
 
-  const handleCreateTestOrder = async () => {
-    try {
-      const newOrder = await createTestOrder();
-      setOrders((prevOrders) => [...prevOrders, newOrder]);
-      toast.success("Test order created successfully");
-    } catch (error) {
-      console.error("Error creating test order:", error);
-      toast.error("Failed to create test order");
-    }
-  };
+
 
   const handleOrderCardClick = (order: BackendOrder) => {
     setSelectedOrder(order);
@@ -842,15 +832,7 @@ export default function CustomerPage() {
                   </Select>
                 </div>
 
-                <div className="flex justify-between items-center mb-6">
-                  <Button 
-                    onClick={handleCreateTestOrder}
-                    className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80"
-                  >
-                    <Package className="mr-2 h-4 w-4" />
-                    Create Test Order
-                  </Button>
-                </div>
+
               </div>
 
               {filteredOrders.length === 0 ? (
