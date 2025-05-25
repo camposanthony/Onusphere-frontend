@@ -78,10 +78,8 @@ export interface BackendOrderBatch {
   item: BackendOrderBatchItem | null;
 }
 export interface LoadingInstructions {
-  sequence: string[];
-  notes: string;
-  vehicleType: string;
-  estimatedTime: string;
+  labels: string[];
+  base64Images: string[];
 }
 
 export interface BackendOrder {
@@ -93,7 +91,7 @@ export interface BackendOrder {
   // Assuming 'upcoming_shipment_times' should be 'shipment_times'
   shipment_times: string[];
   status: "incomplete" | "processing" | "done"; // General order lifecycle status
-  loading_instructions: LoadingInstructions | string[] | []; // Support both object and array formats
+  loading_instructions: LoadingInstructions; // Support both object and array formats
 }
 
 /**
