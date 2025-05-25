@@ -146,7 +146,7 @@ export default function RegisterPage() {
           </div>
           <CardDescription>
             {invitationInfo 
-              ? `You've been invited to join ${invitationInfo.company_name} on OnuSphere`
+              ? `You've been invited to join ${invitationInfo.company_name} on Movomint`
               : "Join the movomint platform to access logistics tools"
             }
           </CardDescription>

@@ -23,6 +23,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const { setAuthenticated } = useAuth();
 
@@ -33,7 +34,7 @@ export default function LoginPage() {
 
     try {
       // Call backend login API
-      const response = await login({ email, password });
+      const response = await login({ email, password, remember_me: rememberMe });
 
       // Save the token
       saveToken(response.access_token);
@@ -108,6 +109,8 @@ export default function LoginPage() {
               <input
                 type="checkbox"
                 id="remember"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
                 className="rounded border-gray-300 text-primary focus:ring-primary"
               />
               <Label htmlFor="remember" className="text-sm cursor-pointer">

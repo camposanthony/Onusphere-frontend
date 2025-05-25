@@ -11,6 +11,7 @@ import {
   Download,
   FileText,
   Package,
+  Truck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -888,7 +889,23 @@ export default function CustomerPage() {
                           <div className="text-sm text-slate-600 dark:text-slate-400 font-medium">
                             {order.order_batches?.length || 0} items
                           </div>
-                          <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-primary transition-colors" />
+                          <div className="flex items-center gap-2">
+                            {order.status === "done" && order.loading_instructions && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  router.push(`/dashboard/tools/load-plan-pro/loading-plan/${order.id}?customerId=${params.id}`);
+                                }}
+                                className="h-8 px-3 text-xs bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800"
+                              >
+                                <Truck className="h-3 w-3 mr-1" />
+                                View Plan
+                              </Button>
+                            )}
+                            <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-primary transition-colors" />
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
@@ -1157,11 +1174,11 @@ export default function CustomerPage() {
                                   <div
                                     className={`flex flex-col flex-1 min-h-0 ${isJustSaved ? "opacity-40" : ""}`}
                                   >
-                                    <div className="font-semibold mb-1 text-sm sm:text-base">
+                                    <div className="font-semibold mb-1 text-sm sm:text-base truncate max-w-[100px] sm:max-w-[140px]" title={item?.item_number || "Unknown Item"}>
                                       {item?.item_number || "Unknown Item"}
                                     </div>
-                                    <div className="text-xs text-gray-500 mb-1 truncate">
-                                      {item?.description}
+                                    <div className="text-xs text-gray-500 mb-1 truncate max-w-[120px] sm:max-w-[160px]" title={item?.description || "No description"}>
+                                      {item?.description || "No description"}
                                     </div>
                                     <div className="text-xs text-gray-500 mb-1">
                                       Pallets: {batch.number_pallets}
@@ -1271,11 +1288,11 @@ export default function CustomerPage() {
                                   <div
                                     className={`flex flex-col flex-1 min-h-0 ${isJustSaved ? "opacity-40" : ""}`}
                                   >
-                                    <div className="font-semibold mb-1 text-sm sm:text-base">
+                                    <div className="font-semibold mb-1 text-sm sm:text-base truncate max-w-[100px] sm:max-w-[140px]" title={item?.item_number || "Unknown Item"}>
                                       {item?.item_number || "Unknown Item"}
                                     </div>
-                                    <div className="text-xs text-gray-500 mb-1 truncate">
-                                      {item?.description}
+                                    <div className="text-xs text-gray-500 mb-1 truncate max-w-[120px] sm:max-w-[160px]" title={item?.description || "No description"}>
+                                      {item?.description || "No description"}
                                     </div>
                                     <div className="text-xs text-gray-500 mb-1">
                                       Pallets: {swipingBatch.number_pallets}

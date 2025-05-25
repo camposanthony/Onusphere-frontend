@@ -8,6 +8,7 @@ const API_URL = 'http://localhost:8000';
 export interface LoginCredentials {
   email: string;
   password: string;
+  remember_me?: boolean;
 }
 
 export interface SignupData {

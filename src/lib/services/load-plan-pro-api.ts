@@ -68,6 +68,9 @@ export interface BackendOrderBatchItem {
   item_number: string;
   description: string;
   units_per_pallet: number;
+  height: number;
+  width: number;
+  length: number;
 }
 export interface BackendOrderBatch {
   order_batch_id: string;
@@ -90,7 +93,7 @@ export interface BackendOrder {
   // Assuming 'upcoming_shipment_times' should be 'shipment_times'
   shipment_times: string[];
   status: "incomplete" | "processing" | "done"; // General order lifecycle status
-  loading_instructions: LoadingInstructions | []; // Match backend which can be empty list
+  loading_instructions: LoadingInstructions | string[] | []; // Support both object and array formats
 }
 
 /**

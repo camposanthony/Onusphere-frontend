@@ -16,6 +16,7 @@ import {
   LineChart,
   Settings,
 } from "lucide-react";
+import { useAuth } from "@/lib/context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import LottieAnimation from "@/components/lottie/LottieAnimation";
 import logisticsAnimation from "../public/animations/logistics.json";
@@ -30,6 +31,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export default function LandingPage() {
+  const { isAuthenticated, loading } = useAuth();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [visibleSections, setVisibleSections] = useState<Set<string>>(
@@ -261,19 +263,37 @@ export default function LandingPage() {
             </Link>
           </nav>
           <div className="flex items-center gap-4">
-            <Link href="/auth/login">
-              <Button
-                variant="outline"
-                size="sm"
-                className={`rounded-full px-6 py-2 font-semibold shadow-sm transition-all duration-300 ${
-                  scrolled
-                    ? "border-primary/60 text-primary hover:bg-primary/5 hover:text-primary/100"
-                    : "border-border text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                }`}
-              >
-                Log In
-              </Button>
-            </Link>
+            {!loading && (
+              isAuthenticated ? (
+                <Link href="/dashboard">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className={`rounded-full px-6 py-2 font-semibold shadow-sm transition-all duration-300 ${
+                      scrolled
+                        ? "border-primary/60 text-primary hover:bg-primary/5 hover:text-primary/100"
+                        : "border-border text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    }`}
+                  >
+                    Dashboard
+                  </Button>
+                </Link>
+              ) : (
+                <Link href="/auth/login">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className={`rounded-full px-6 py-2 font-semibold shadow-sm transition-all duration-300 ${
+                      scrolled
+                        ? "border-primary/60 text-primary hover:bg-primary/5 hover:text-primary/100"
+                        : "border-border text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    }`}
+                  >
+                    Log In
+                  </Button>
+                </Link>
+              )
+            )}
             <Link href="/demo">
               <Button
                 size="sm"
@@ -366,13 +386,25 @@ export default function LandingPage() {
                         Request a Demo
                       </Button>
                     </Link>
-                    <Link
-                      href="/auth/login"
-                      onClick={() => setOpen(false)}
-                      className="w-full text-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors mt-2"
-                    >
-                      Log In
-                    </Link>
+                    {!loading && (
+                      isAuthenticated ? (
+                        <Link
+                          href="/dashboard"
+                          onClick={() => setOpen(false)}
+                          className="w-full text-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors mt-2"
+                        >
+                          Dashboard
+                        </Link>
+                      ) : (
+                        <Link
+                          href="/auth/login"
+                          onClick={() => setOpen(false)}
+                          className="w-full text-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors mt-2"
+                        >
+                          Log In
+                        </Link>
+                      )
+                    )}
                   </div>
                 </div>
               </SheetContent>

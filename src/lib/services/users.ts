@@ -60,12 +60,11 @@ export interface SendInvitationData {
  * Create a mailto link from email template data
  */
 export const createMailtoLink = (template: EmailTemplate): string => {
-  const params = new URLSearchParams({
-    to: template.to,
-    subject: template.subject,
-    body: template.body,
-  });
-  return `mailto:?${params.toString()}`;
+  // Manually encode the parameters to avoid URLSearchParams converting spaces to '+'
+  const encodedSubject = encodeURIComponent(template.subject);
+  const encodedBody = encodeURIComponent(template.body);
+  
+  return `mailto:${template.to}?subject=${encodedSubject}&body=${encodedBody}`;
 };
 
 /**

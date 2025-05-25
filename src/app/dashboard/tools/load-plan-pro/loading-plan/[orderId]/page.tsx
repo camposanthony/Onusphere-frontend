@@ -83,10 +83,17 @@ export default function LoadingPlanPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="flex flex-col items-center gap-2">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-lg font-medium">Loading order details...</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+        <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center py-16">
+            <div className="flex flex-col items-center gap-4 bg-white dark:bg-slate-800 p-8 rounded-2xl border border-slate-200 dark:border-slate-700">
+              <div className="relative">
+                <Loader2 className="h-12 w-12 animate-spin text-primary" />
+                <div className="absolute inset-0 h-12 w-12 rounded-full border-4 border-primary/20"></div>
+              </div>
+              <p className="text-slate-600 dark:text-slate-300 font-medium">Loading order details...</p>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -94,18 +101,39 @@ export default function LoadingPlanPage() {
 
   if (!order) {
     return (
-      <div className="container mx-auto py-6">
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 text-center">
-          <AlertCircle className="mx-auto h-12 w-12 text-red-500 mb-3" />
-          <h2 className="text-lg font-semibold mb-2">Order Not Found</h2>
-          <p className="text-gray-600 dark:text-gray-300 mb-4">
-            We couldn&apos;t find the loading plan for this order. It may have
-            been deleted or doesn&apos;t exist.
-          </p>
-          <Button onClick={() => router.back()}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Go Back
-          </Button>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+        <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+          {/* Header Section */}
+          <div className="mb-8">
+            <Button 
+              variant="ghost" 
+              onClick={() => router.back()}
+              className="mb-4 hover:bg-slate-100 dark:hover:bg-slate-800 -ml-4"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Orders
+            </Button>
+          </div>
+
+          <div className="mb-8 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
+            <div className="flex items-center gap-3 text-red-800 dark:text-red-200 text-center justify-center">
+              <AlertCircle className="h-12 w-12 text-red-500 mb-3" />
+              <div>
+                <h2 className="text-lg font-semibold mb-2">Order Not Found</h2>
+                <p className="text-slate-600 dark:text-slate-400 mb-4">
+                  We couldn&apos;t find the loading plan for this order. It may have
+                  been deleted or doesn&apos;t exist.
+                </p>
+                <Button 
+                  onClick={() => router.back()}
+                  className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80"
+                >
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Go Back
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -113,29 +141,43 @@ export default function LoadingPlanPage() {
 
   const hasValidLoadingInstructions =
     order.loading_instructions &&
-    typeof order.loading_instructions === "object" &&
-    !Array.isArray(order.loading_instructions) &&
-    Array.isArray(order.loading_instructions.sequence);
+    (
+      (Array.isArray(order.loading_instructions) && order.loading_instructions.length > 0) ||
+      (typeof order.loading_instructions === "object" &&
+       !Array.isArray(order.loading_instructions) &&
+       Array.isArray(order.loading_instructions.sequence))
+    );
 
   if (!hasValidLoadingInstructions) {
     return (
-      <div className="container mx-auto py-6">
-        <div className="mb-6">
-          <Button variant="ghost" onClick={() => router.back()}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back
-          </Button>
-        </div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+        <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+          {/* Header Section */}
+          <div className="mb-8">
+            <Button 
+              variant="ghost" 
+              onClick={() => router.back()}
+              className="mb-4 hover:bg-slate-100 dark:hover:bg-slate-800 -ml-4"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Orders
+            </Button>
+          </div>
 
-        <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6 text-center">
-          <AlertCircle className="mx-auto h-12 w-12 text-yellow-500 mb-3" />
-          <h2 className="text-lg font-semibold mb-2">
-            Loading Plan Not Available
-          </h2>
-          <p className="text-gray-600 dark:text-gray-300 mb-4">
-            This order doesn&apos;t have loading instructions yet. Please check
-            back later.
-          </p>
+          <div className="mb-8 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl">
+            <div className="flex items-center gap-3 text-amber-800 dark:text-amber-200 text-center justify-center">
+              <AlertCircle className="h-12 w-12 text-amber-500 mb-3" />
+              <div>
+                <h2 className="text-lg font-semibold mb-2">
+                  Loading Plan Not Available
+                </h2>
+                <p className="text-slate-600 dark:text-slate-400 mb-4">
+                  This order doesn&apos;t have loading instructions yet. Please check
+                  back later.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -210,40 +252,50 @@ export default function LoadingPlanPage() {
   };
 
   return (
-    <div className="container mx-auto py-6">
-      <div className="mb-6">
-        <Button variant="ghost" onClick={() => router.back()}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back
-        </Button>
-      </div>
-
-      <div className="grid gap-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+      <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-3">
-                <Truck className="h-8 w-8 text-gray-600 dark:text-gray-400" />
-                <h1 className="text-2xl font-bold">Loading Instructions</h1>
-                <Badge
-                  variant="outline"
-                  className="ml-2 bg-gray-50 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300 border-gray-200 dark:border-gray-800"
-                >
-                  Order #{order.id}
-                </Badge>
+        <div className="mb-8">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div className="space-y-4">
+              <Button 
+                variant="ghost" 
+                onClick={() => router.back()}
+                className="mb-4 hover:bg-slate-100 dark:hover:bg-slate-800 -ml-4"
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to Orders
+              </Button>
+              
+              <div className="flex items-center gap-4">
+                <div className="h-16 w-16 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center">
+                  <Truck className="h-8 w-8 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-200 bg-clip-text text-transparent">
+                    Loading Instructions
+                  </h1>
+                  <div className="flex items-center gap-2 mt-2">
+                    <Badge
+                      variant="outline"
+                      className="bg-slate-50 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700"
+                    >
+                      Order #{order.id.slice(0, 8)}...
+                    </Badge>
+                    <span className="text-slate-600 dark:text-slate-400 text-lg">
+                      {new Date(order.order_date).toLocaleDateString()}
+                    </span>
+                  </div>
+                </div>
               </div>
-              <p className="text-gray-600 dark:text-gray-300 mt-2">
-                Order Date: {new Date(order.order_date).toLocaleDateString()}
-              </p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-col sm:flex-row gap-3">
               <Button
                 variant="outline"
-                size="sm"
                 onClick={handleEmailInstructions}
                 disabled={isSendingEmail}
+                className="h-11 px-6 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700"
               >
                 {isSendingEmail ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -253,9 +305,9 @@ export default function LoadingPlanPage() {
                 {isSendingEmail ? "Sending..." : "Email Instructions"}
               </Button>
               <Button
-                size="sm"
                 onClick={handleShareWithLoader}
                 disabled={isSharing}
+                className="h-11 px-6 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 transition-all duration-200"
               >
                 {isSharing ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -271,38 +323,41 @@ export default function LoadingPlanPage() {
         {/* Main Content */}
         <div className="grid gap-6">
           {/* Loading Instructions */}
-          <Card>
+          <Card className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
             <CardHeader>
-              <CardTitle className="flex items-center text-lg">
-                <Truck className="mr-2 h-5 w-5 text-gray-600" />
+              <CardTitle className="flex items-center text-lg text-slate-900 dark:text-white">
+                <Truck className="mr-2 h-5 w-5 text-slate-600 dark:text-slate-400" />
                 Loading Instructions
               </CardTitle>
             </CardHeader>
             <CardContent>
               {/* Step by Step Instructions */}
               <div className="mb-6">
-                <div className="border rounded-md p-4 dark:border-gray-700 max-h-[300px] overflow-y-auto">
+                <div className="border rounded-xl p-4 border-slate-200 dark:border-slate-700 max-h-[300px] overflow-y-auto bg-slate-50 dark:bg-slate-900/50">
                   <div className="space-y-5">
                     {order.loading_instructions &&
-                      typeof order.loading_instructions === "object" &&
-                      !Array.isArray(order.loading_instructions) &&
-                      order.loading_instructions.sequence?.map(
-                        (step, index) => (
+                      (() => {
+                        // Handle both array format (new) and object format (legacy)
+                        const instructions = Array.isArray(order.loading_instructions)
+                          ? order.loading_instructions
+                          : order.loading_instructions.sequence || [];
+                        
+                        return instructions.map((step, index) => (
                           <div
                             key={index}
-                            className="flex items-start pb-5 border-b dark:border-gray-700 last:border-0 last:pb-0"
+                            className="flex items-start pb-5 border-b border-slate-200 dark:border-slate-700 last:border-0 last:pb-0"
                           >
-                            <div className="flex-shrink-0 h-7 w-7 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center mr-3 mt-0.5">
-                              <span className="text-sm font-semibold text-gray-800 dark:text-gray-300">
+                            <div className="flex-shrink-0 h-7 w-7 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center mr-3 mt-0.5">
+                              <span className="text-sm font-semibold text-primary dark:text-primary">
                                 {index + 1}
                               </span>
                             </div>
                             <div className="flex-1">
-                              <p>{step}</p>
+                              <p className="text-slate-700 dark:text-slate-300">{step}</p>
                             </div>
                           </div>
-                        ),
-                      )}
+                        ));
+                      })()}
                   </div>
                 </div>
               </div>
@@ -313,23 +368,23 @@ export default function LoadingPlanPage() {
                 !Array.isArray(order.loading_instructions) &&
                 order.loading_instructions.notes && (
                   <div className="mb-6">
-                    <h3 className="text-base font-semibold mb-3 flex items-center">
+                    <h3 className="text-base font-semibold mb-3 flex items-center text-slate-900 dark:text-white">
                       <AlertCircle className="h-4 w-4 text-amber-600 mr-2" />
                       Special Handling Notes
                     </h3>
-                    <div className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 p-4">
-                      <p>{order.loading_instructions.notes}</p>
+                    <div className="rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 p-4">
+                      <p className="text-slate-700 dark:text-slate-300">{order.loading_instructions.notes}</p>
                     </div>
                   </div>
                 )}
 
               {/* Email Settings */}
               <div>
-                <h3 className="text-base font-semibold mb-3 flex items-center">
-                  <Mail className="h-4 w-4 text-gray-600 mr-2" />
+                <h3 className="text-base font-semibold mb-3 flex items-center text-slate-900 dark:text-white">
+                  <Mail className="h-4 w-4 text-slate-600 dark:text-slate-400 mr-2" />
                   Email Notifications
                 </h3>
-                <div className="grid gap-4 rounded-lg border p-4 dark:border-gray-700">
+                <div className="grid gap-4 rounded-xl border border-slate-200 dark:border-slate-700 p-4 bg-slate-50 dark:bg-slate-900/50">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="auto-email" className="flex flex-col">
                       <span className="font-medium">
@@ -364,6 +419,7 @@ export default function LoadingPlanPage() {
                         <Button
                           onClick={handleEmailInstructions}
                           disabled={isSendingEmail}
+                          className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80"
                         >
                           {isSendingEmail ? (
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -397,17 +453,18 @@ export default function LoadingPlanPage() {
           </Card>
 
           {/* Loading Model Visualization */}
-          <Card>
+          <Card className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
             <CardHeader>
-              <CardTitle className="flex items-center justify-between">
+              <CardTitle className="flex items-center justify-between text-slate-900 dark:text-white">
                 <div className="flex items-center">
-                  <Package className="mr-2 h-5 w-5 text-gray-600" />
+                  <Package className="mr-2 h-5 w-5 text-slate-600 dark:text-slate-400" />
                   <span>Loading Model Visualization</span>
                 </div>
                 <Button
                   size="sm"
                   variant="outline"
                   onClick={() => setViewingModel(!viewingModel)}
+                  className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700"
                 >
                   {viewingModel ? "2D Views" : "3D Interactive Model"}
                 </Button>
@@ -415,27 +472,27 @@ export default function LoadingPlanPage() {
             </CardHeader>
             <CardContent>
               {viewingModel ? (
-                <div className="rounded-lg border border-gray-200 dark:border-gray-700 aspect-video bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                <div className="rounded-xl border border-slate-200 dark:border-slate-700 aspect-video bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
                   <div className="text-center p-8 w-full">
-                    <Package className="mx-auto h-16 w-16 text-gray-500 mb-4" />
-                    <h3 className="text-lg font-medium mb-2">
+                    <Package className="mx-auto h-16 w-16 text-slate-500 mb-4" />
+                    <h3 className="text-lg font-medium mb-2 text-slate-900 dark:text-white">
                       3D Interactive Model
                     </h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 max-w-md mx-auto">
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 max-w-md mx-auto">
                       This is where the interactive 3D model would be displayed,
                       allowing users to rotate, zoom, and explore the truck
                       loading configuration.
                     </p>
                     <div className="flex flex-wrap justify-center gap-3">
-                      <Button variant="outline">
+                      <Button variant="outline" className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700">
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         Rotate Left
                       </Button>
-                      <Button>
+                      <Button className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80">
                         <Package className="mr-2 h-4 w-4" />
                         Exploded View
                       </Button>
-                      <Button variant="outline">
+                      <Button variant="outline" className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700">
                         Rotate Right
                         <ArrowLeft className="ml-2 h-4 w-4 rotate-180" />
                       </Button>
@@ -445,60 +502,60 @@ export default function LoadingPlanPage() {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Front View */}
-                  <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 p-4">
-                    <h3 className="text-sm font-medium mb-3 flex items-center">
-                      <Layout className="h-4 w-4 text-gray-500 mr-2" />
+                  <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 p-4">
+                    <h3 className="text-sm font-medium mb-3 flex items-center text-slate-900 dark:text-white">
+                      <Layout className="h-4 w-4 text-slate-500 mr-2" />
                       Front View
                     </h3>
-                    <div className="aspect-video bg-white dark:bg-gray-900 rounded flex items-center justify-center">
+                    <div className="aspect-video bg-white dark:bg-slate-900 rounded-lg flex items-center justify-center">
                       <div className="text-center p-4">
-                        <LayoutDashboard className="mx-auto h-12 w-12 text-gray-400 mb-2" />
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <LayoutDashboard className="mx-auto h-12 w-12 text-slate-400 mb-2" />
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
                           Front loading diagram
                         </p>
                       </div>
                     </div>
                   </div>
                   {/* Top View */}
-                  <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 p-4">
-                    <h3 className="text-sm font-medium mb-3 flex items-center">
-                      <ArrowUp className="h-4 w-4 text-gray-500 mr-2" />
+                  <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 p-4">
+                    <h3 className="text-sm font-medium mb-3 flex items-center text-slate-900 dark:text-white">
+                      <ArrowUp className="h-4 w-4 text-slate-500 mr-2" />
                       Top View
                     </h3>
-                    <div className="aspect-video bg-white dark:bg-gray-900 rounded flex items-center justify-center">
+                    <div className="aspect-video bg-white dark:bg-slate-900 rounded-lg flex items-center justify-center">
                       <div className="text-center p-4">
-                        <Grid className="mx-auto h-12 w-12 text-gray-400 mb-2" />
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <Grid className="mx-auto h-12 w-12 text-slate-400 mb-2" />
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
                           Top loading diagram
                         </p>
                       </div>
                     </div>
                   </div>
                   {/* Back View */}
-                  <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 p-4">
-                    <h3 className="text-sm font-medium mb-3 flex items-center">
-                      <RotateCcw className="h-4 w-4 text-gray-500 mr-2" />
+                  <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 p-4">
+                    <h3 className="text-sm font-medium mb-3 flex items-center text-slate-900 dark:text-white">
+                      <RotateCcw className="h-4 w-4 text-slate-500 mr-2" />
                       Back View
                     </h3>
-                    <div className="aspect-video bg-white dark:bg-gray-900 rounded flex items-center justify-center">
+                    <div className="aspect-video bg-white dark:bg-slate-900 rounded-lg flex items-center justify-center">
                       <div className="text-center p-4">
-                        <FlipHorizontal className="mx-auto h-12 w-12 text-gray-400 mb-2" />
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <FlipHorizontal className="mx-auto h-12 w-12 text-slate-400 mb-2" />
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
                           Back loading diagram
                         </p>
                       </div>
                     </div>
                   </div>
                   {/* Side View */}
-                  <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 p-4">
-                    <h3 className="text-sm font-medium mb-3 flex items-center">
-                      <Sidebar className="h-4 w-4 text-gray-500 mr-2" />
+                  <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 p-4">
+                    <h3 className="text-sm font-medium mb-3 flex items-center text-slate-900 dark:text-white">
+                      <Sidebar className="h-4 w-4 text-slate-500 mr-2" />
                       Side View
                     </h3>
-                    <div className="aspect-video bg-white dark:bg-gray-900 rounded flex items-center justify-center">
+                    <div className="aspect-video bg-white dark:bg-slate-900 rounded-lg flex items-center justify-center">
                       <div className="text-center p-4">
-                        <PanelRight className="mx-auto h-12 w-12 text-gray-400 mb-2" />
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <PanelRight className="mx-auto h-12 w-12 text-slate-400 mb-2" />
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
                           Side loading diagram
                         </p>
                       </div>
