@@ -41,8 +41,8 @@ export default function CustomersPage() {
 
   const [companyCode, setCompanyCode] = useState<string | null>(null);
   const [isLoadingCompanyCode, setIsLoadingCompanyCode] = useState(true);
-  const [isCodeCopied, setIsCodeCopied] = useState(false);
   const [isCodeCopied2, setIsCodeCopied2] = useState(false);
+  const [isEmailCopied, setIsEmailCopied] = useState(false);
   const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null);
 
   // Fetch customers and their incomplete order counts
@@ -120,13 +120,22 @@ export default function CustomersPage() {
     if (companyCode) {
       try {
         await navigator.clipboard.writeText(companyCode);
-        setIsCodeCopied(true);
         setIsCodeCopied2(true);
-        setTimeout(() => setIsCodeCopied(false), 2000);
         setTimeout(() => setIsCodeCopied2(false), 2000);
       } catch (err) {
         console.error("Failed to copy company code:", err);
       }
+    }
+  };
+
+  const handleCopyEmail = async () => {
+    const email = "onusphere@gmail.com";
+    try {
+      await navigator.clipboard.writeText(email);
+      setIsEmailCopied(true);
+      setTimeout(() => setIsEmailCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy email:", err);
     }
   };
 
@@ -377,10 +386,10 @@ export default function CustomersPage() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={handleCopyCode}
+                        onClick={handleCopyEmail}
                         className="flex-shrink-0"
                       >
-                        {isCodeCopied ? (
+                        {isEmailCopied ? (
                           <>
                             <CheckCircle2 className="h-4 w-4 mr-2 text-green-500" />
                             <span className="text-green-600">Copied!</span>

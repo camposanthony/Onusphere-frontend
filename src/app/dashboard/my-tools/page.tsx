@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Truck,
   ArrowRight,
@@ -45,12 +46,34 @@ export default function MyToolsPage() {
   // State for search and saved tools
   const [searchQuery, setSearchQuery] = useState('');
   const [savedTools, setSavedTools] = useState<string[]>([]);
+  const router = useRouter();
   
-  // Simulate loading saved tools from local storage or an API
+  // Load saved tools from local storage or an API
   useEffect(() => {
     // In a real app, you would fetch this from your backend
-    // For demo purposes, we'll just use the Load Plan Pro as a default saved tool
-    setSavedTools(['load-plan-pro']);
+    // Load saved tools from localStorage
+    const savedToolsFromStorage = localStorage.getItem('savedTools');
+    if (savedToolsFromStorage) {
+      try {
+        setSavedTools(JSON.parse(savedToolsFromStorage));
+      } catch (error) {
+        console.error('Failed to parse saved tools from localStorage:', error);
+        setSavedTools([]);
+      }
+    } else {
+      setSavedTools([]);
+    }
+
+    // Listen for changes in saved tools from other components
+    const handleSavedToolsChanged = (event: CustomEvent) => {
+      setSavedTools(event.detail.savedTools);
+    };
+
+    window.addEventListener('savedToolsChanged', handleSavedToolsChanged as EventListener);
+
+    return () => {
+      window.removeEventListener('savedToolsChanged', handleSavedToolsChanged as EventListener);
+    };
   }, []);
 
   // Filter tools based on search query and whether they're saved
@@ -62,11 +85,9 @@ export default function MyToolsPage() {
       tool.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
     );
 
-  // Function to simulate adding a tool to saved tools
+  // Function to navigate to all tools page
   const handleAddTool = () => {
-    // In a real app, this would navigate to a selection screen or modal
-    // For now, we'll just show that functionality would exist here
-    alert('In a production app, this would open a dialog to add more tools to your My Tools section.');
+    router.push('/dashboard/tools');
   };
 
   return (

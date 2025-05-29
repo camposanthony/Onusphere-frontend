@@ -67,14 +67,30 @@ export default function Sidebar() {
     if (savedState !== null) {
       setCollapsed(savedState === 'true');
     }
-    // Load saved tools from localStorage (same as my-tools page)
+    // Load saved tools from localStorage
     const tools = localStorage.getItem('savedTools');
     if (tools) {
-      setSavedTools(JSON.parse(tools));
+      try {
+        setSavedTools(JSON.parse(tools));
+      } catch (error) {
+        console.error('Failed to parse saved tools from localStorage:', error);
+        setSavedTools([]);
+      }
     } else {
-      // Default fallback for demo: load-plan-pro
-      setSavedTools(['load-plan-pro']);
+      // Start with empty saved tools - tools will be added when user launches them for the first time
+      setSavedTools([]);
     }
+
+    // Listen for changes in saved tools from other components
+    const handleSavedToolsChanged = (event: CustomEvent) => {
+      setSavedTools(event.detail.savedTools);
+    };
+
+    window.addEventListener('savedToolsChanged', handleSavedToolsChanged as EventListener);
+
+    return () => {
+      window.removeEventListener('savedToolsChanged', handleSavedToolsChanged as EventListener);
+    };
   }, []);
 
   // Save collapsed state to localStorage

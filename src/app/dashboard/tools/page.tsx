@@ -1,17 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Truck, 
   ArrowRight, 
   Search,
   Package,
-  Sparkles
+  Sparkles,
+  Star
 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { getSavedTools } from '@/lib/utils/tool-manager';
 
 // Tool card interface for type safety
 interface ToolCard {
@@ -41,6 +43,23 @@ const allTools: ToolCard[] = [
 
 export default function ToolsPage() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [savedTools, setSavedTools] = useState<string[]>([]);
+  
+  // Load saved tools on component mount
+  useEffect(() => {
+    setSavedTools(getSavedTools());
+
+    // Listen for changes in saved tools from other components
+    const handleSavedToolsChanged = (event: CustomEvent) => {
+      setSavedTools(event.detail.savedTools);
+    };
+
+    window.addEventListener('savedToolsChanged', handleSavedToolsChanged as EventListener);
+
+    return () => {
+      window.removeEventListener('savedToolsChanged', handleSavedToolsChanged as EventListener);
+    };
+  }, []);
   
   // Filter tools based on search query
   const filteredTools = allTools.filter(tool => 
@@ -80,6 +99,16 @@ export default function ToolsPage() {
                     </span>
                   </div>
                 </div>
+                {savedTools.length > 0 && (
+                  <div className="bg-green-50 dark:bg-green-900/20 rounded-xl px-4 py-3 border border-green-200 dark:border-green-800">
+                    <div className="flex items-center gap-2">
+                      <Star className="h-3 w-3 text-green-500 fill-current" />
+                      <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                        {savedTools.length} In My Tools
+                      </span>
+                    </div>
+                  </div>
+                )}
                 {allTools.filter(t => t.isPopular).length > 0 && (
                   <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl px-4 py-3 border border-amber-200 dark:border-amber-800">
                     <div className="flex items-center gap-2">
@@ -134,48 +163,58 @@ export default function ToolsPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredTools.map((tool) => (
-              <div 
-                key={tool.id}
-                className="group border border-slate-200 dark:border-slate-700 rounded-xl p-6 transition-all duration-200 bg-white dark:bg-slate-800 overflow-hidden"
-              >
-                <div className="flex justify-between items-start mb-4">
-                  <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center">
-                    {tool.icon}
+            {filteredTools.map((tool) => {
+              const isToolSaved = savedTools.includes(tool.id);
+              
+              return (
+                <div 
+                  key={tool.id}
+                  className="group border border-slate-200 dark:border-slate-700 rounded-xl p-6 transition-all duration-200 bg-white dark:bg-slate-800 overflow-hidden"
+                >
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center">
+                      {tool.icon}
+                    </div>
+                    <div className="flex space-x-2">
+                      {isToolSaved && (
+                        <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 border-0">
+                          <Star className="h-3 w-3 mr-1 fill-current" />
+                          Saved
+                        </Badge>
+                      )}
+                      {tool.isNew && (
+                        <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 border-0">
+                          New
+                        </Badge>
+                      )}
+                      {tool.isPopular && (
+                        <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300 border-0">
+                          Popular
+                        </Badge>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex space-x-2">
-                    {tool.isNew && (
-                      <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 border-0">
-                        New
+                  
+                  <h3 className="text-xl font-bold mb-2 text-slate-900 dark:text-white">{tool.name}</h3>
+                  <p className="text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">{tool.description}</p>
+                  
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {tool.tags.map((tag) => (
+                      <Badge key={tag} variant="outline" className="text-xs border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400">
+                        {tag}
                       </Badge>
-                    )}
-                    {tool.isPopular && (
-                      <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300 border-0">
-                        Popular
-                      </Badge>
-                    )}
+                    ))}
                   </div>
+                  
+                  <Link href={tool.path}>
+                    <Button className="w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 transition-all duration-200">
+                      {isToolSaved ? 'Open Tool' : 'Launch Tool'}
+                      <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                  </Link>
                 </div>
-                
-                <h3 className="text-xl font-bold mb-2 text-slate-900 dark:text-white">{tool.name}</h3>
-                <p className="text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">{tool.description}</p>
-                
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {tool.tags.map((tag) => (
-                    <Badge key={tag} variant="outline" className="text-xs border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400">
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-                
-                <Link href={tool.path}>
-                  <Button className="w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 transition-all duration-200">
-                    Launch Tool
-                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
