@@ -14,14 +14,24 @@ import {
   Menu,
   X,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  MessageSquare
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/context/AuthContext';
 
-// Updated routes based on user requirements
-const routes = [
+// Route interface
+interface Route {
+  label: string;
+  icon: any;
+  href: string;
+  active: (path: string) => boolean;
+  isAction?: boolean;
+}
+
+// Tools section - above the divider
+const toolRoutes: Route[] = [
   {
     label: 'Dashboard',
     icon: LayoutDashboard,
@@ -40,6 +50,10 @@ const routes = [
     href: '/dashboard/tools',
     active: (path: string) => path.startsWith('/dashboard/tools') && !path.startsWith('/dashboard/my-tools'),
   },
+];
+
+// Administrative section - below the divider
+const adminRoutes: Route[] = [
   {
     label: 'Users',
     icon: Users,
@@ -47,10 +61,23 @@ const routes = [
     active: (path: string) => path.startsWith('/dashboard/users'),
   },
   {
+    label: 'Contact',
+    icon: MessageSquare,
+    href: '/dashboard/contact',
+    active: (path: string) => path.startsWith('/dashboard/contact'),
+  },
+  {
     label: 'Settings',
     icon: Settings,
     href: '/dashboard/settings',
     active: (path: string) => path.startsWith('/dashboard/settings'),
+  },
+  {
+    label: 'Sign Out',
+    icon: LogOut,
+    href: '#',
+    active: () => false,
+    isAction: true, // Special flag to indicate this is an action, not navigation
   },
 ];
 
@@ -108,6 +135,99 @@ export default function Sidebar() {
     setCollapsed(!collapsed);
   };
 
+  const handleRouteClick = (route: Route) => {
+    if (route.isAction && route.label === 'Sign Out') {
+      logout();
+    }
+    setMobileOpen(false);
+  };
+
+  const renderNavSection = (routes: Route[], sectionTitle?: string) => {
+    return (
+      <div className="space-y-1">
+        {sectionTitle && !collapsed && (
+          <div className="px-3 py-2">
+            <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              {sectionTitle}
+            </h3>
+          </div>
+        )}
+        {routes.map((route) => {
+          // Custom active logic for My Tools
+          let isActive = route.active(pathname);
+          if (route.label === 'My Tools' && myToolMatch) {
+            isActive = true;
+          }
+          if (route.label === 'All Tools' && myToolMatch) {
+            isActive = false;
+          }
+
+          // Handle action items (like Sign Out) vs navigation items
+          if (route.isAction) {
+            return (
+              <div
+                key={route.label}
+                onClick={() => handleRouteClick(route)}
+                className={cn(
+                  "flex items-center px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 ease-in-out cursor-pointer relative",
+                  "hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                )}
+                title={collapsed ? route.label : undefined}
+              >
+                <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
+                  <route.icon className="h-5 w-5 text-[#000000] dark:text-white" />
+                </div>
+                <span 
+                  className={cn(
+                    "ml-3 transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap",
+                    collapsed ? "w-0 opacity-0" : "w-auto opacity-100",
+                    "text-[#000000] dark:text-white"
+                  )}
+                >
+                  {route.label}
+                </span>
+              </div>
+            );
+          }
+
+          return (
+            <Link
+              key={route.href}
+              href={route.href}
+              onClick={() => handleRouteClick(route)}
+              className={cn(
+                "flex items-center px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 ease-in-out relative",
+                isActive
+                  ? "bg-primary/10 text-primary dark:bg-primary/20"
+                  : "hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+              )}
+              title={collapsed ? route.label : undefined}
+            >
+              <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
+                <route.icon className={cn("h-5 w-5", {
+                  "text-primary": isActive,
+                  "text-[#000000] dark:text-white": !isActive
+                })} />
+              </div>
+              <span 
+                className={cn(
+                  "ml-3 transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap",
+                  collapsed ? "w-0 opacity-0" : "w-auto opacity-100",
+                  {
+                    "text-primary": isActive,
+                    "text-[#000000] dark:text-white": !isActive
+                  }
+                )}
+              >
+                {route.label}
+              </span>
+            </Link>
+          );
+        })}
+      </div>
+    );
+  };
+
   return (
     <>
       {/* Mobile Sidebar Toggle */}
@@ -162,77 +282,18 @@ export default function Sidebar() {
         </div>
         
         {/* Navigation */}
-        <div className="flex-1 py-6 px-4 space-y-1 overflow-y-auto">
-          <div className="space-y-1">
-            {routes.map((route) => {
-              // Custom active logic for My Tools
-              let isActive = route.active(pathname);
-              if (route.label === 'My Tools' && myToolMatch) {
-                isActive = true;
-              }
-              if (route.label === 'All Tools' && myToolMatch) {
-                isActive = false;
-              }
-              return (
-                <Link
-                  key={route.href}
-                  href={route.href}
-                  onClick={() => setMobileOpen(false)}
-                  className={cn(
-                    "flex items-center px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 ease-in-out relative",
-                    isActive
-                      ? "bg-primary/10 text-primary dark:bg-primary/20"
-                      : "hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                  )}
-                  title={collapsed ? route.label : undefined}
-                >
-                  <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
-                    <route.icon className={cn("h-5 w-5", {
-                      "text-primary": isActive,
-                      "text-[#000000] dark:text-white": !isActive
-                    })} />
-                  </div>
-                  <span 
-                    className={cn(
-                      "ml-3 transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap",
-                      collapsed ? "w-0 opacity-0" : "w-auto opacity-100",
-                      {
-                        "text-primary": isActive,
-                        "text-[#000000] dark:text-white": !isActive
-                      }
-                    )}
-                  >
-                    {route.label}
-                  </span>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-        
-        {/* Sign Out */}
-        <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-          <div 
-            className={cn(
-              "flex items-center px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 ease-in-out cursor-pointer relative",
-              "hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-            )}
-            title={collapsed ? "Sign Out" : undefined}
-            onClick={logout}
-          >
-            <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
-              <LogOut className="h-5 w-5 text-[#000000] dark:text-white" />
-            </div>
-            <span 
-              className={cn(
-                "ml-3 transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap",
-                collapsed ? "w-0 opacity-0" : "w-auto opacity-100",
-                "text-[#000000] dark:text-white"
-              )}
-            >
-              Sign Out
-            </span>
-          </div>
+        <div className="flex-1 py-6 px-4 space-y-6 overflow-y-auto">
+          {/* Tools Section */}
+          {renderNavSection(toolRoutes)}
+          
+          {/* Divider */}
+          <div className={cn(
+            "border-t border-gray-200 dark:border-gray-700 transition-all duration-300",
+            collapsed ? "mx-2" : "mx-0"
+          )}></div>
+          
+          {/* Administrative Section */}
+          {renderNavSection(adminRoutes)}
         </div>
       </div>
 

@@ -28,6 +28,7 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import Image from "next/image";
 import {
   getCustomerOrders,
   BackendOrder,
@@ -54,7 +55,63 @@ export default function LoadingPlanPage() {
   }>({ show: false, success: false, message: "" });
   const [isSendingEmail, setIsSendingEmail] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
+  const [currentTruckIndex, setCurrentTruckIndex] = useState(0);
 
+  // Define types for loading instruction images and trucks
+  type LoadingInstructionImageType = {
+    label: string;
+    base64: string;
+    [key: string]: unknown;
+  };
+
+  type TruckImagesGroup = {
+    images: LoadingInstructionImageType[];
+    truckNum: string;
+  };
+
+  // Group flat image array by truck number extracted from label for tabbed truck navigation
+  function groupImagesByTruck(
+    images: LoadingInstructionImageType[],
+  ): TruckImagesGroup[] {
+    const trucksMap: Record<string, LoadingInstructionImageType[]> = {};
+    images.forEach((img) => {
+      // Extract truck number from label, e.g., "truck1 side-left View"
+      const match = img.label.match(/truck(\d+)/i);
+      const truckNum = match ? match[1] : "1";
+      if (!trucksMap[truckNum]) trucksMap[truckNum] = [];
+      trucksMap[truckNum].push(img);
+    });
+    // Sort by truck number for consistent tab order
+    return Object.keys(trucksMap)
+      .sort((a, b) => Number(a) - Number(b))
+      .map((truckNum) => ({ images: trucksMap[truckNum], truckNum }));
+  }
+
+  let trucks: TruckImagesGroup[] = [];
+  if (
+    order &&
+    Array.isArray(order.loading_instructions) &&
+    order.loading_instructions.length > 0 &&
+    typeof order.loading_instructions[0] === "object" &&
+    "images" in
+      (order.loading_instructions[0] as unknown as Record<string, unknown>)
+  ) {
+    // If loading_instructions is already TruckImagesGroup[]
+    trucks = order.loading_instructions as unknown as TruckImagesGroup[];
+  } else if (
+    order &&
+    Array.isArray(order.loading_instructions) &&
+    order.loading_instructions.length > 0 &&
+    typeof order.loading_instructions[0] === "object" &&
+    "label" in
+      (order.loading_instructions[0] as unknown as Record<string, unknown>) &&
+    "base64" in
+      (order.loading_instructions[0] as unknown as Record<string, unknown>)
+  ) {
+    trucks = groupImagesByTruck(
+      order.loading_instructions as LoadingInstructionImageType[],
+    );
+  }
   useEffect(() => {
     const fetchOrder = async () => {
       try {
@@ -94,7 +151,9 @@ export default function LoadingPlanPage() {
                 <Loader2 className="h-12 w-12 animate-spin text-primary" />
                 <div className="absolute inset-0 h-12 w-12 rounded-full border-4 border-primary/20"></div>
               </div>
-              <p className="text-slate-600 dark:text-slate-300 font-medium">Loading order details...</p>
+              <p className="text-slate-600 dark:text-slate-300 font-medium">
+                Loading order details...
+              </p>
             </div>
           </div>
         </div>
@@ -108,8 +167,8 @@ export default function LoadingPlanPage() {
         <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
           {/* Header Section */}
           <div className="mb-8">
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               onClick={() => router.back()}
               className="mb-4 hover:bg-slate-100 dark:hover:bg-slate-800 -ml-4"
             >
@@ -124,10 +183,10 @@ export default function LoadingPlanPage() {
               <div>
                 <h2 className="text-lg font-semibold mb-2">Order Not Found</h2>
                 <p className="text-slate-600 dark:text-slate-400 mb-4">
-                  We couldn&apos;t find the loading plan for this order. It may have
-                  been deleted or doesn&apos;t exist.
+                  We couldn&apos;t find the loading plan for this order. It may
+                  have been deleted or doesn&apos;t exist.
                 </p>
-                <Button 
+                <Button
                   onClick={() => router.back()}
                   className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80"
                 >
@@ -142,15 +201,19 @@ export default function LoadingPlanPage() {
     );
   }
 
+  type LoadingInstructionsObject = { sequence?: string[]; notes?: string };
+
   const hasValidLoadingInstructions =
     order.loading_instructions &&
-    (
-      (Array.isArray(order.loading_instructions) && order.loading_instructions.length > 0) ||
+    ((Array.isArray(order.loading_instructions) &&
+      order.loading_instructions.length > 0) ||
       (typeof order.loading_instructions === "object" &&
-       !Array.isArray(order.loading_instructions) &&
-       (Array.isArray((order.loading_instructions as any).sequence) || 
-        typeof (order.loading_instructions as any).notes === 'string'))
-    );
+        !Array.isArray(order.loading_instructions) &&
+        (Array.isArray(
+          (order.loading_instructions as LoadingInstructionsObject).sequence,
+        ) ||
+          typeof (order.loading_instructions as LoadingInstructionsObject)
+            .notes === "string")));
 
   if (!hasValidLoadingInstructions) {
     return (
@@ -158,8 +221,8 @@ export default function LoadingPlanPage() {
         <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
           {/* Header Section */}
           <div className="mb-8">
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               onClick={() => router.back()}
               className="mb-4 hover:bg-slate-100 dark:hover:bg-slate-800 -ml-4"
             >
@@ -176,8 +239,8 @@ export default function LoadingPlanPage() {
                   Loading Plan Not Available
                 </h2>
                 <p className="text-slate-600 dark:text-slate-400 mb-4">
-                  This order doesn&apos;t have loading instructions yet. Please check
-                  back later.
+                  This order doesn&apos;t have loading instructions yet. Please
+                  check back later.
                 </p>
               </div>
             </div>
@@ -262,15 +325,15 @@ export default function LoadingPlanPage() {
         <div className="mb-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div className="space-y-4">
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 onClick={() => router.back()}
                 className="mb-4 hover:bg-slate-100 dark:hover:bg-slate-800 -ml-4"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Orders
               </Button>
-              
+
               <div className="flex items-center gap-4">
                 <div className="h-16 w-16 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center">
                   <Truck className="h-8 w-8 text-white" />
@@ -339,39 +402,56 @@ export default function LoadingPlanPage() {
               <div className="mb-6">
                 {order.loading_instructions &&
                   (() => {
-                    // Check if loading instructions are images (array of objects with label and base64)
-                    if (Array.isArray(order.loading_instructions) && 
-                        order.loading_instructions.length > 0 && 
-                        typeof order.loading_instructions[0] === 'object' && 
-                        'label' in order.loading_instructions[0] && 
-                        'base64' in order.loading_instructions[0]) {
-                      
-                      const images = order.loading_instructions as LoadingInstructionImage[];
-                      
+                    // If we have trucks with images, show truck selector and images for selected truck
+                    if (trucks.length > 0 && Array.isArray(trucks[0].images)) {
+                      const selectedTruck = trucks[currentTruckIndex];
+                      const images = selectedTruck.images || [];
+
                       return (
                         <div className="space-y-6">
                           <h3 className="text-base font-semibold mb-3 flex items-center text-slate-900 dark:text-white">
                             <ImageIcon className="h-4 w-4 text-slate-600 dark:text-slate-400 mr-2" />
                             Visual Loading Instructions
                           </h3>
+                          {trucks.length > 1 && (
+                            <div className="flex gap-2 mb-4">
+                              {trucks.map((_, idx) => (
+                                <Button
+                                  key={idx}
+                                  variant={
+                                    currentTruckIndex === idx
+                                      ? "default"
+                                      : "outline"
+                                  }
+                                  onClick={() => setCurrentTruckIndex(idx)}
+                                >
+                                  Truck {idx + 1}
+                                </Button>
+                              ))}
+                            </div>
+                          )}
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {images.map((image, index) => (
-                              <div
-                                key={index}
-                                className="border rounded-xl p-4 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"
-                              >
-                                <div className="flex items-center justify-between mb-3">
-                                  <h4 className="text-sm font-medium text-slate-900 dark:text-white capitalize">
-                                    {image.label.replace('-', ' ')} View
-                                  </h4>
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={() => {
-                                      // Open image in new tab for full view
-                                      const newWindow = window.open();
-                                      if (newWindow) {
-                                        newWindow.document.write(`
+                            {images.map(
+                              (
+                                image: LoadingInstructionImage,
+                                index: number,
+                              ) => (
+                                <div
+                                  key={index}
+                                  className="border rounded-xl p-4 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"
+                                >
+                                  <div className="flex items-center justify-between mb-3">
+                                    <h4 className="text-sm font-medium text-slate-900 dark:text-white capitalize">
+                                      {image.label.replace("-", " ")} View
+                                    </h4>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() => {
+                                        // Open image in new tab for full view
+                                        const newWindow = window.open();
+                                        if (newWindow) {
+                                          newWindow.document.write(`
                                           <html>
                                             <head><title>${image.label} View</title></head>
                                             <body style="margin:0;background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh;">
@@ -379,25 +459,28 @@ export default function LoadingPlanPage() {
                                             </body>
                                           </html>
                                         `);
-                                      }
-                                    }}
-                                    className="h-8 px-3 text-xs"
-                                  >
-                                    <ZoomIn className="h-3 w-3 mr-1" />
-                                    Full Size
-                                  </Button>
-                                </div>
-                                <div className="aspect-video bg-slate-100 dark:bg-slate-900 rounded-lg overflow-hidden">
-                                  <img
-                                    src={`data:image/png;base64,${image.base64}`}
-                                    alt={`${image.label} loading view`}
-                                    className="w-full h-full object-contain"
-                                    onError={(e) => {
-                                      const target = e.target as HTMLImageElement;
-                                      target.style.display = 'none';
-                                      const parent = target.parentElement;
-                                      if (parent) {
-                                        parent.innerHTML = `
+                                        }
+                                      }}
+                                      className="h-8 px-3 text-xs"
+                                    >
+                                      <ZoomIn className="h-3 w-3 mr-1" />
+                                      Full Size
+                                    </Button>
+                                  </div>
+                                  <div className="aspect-video bg-slate-100 dark:bg-slate-900 rounded-lg overflow-hidden">
+                                    <Image
+                                      src={`data:image/png;base64,${image.base64}`}
+                                      alt={`${image.label} loading view`}
+                                      className="w-full h-full object-contain"
+                                      width={800}
+                                      height={450}
+                                      onError={(e) => {
+                                        const target =
+                                          e.target as HTMLImageElement;
+                                        target.style.display = "none";
+                                        const parent = target.parentElement;
+                                        if (parent) {
+                                          parent.innerHTML = `
                                           <div class="flex items-center justify-center h-full text-slate-500">
                                             <div class="text-center">
                                               <svg class="mx-auto h-12 w-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -407,71 +490,22 @@ export default function LoadingPlanPage() {
                                             </div>
                                           </div>
                                         `;
-                                      }
-                                    }}
-                                  />
+                                        }
+                                      }}
+                                    />
+                                  </div>
                                 </div>
-                              </div>
-                            ))}
+                              ),
+                            )}
                           </div>
                         </div>
                       );
                     }
-                    
+
                     // Handle text instructions (array of strings or object with sequence)
-                    const instructions = Array.isArray(order.loading_instructions)
-                      ? order.loading_instructions as string[]
-                      : (order.loading_instructions as any).sequence || [];
-                    
-                    if (instructions.length > 0) {
-                      return (
-                        <div>
-                          <h3 className="text-base font-semibold mb-3 flex items-center text-slate-900 dark:text-white">
-                            <Package className="h-4 w-4 text-slate-600 dark:text-slate-400 mr-2" />
-                            Step by Step Instructions
-                          </h3>
-                          <div className="border rounded-xl p-4 border-slate-200 dark:border-slate-700 max-h-[300px] overflow-y-auto bg-slate-50 dark:bg-slate-900/50">
-                            <div className="space-y-5">
-                              {instructions.map((step: string, index: number) => (
-                                <div
-                                  key={index}
-                                  className="flex items-start pb-5 border-b border-slate-200 dark:border-slate-700 last:border-0 last:pb-0"
-                                >
-                                  <div className="flex-shrink-0 h-7 w-7 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center mr-3 mt-0.5">
-                                    <span className="text-sm font-semibold text-primary dark:text-primary">
-                                      {index + 1}
-                                    </span>
-                                  </div>
-                                  <div className="flex-1">
-                                    <p className="text-slate-700 dark:text-slate-300">{step}</p>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    }
-                    
-                    return null;
+                    // Removed step-by-step instructions and special notes; only visual instructions remain.
                   })()}
               </div>
-
-              {/* Special Notes */}
-              {order.loading_instructions &&
-                typeof order.loading_instructions === "object" &&
-                !Array.isArray(order.loading_instructions) &&
-                order.loading_instructions.notes && (
-                  <div className="mb-6">
-                    <h3 className="text-base font-semibold mb-3 flex items-center text-slate-900 dark:text-white">
-                      <AlertCircle className="h-4 w-4 text-amber-600 mr-2" />
-                      Special Handling Notes
-                    </h3>
-                    <div className="rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 p-4">
-                      <p className="text-slate-700 dark:text-slate-300">{order.loading_instructions.notes}</p>
-                    </div>
-                  </div>
-                )}
 
               {/* Email Settings */}
               <div>
@@ -579,7 +613,10 @@ export default function LoadingPlanPage() {
                       loading configuration.
                     </p>
                     <div className="flex flex-wrap justify-center gap-3">
-                      <Button variant="outline" className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700">
+                      <Button
+                        variant="outline"
+                        className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700"
+                      >
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         Rotate Left
                       </Button>
@@ -587,7 +624,10 @@ export default function LoadingPlanPage() {
                         <Package className="mr-2 h-4 w-4" />
                         Exploded View
                       </Button>
-                      <Button variant="outline" className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700">
+                      <Button
+                        variant="outline"
+                        className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700"
+                      >
                         Rotate Right
                         <ArrowLeft className="ml-2 h-4 w-4 rotate-180" />
                       </Button>
@@ -597,11 +637,12 @@ export default function LoadingPlanPage() {
               ) : (
                 (() => {
                   // Check if we have image-based loading instructions
-                  const hasImages = Array.isArray(order.loading_instructions) && 
-                    order.loading_instructions.length > 0 && 
-                    typeof order.loading_instructions[0] === 'object' && 
-                    'label' in order.loading_instructions[0] && 
-                    'base64' in order.loading_instructions[0];
+                  const hasImages =
+                    Array.isArray(order.loading_instructions) &&
+                    order.loading_instructions.length > 0 &&
+                    typeof order.loading_instructions[0] === "object" &&
+                    "label" in order.loading_instructions[0] &&
+                    "base64" in order.loading_instructions[0];
 
                   if (hasImages) {
                     // If we have images in loading instructions, show a different view here
@@ -613,15 +654,22 @@ export default function LoadingPlanPage() {
                             Interactive Model View
                           </h3>
                           <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 max-w-md mx-auto">
-                            The loading instructions above show the visual diagrams. This section could display 
-                            an interactive 3D model or additional analysis tools.
+                            The loading instructions above show the visual
+                            diagrams. This section could display an interactive
+                            3D model or additional analysis tools.
                           </p>
                           <div className="flex flex-wrap justify-center gap-3">
-                            <Button variant="outline" className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700">
+                            <Button
+                              variant="outline"
+                              className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700"
+                            >
                               <Package className="mr-2 h-4 w-4" />
                               3D Model
                             </Button>
-                            <Button variant="outline" className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700">
+                            <Button
+                              variant="outline"
+                              className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700"
+                            >
                               <Grid className="mr-2 h-4 w-4" />
                               Analysis
                             </Button>

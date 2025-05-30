@@ -11,7 +11,6 @@ import {
   ClipboardCopy,
   RefreshCw,
   Users,
-  Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -129,7 +128,7 @@ export default function CustomersPage() {
   };
 
   const handleCopyEmail = async () => {
-    const email = "onusphere@gmail.com";
+    const email = "orders@movomint.com";
     try {
       await navigator.clipboard.writeText(email);
       setIsEmailCopied(true);
@@ -172,7 +171,7 @@ export default function CustomersPage() {
                   </p>
                 </div>
               </div>
-              
+
               {/* Stats Section */}
               <div className="flex flex-wrap gap-4 mt-6">
                 <div className="bg-white dark:bg-slate-800 rounded-xl px-4 py-3 border border-slate-200 dark:border-slate-700">
@@ -209,8 +208,8 @@ export default function CustomersPage() {
                 Refresh Data
               </Button>
 
-              <Button 
-                onClick={handleShowEmailInstructions} 
+              <Button
+                onClick={handleShowEmailInstructions}
                 disabled={isLoading}
                 className="h-11 px-6 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 transition-all duration-200"
               >
@@ -249,7 +248,9 @@ export default function CustomersPage() {
                   <Loader2 className="h-12 w-12 animate-spin text-primary" />
                   <div className="absolute inset-0 h-12 w-12 rounded-full border-4 border-primary/20"></div>
                 </div>
-                <p className="text-slate-600 dark:text-slate-300 font-medium">Loading customer data...</p>
+                <p className="text-slate-600 dark:text-slate-300 font-medium">
+                  Loading customer data...
+                </p>
               </div>
             </div>
           )}
@@ -264,9 +265,10 @@ export default function CustomersPage() {
                 No Customers Yet
               </h3>
               <p className="text-slate-600 dark:text-slate-400 text-lg mb-8 max-w-md mx-auto">
-                Get started by forwarding your first order email to automatically create your customer database.
+                Get started by forwarding your first order email to
+                automatically create your customer database.
               </p>
-              <Button 
+              <Button
                 onClick={handleShowEmailInstructions}
                 size="lg"
                 className="h-12 px-8 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80"
@@ -360,10 +362,11 @@ export default function CustomersPage() {
               Add New Customer
             </DialogTitle>
             <DialogDescription className="text-base text-slate-600 dark:text-slate-400">
-              Follow these simple steps to automatically add a customer by forwarding their order email
+              Follow these simple steps to automatically add a customer by
+              forwarding their order email
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-8 py-6">
             <div className="space-y-6">
               {/* Step 1 */}
@@ -376,12 +379,13 @@ export default function CustomersPage() {
                     Forward Order Email
                   </h4>
                   <p className="text-slate-600 dark:text-slate-400 mb-3">
-                    Forward any order email from your customer to our processing address
+                    Forward any order email from your customer to our processing
+                    address
                   </p>
                   <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
                     <div className="flex items-center gap-3">
                       <code className="flex-1 px-3 py-2 bg-white dark:bg-slate-900 rounded-md text-sm font-mono border border-slate-200 dark:border-slate-600">
-                        onusphere@gmail.com
+                        orders@movomint.com
                       </code>
                       <Button
                         variant="outline"
@@ -416,13 +420,16 @@ export default function CustomersPage() {
                     Include Company Code
                   </h4>
                   <p className="text-slate-600 dark:text-slate-400 mb-3">
-                    Add your company code to the email subject line so we can route it correctly
+                    Add your company code to the email subject line so we can
+                    route it correctly
                   </p>
                   <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
                     {isLoadingCompanyCode ? (
                       <div className="flex items-center gap-3">
                         <div className="animate-pulse bg-slate-200 dark:bg-slate-600 h-9 rounded-md flex-1"></div>
-                        <span className="text-sm text-slate-500">Loading...</span>
+                        <span className="text-sm text-slate-500">
+                          Loading...
+                        </span>
                       </div>
                     ) : companyCode ? (
                       <div className="flex items-center gap-3">
@@ -467,7 +474,9 @@ export default function CustomersPage() {
                     Automatic Processing
                   </h4>
                   <p className="text-slate-600 dark:text-slate-400">
-                    We'll automatically process the email, extract customer and order information, and add them to your dashboard within minutes.
+                    We&apos;ll automatically process the email, extract customer
+                    and order information, and add them to your dashboard within
+                    minutes.
                   </p>
                 </div>
               </div>
@@ -488,7 +497,7 @@ export default function CustomersPage() {
                 className="px-6 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80"
               >
                 <Send className="mr-2 h-4 w-4" />
-                I've Sent the Email
+                I&apos;ve Sent the Email
               </Button>
             </div>
           </div>
